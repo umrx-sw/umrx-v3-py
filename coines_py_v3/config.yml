@@ -1,0 +1,3 @@
+USB:
+  - vid: 0x152a
+  - pid: 0x80c0
