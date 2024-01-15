@@ -1,6 +1,7 @@
 dist/*
 build/*
 coines_py_v3.egg-info/*
-coines_py_v3/__pycache__/
+**/__pycache__/
 **/*.log
 .idea
+.pytest_cache
