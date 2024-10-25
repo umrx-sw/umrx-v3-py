@@ -5,8 +5,8 @@ import sys
 import pytest
 
 from umrx_app_v3.mcu_board.usb_comm import UsbCommunication
-from src.umrx_app_v3.mcu_board.bst_protocol import BstProtocol
-from src.umrx_app_v3.mcu_board.app_board_30 import ApplicationBoard30
+from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
+from umrx_app_v3.mcu_board.app_board_30 import ApplicationBoard30
 
 from umrx_app_v3.shuttle_board.bmi088 import BMI088
 
