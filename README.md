@@ -1,4 +1,6 @@
-# COINES for Bosch SensorTec Application Board v3
+# Python communication with COINES firmware
+
+`python3` communication with COINES app-board 3.0 and app-board 3.1 firmware.
 
 
 ## Maintainer
