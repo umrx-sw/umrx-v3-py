@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-# Author: Dr. Konstantin Selyunin
-# License: MIT
-# Date: 28 May 2022
-
-
 import logging
 from typing import Union, Tuple, List
 
@@ -11,7 +5,7 @@ import pytest
 import usb.core
 
 from array import array
-from coines_py_v3.mcu_board.usb_comm import UsbCommunication
+from umrx_app_v3.mcu_board.usb_comm import UsbCommunication
 
 logger = logging.getLogger()
 

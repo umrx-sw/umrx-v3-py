@@ -4,8 +4,8 @@ import sys
 from pathlib import Path
 from time import sleep
 
-from coines_py_v3.mcu_board.app_board_30 import ApplicationBoard30
-from coines_py_v3.shuttle_board.bmi088 import BMI088
+from umrx_app_v3.mcu_board.app_board_30 import ApplicationBoard30
+from umrx_app_v3.shuttle_board.bmi088 import BMI088
 
 
 if __name__ == '__main__':

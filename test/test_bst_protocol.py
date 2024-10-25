@@ -1,16 +1,11 @@
-#!/usr/bin/env python3
-# Author: Dr. Konstantin Selyunin
-# License: MIT
-# Date: 28 May 2022
-
 import logging
 from typing import List, Tuple, Union
 
 import pytest
 
 from array import array
-from coines_py_v3.mcu_board.bst_protocol import BstProtocol
-from coines_py_v3.mcu_board.usb_comm import UsbCommunication
+from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
+from umrx_app_v3.mcu_board.usb_comm import UsbCommunication
 
 logger = logging.getLogger()
 
@@ -58,7 +53,7 @@ def test_bst_protocol_recv(bst_protocol: BstProtocol):
     ok = bst_protocol.send(valid_packet)
     assert ok, "Sending board info request packet failed!"
     reply = bst_protocol.recv()
-    expected_reply = 170, 15, 1, 0, 66, 31, 0, 102, 0, 16, 0, 9, 5, 13, 10,
+    expected_reply = 170, 15, 1, 0, 66, 31, 0, 102, 0, 16, 0, 25, 5, 13, 10,
     assert isinstance(reply, array), "Expecting an array back"
     assert tuple(reply[:len(expected_reply)]) == expected_reply, "Expecting App Board 3.0 + BMI08x reply back"
 

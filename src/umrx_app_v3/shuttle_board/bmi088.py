@@ -1,8 +1,3 @@
-#!/usr/bin/env python3
-# Author: Dr. Konstantin Selyunin
-# License: MIT
-
-
 import json
 import logging
 import struct
@@ -16,7 +11,7 @@ from pathlib import Path
 from time import sleep
 from typing import ClassVar
 
-from coines_py_v3.mcu_board.app_board_30 import ApplicationBoard30
+from umrx_app_v3.mcu_board.app_board_30 import ApplicationBoard30
 
 
 @dataclass

@@ -1,21 +1,11 @@
-#!/usr/bin/env python3
-# Author: Dr. Konstantin Selyunin
-# License: MIT
-# Date: 19 June 2022
-
 import logging
 import pytest
 import struct
-import sys
 
 from array import array
-from pathlib import Path
-from typing import List, Tuple, Union
 
-from coines_py_v3.mcu_board.bst_protocol import BstProtocol
-from coines_py_v3.shuttle_board.bmi088 import BMI088, BMI088AccelPacket, BMI088GyroPacket
-from coines_py_v3.shuttle_board.bmi088 import BMI088
-from coines_py_v3.mcu_board.app_board_30 import ApplicationBoard30
+from umrx_app_v3.shuttle_board.bmi088 import BMI088
+from umrx_app_v3.mcu_board.app_board_30 import ApplicationBoard30
 
 
 logger = logging.getLogger()

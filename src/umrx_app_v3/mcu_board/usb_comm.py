@@ -1,8 +1,3 @@
-#!/usr/bin/env python3
-# Author: Dr. Konstantin Selyunin
-# License: MIT
-
-
 import logging
 import usb.core
 from array import array
@@ -108,5 +103,3 @@ class UsbCommunication:
         payload = array('B', message)
         packet[0:len(payload)] = payload
         return packet
-
-

@@ -1,20 +1,14 @@
-#!/usr/bin/env python3
-# Author: Dr. Konstantin Selyunin
-# License: MIT
-# Date: 28 May 2022
-
-
 import logging
 import os
 import pathlib
 import sys
 import pytest
 
-from coines_py_v3.mcu_board.usb_comm import UsbCommunication
-from coines_py_v3.mcu_board.bst_protocol import BstProtocol
-from coines_py_v3.mcu_board.app_board_30 import ApplicationBoard30
+from umrx_app_v3.mcu_board.usb_comm import UsbCommunication
+from src.umrx_app_v3.mcu_board.bst_protocol import BstProtocol
+from src.umrx_app_v3.mcu_board.app_board_30 import ApplicationBoard30
 
-from coines_py_v3.shuttle_board.bmi088 import BMI088
+from umrx_app_v3.shuttle_board.bmi088 import BMI088
 
 handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(

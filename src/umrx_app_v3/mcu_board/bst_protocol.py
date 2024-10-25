@@ -7,7 +7,7 @@ import logging
 from array import array
 from typing import List, Tuple, Union
 
-from coines_py_v3.mcu_board.usb_comm import UsbCommunication
+from src.umrx_app_v3.mcu_board import UsbCommunication
 
 
 class BstProtocol:
