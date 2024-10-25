@@ -5,7 +5,7 @@ from typing import Union, Tuple, List
 
 
 class BstBoardException(Exception):
-    pass
+    ...
 
 
 class UsbCommunication:
