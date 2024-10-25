@@ -1,13 +1,8 @@
-#!/usr/bin/env python3
-# Author: Dr. Konstantin Selyunin
-# License: MIT
-
-
 import logging
 from array import array
 from typing import List, Tuple, Union
 
-from src.umrx_app_v3.mcu_board import UsbCommunication
+from umrx_app_v3.mcu_board.usb_comm import UsbCommunication
 
 
 class BstProtocol:

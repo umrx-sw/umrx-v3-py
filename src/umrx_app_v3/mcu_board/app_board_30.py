@@ -1,15 +1,11 @@
-#!/usr/bin/env python3
-# Author: Dr. Konstantin Selyunin
-# License: MIT
-
 import inspect
 import logging
 from array import array
 from dataclasses import dataclass
 from typing import Callable, Any, Union
 
-from .bst_protocol import BstProtocol
-from .usb_comm import UsbCommunication
+from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
+from umrx_app_v3.mcu_board.usb_comm import UsbCommunication
 
 logger = logging.getLogger("app_board_30")
 
