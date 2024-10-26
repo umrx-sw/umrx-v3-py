@@ -16,6 +16,7 @@ repository = "https://github.com/umrx-sw/umrx-v3-py"
 pyusb = "1.2.1"
 python = ">=3.12.0,<3.14.0"
 pyserial = "^3.5"
+pyudev = "^0.24.3"
 
 [tool.poetry.dev-dependencies]
 coverage = { extras = ["toml"], version = ">=7.2.5" }
@@ -79,7 +80,7 @@ filterwarnings = [
   "ignore::DeprecationWarning",
   "ignore::pytest.PytestUnraisableExceptionWarning",
 ]
-testpaths = ["src", "tests"]
+testpaths = ["src", "test"]
 xfail_strict = true
 markers =[
   "usb_comm: mark tests related to low-level USB config",
@@ -160,4 +161,4 @@ cmd = "coverage xml"
 
 [tool.poe.tasks.integration-test]
 help = "Run the integration tests"
-cmd = "pytest --forked --failed-first --log-cli-level=DEBUG integration_tests/test_bmi088.py"
+cmd = "pytest --forked --failed-first --log-cli-level=DEBUG integration_tests/test_shuttle_bmi088.py"
