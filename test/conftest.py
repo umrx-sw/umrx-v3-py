@@ -1,12 +1,11 @@
 import logging
-import os
-import pathlib
 import sys
 import pytest
 
-from umrx_app_v3.mcu_board.usb_comm import UsbCommunication
+from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
+from umrx_app_v3.mcu_board.comm.serial_comm import SerialCommunication
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
-from umrx_app_v3.mcu_board.app_board_30 import ApplicationBoard30
+from umrx_app_v3.mcu_board.app_board_v3_rev0 import ApplicationBoardV3Rev0
 
 from umrx_app_v3.shuttle_board.bmi088 import BMI088
 
@@ -30,16 +29,21 @@ def usb_comm() -> UsbCommunication:
 
 
 @pytest.fixture(scope='session', autouse=True)
+def serial_comm() -> SerialCommunication:
+    return SerialCommunication()
+
+
+@pytest.fixture(scope='session', autouse=True)
 def bst_protocol(usb_comm: UsbCommunication) -> BstProtocol:
     return BstProtocol(usb=usb_comm)
 
 
 @pytest.fixture(scope='session', autouse=True)
-def app_board_30(bst_protocol: BstProtocol) -> ApplicationBoard30:
-    return ApplicationBoard30(protocol=bst_protocol)
+def app_board_30(bst_protocol: BstProtocol) -> ApplicationBoardV3Rev0:
+    return ApplicationBoardV3Rev0(protocol=bst_protocol)
 
 
 @pytest.fixture(scope='session', autouse=True)
-def bmi088(app_board_30: ApplicationBoard30) -> BMI088:
+def bmi088(app_board_30: ApplicationBoardV3Rev0) -> BMI088:
     return BMI088(board=app_board_30)
 
