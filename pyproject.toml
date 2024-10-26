@@ -81,6 +81,12 @@ filterwarnings = [
 ]
 testpaths = ["src", "tests"]
 xfail_strict = true
+markers =[
+  "usb_comm: mark tests related to low-level USB config",
+  "bst_protocol: mark tests for Bosch SensorTec protocol on top of USB data transfer",
+  "app_board: mark tests for application Board 3.0 test",
+  "bmi08x: mart test for bmi088 board",
+]
 
 [tool.pytest-watcher]
 now = true
@@ -155,5 +161,3 @@ cmd = "coverage xml"
 [tool.poe.tasks.integration-test]
 help = "Run the integration tests"
 cmd = "pytest --forked --failed-first --log-cli-level=DEBUG integration_tests/test_bmi088.py"
-
-
