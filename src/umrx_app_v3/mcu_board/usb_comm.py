@@ -4,6 +4,9 @@ from array import array
 from typing import Union, Tuple, List
 
 
+logger = logging.getLogger(__name__)
+
+
 class BstBoardException(Exception):
     ...
 
@@ -36,26 +39,26 @@ class UsbCommunication:
         logging.info(f"{self.interface=}")
         if self.usb_device.is_kernel_driver_active(self.interface.bInterfaceNumber):
             self.usb_device.detach_kernel_driver(self.interface.bInterfaceNumber)
-            logging.info(f"Detaching kernel driver done")
+            logger.info(f"Detaching kernel driver done")
 
         self.endpoint_bulk_in = self.interface[0x0]
-        logging.info(f"{self.endpoint_bulk_in=}")
+        logger.info(f"{self.endpoint_bulk_in=}")
 
         self.endpoint_bulk_out = self.interface[0x1]
-        logging.info(f"{self.endpoint_bulk_out=}")
+        logger.info(f"{self.endpoint_bulk_out=}")
         self.is_initialized = True
 
     @property
     def bulk_in_packet_size(self):
         if not self.endpoint_bulk_in:
-            logging.warning(f"Input endpoint not available!")
+            logger.warning(f"Input endpoint not available!")
             return
         return self.endpoint_bulk_in.wMaxPacketSize
 
     @property
     def bulk_out_packet_size(self):
         if not self.endpoint_bulk_out:
-            logging.warning(f"Output endpoint not available!")
+            logger.warning(f"Output endpoint not available!")
             return
         return self.endpoint_bulk_out.wMaxPacketSize
 
@@ -79,13 +82,13 @@ class UsbCommunication:
 
     def send(self, message: Union[array, Tuple, List]) -> bool:
         if len(message) == 0:
-            logging.warning("Nothing to send")
+            logger.warning("Nothing to send")
             return False
         packet = self.create_packet_from(message)
-        bytes_written = self.endpoint_bulk_out.write(data=packet)
+        bytes_written = self.endpoint_bulk_out.write(data=packet, timeout=1)
         logging.debug(f"{bytes_written=}")
         if bytes_written != len(packet):
-            logging.warning(f"Number of bytes written: {bytes_written} != packet length: {len(packet)}")
+            logger.warning(f"Number of bytes written: {bytes_written} != packet length: {len(packet)}")
         return bytes_written == len(packet)
 
     def recv(self) -> array:
