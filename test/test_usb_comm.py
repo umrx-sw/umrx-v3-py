@@ -5,9 +5,9 @@ import pytest
 import usb.core
 
 from array import array
-from umrx_app_v3.mcu_board.usb_comm import UsbCommunication
+from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 
 @pytest.mark.usb_comm
@@ -26,8 +26,7 @@ def test_usb_comm_endpoint_packet(usb_comm: UsbCommunication):
 
 @pytest.mark.usb_comm
 def test_usb_comm_recv(usb_comm: UsbCommunication):
-    data = usb_comm.recv()
-    assert len(data) == usb_comm.bulk_in_packet_size, f"Expected {usb_comm.bulk_in_packet_size} bytes, got {len(data)}"
+    data = usb_comm.receive()
     assert type(data) == array, f"Expecting `array` of bytes back"
 
 

@@ -5,7 +5,7 @@ import struct
 from array import array
 
 from umrx_app_v3.shuttle_board.bmi088 import BMI088
-from umrx_app_v3.mcu_board.app_board_30 import ApplicationBoard30
+from umrx_app_v3.mcu_board.app_board_v3_rev0 import ApplicationBoardV3Rev0
 
 
 logger = logging.getLogger()
@@ -14,7 +14,7 @@ logger = logging.getLogger()
 @pytest.mark.bmi08x
 def test_bmi088_construction(bmi088: BMI088, caplog):
     assert isinstance(bmi088, BMI088), "Expecting instance of BMI088"
-    assert isinstance(bmi088.board, ApplicationBoard30), f"Expecting ApplicationBoard30, got {type(bmi088.board)}"
+    assert isinstance(bmi088.board, ApplicationBoardV3Rev0), f"Expecting ApplicationBoard30, got {type(bmi088.board)}"
 
 
 @pytest.mark.bmi08x
@@ -69,6 +69,7 @@ def test_bmi088_gyro_broadcast_decode(bmi088: BMI088):
 
 @pytest.mark.bmi08x
 def test_bmi088_accel_broadcast_decode(bmi088: BMI088):
+
     valid_packet = 170, 26, 1, 0, 135, 0, 0, 0, 0, 0, 0, 0, 54, 0, 0, 1, 128, 0, 0, 16, 0, 0, 0, 1, 13, 10
     packet = array('B', valid_packet)
     decoded_accel_packet = bmi088.decode(packet)
