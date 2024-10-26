@@ -1,0 +1,78 @@
+# https://pre-commit.com
+default_install_hook_types: [commit-msg, pre-commit]
+default_stages: [commit, manual]
+fail_fast: true
+repos:
+  - repo: meta
+    hooks:
+      - id: check-useless-excludes
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: 3a6eb0fadf60b3cccfd80bad9dbb6fae7e47b316  # v1.10.0
+    hooks:
+      - id: python-check-mock-methods
+      - id: python-use-type-annotations
+      - id: rst-backticks
+      - id: rst-directive-colons
+      - id: rst-inline-touching-normal
+      - id: text-unicode-replacement-char
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 2c9f875913ee60ca25ce70243dc24d5b6415598c  # v4.6.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-ast
+      - id: check-builtin-literals
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-vcs-permalinks
+      - id: check-xml
+      - id: check-yaml
+      - id: debug-statements
+      - id: destroyed-symlinks
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: file-contents-sorter
+        files: .gitignore
+      - id: fix-byte-order-marker
+      - id: mixed-line-ending
+      - id: name-tests-test
+        args: [--pytest-test-first]
+        exclude: tests/utils
+      - id: trailing-whitespace
+        types: [python]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: 75b98813cfb7e663870a28c74366a1e99d7bfe79  # v0.6.9
+    hooks:
+      - id: ruff
+        args: [--fix, --show-fixes]
+      - id: ruff-format
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: d4911cfb7f1010759fde68da196036feeb25b99d  # v1.11.2
+    hooks:
+      - id: mypy
+        args: [--install-types, --non-interactive, .]
+        pass_filenames: false
+        additional_dependencies:
+          - dacite==1.8.0
+          - fastapi==0.99.1
+          - fastapi[all]==0.99.1
+          - pydantic==1.10.16  # < 1.10.16 makes mypy crash
+          - pytest==8.3.3
+          - sdbus-networkmanager==2.0.0
+          - sdbus==0.12.0
+          - sse-starlette==2.0.0
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: a23f6b85d0fdd5bb9d564e2579e678033debbdff  # v0.10.0.1
+    hooks:
+      - id: shellcheck
+        args: [--check-sourced]
+        types: [shell]
+  - repo: https://github.com/python-poetry/poetry
+    rev: e5e4b0ce9d2f4a50f6feeacac3a7d995f0880979  # 1.8.3
+    hooks:
+      - id: poetry-check
+        pass_filenames: false
