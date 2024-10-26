@@ -15,8 +15,8 @@ repository = "https://github.com/umrx-sw/umrx-v3-py"
 [tool.poetry.dependencies]
 pyusb = "1.2.1"
 python = ">=3.12.0,<3.14.0"
+pyserial = "^3.5"
 
-# use this notation for backward compatibility with the poetry version from Yocto!
 [tool.poetry.dev-dependencies]
 coverage = { extras = ["toml"], version = ">=7.2.5" }
 ipdb = "^0.13.13"

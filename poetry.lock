@@ -1145,6 +1145,20 @@ files = [
 windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
+name = "pyserial"
+version = "3.5"
+description = "Python Serial Port Extension"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pyserial-3.5-py2.py3-none-any.whl", hash = "sha256:c4451db6ba391ca6ca299fb3ec7bae67a5c55dde170964c7a14ceefec02f2cf0"},
+    {file = "pyserial-3.5.tar.gz", hash = "sha256:3c77e014170dfffbd816e6ffc205e9842efb10be9f58ec16d3e8675b4925cddb"},
+]
+
+[package.extras]
+cp2110 = ["hidapi"]
+
+[[package]]
 name = "pytest"
 version = "8.3.3"
 description = "pytest: simple powerful testing with Python"
@@ -1759,4 +1773,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.12.0,<3.14.0"
-content-hash = "4c9fc0cda40306a548ef6a42187bb23e93c9b9a5b1083aeafd325d0c4eed0bf3"
+content-hash = "e8773faf667ac871cf8c4ab16198cfc63078da28e3fecaf8f8f69b17594a3e44"
