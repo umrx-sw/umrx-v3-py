@@ -1,13 +1,17 @@
 import inspect
 import logging
+import struct
 from array import array
 from dataclasses import dataclass
 from typing import Callable, Any, Union
 
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
-from umrx_app_v3.mcu_board.usb_comm import UsbCommunication
 
-logger = logging.getLogger("app_board_30")
+logger = logging.getLogger(__name__)
+
+
+class AppBoardError(Exception):
+    ...
 
 
 @dataclass
@@ -18,7 +22,7 @@ class BoardInfo:
     shuttle_id: int
 
 
-class ApplicationBoard30:
+class ApplicationBoard:
     def __init__(self, **kwargs):
         self.protocol: BstProtocol = kwargs['protocol'] if kwargs.get('protocol') else BstProtocol()
 
