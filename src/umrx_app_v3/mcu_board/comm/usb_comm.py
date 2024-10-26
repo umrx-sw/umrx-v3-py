@@ -3,15 +3,16 @@ import usb.core
 from array import array
 from typing import Union, Tuple, List
 
+from umrx_app_v3.mcu_board.comm.comm import Communication
 
 logger = logging.getLogger(__name__)
 
 
-class BstBoardException(Exception):
+class UsbCommunicationError(Exception):
     ...
 
 
-class UsbCommunication:
+class UsbCommunication(Communication):
     def __init__(self, *a, **kw):
         self.vid = 0x152a
         self.pid = 0x80c0
@@ -21,12 +22,12 @@ class UsbCommunication:
         self.endpoint_bulk_in: Union[usb.core.Endpoint, None] = None
         self.endpoint_bulk_out: Union[usb.core.Endpoint, None] = None
         self.is_initialized = False
-        self.init_usb_comm()
+        self.initialize()
 
-    def find_usb_device(self):
+    def find_device(self):
         self.usb_device = usb.core.find(idVendor=self.vid, idProduct=self.pid)
         if self.usb_device is None:
-            raise BstBoardException(f'BST Board with VID={self.vid}, PID={self.pid} not connected!'
+            raise UsbCommunicationError(f'BST Board with VID={self.vid}, PID={self.pid} not connected!'
                                     ' Did you plug in the board to PC and turn it ON?')
 
     def get_set_usb_config(self):
@@ -62,14 +63,14 @@ class UsbCommunication:
             return
         return self.endpoint_bulk_out.wMaxPacketSize
 
-    def init_usb_comm(self):
-        self.find_usb_device()
+    def initialize(self):
+        self.find_device()
         self.get_set_usb_config()
         self.obtain_endpoints()
 
     def connect(self):
         if not self.is_initialized:
-            self.init_usb_comm()
+            self.initialize()
 
     def disconnect(self):
         pass
@@ -80,7 +81,7 @@ class UsbCommunication:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.disconnect()
 
-    def send(self, message: Union[array, Tuple, List]) -> bool:
+    def send(self, message: array | tuple | list) -> bool:
         if len(message) == 0:
             logger.warning("Nothing to send")
             return False
@@ -91,12 +92,29 @@ class UsbCommunication:
             logger.warning(f"Number of bytes written: {bytes_written} != packet length: {len(packet)}")
         return bytes_written == len(packet)
 
-    def recv(self) -> array:
+    def _receive(self) -> array:
         data_recv = self.endpoint_bulk_in.read(self.bulk_in_packet_size)
         logging.debug(f"{data_recv}")
         return data_recv
 
-    def create_packet_from(self, message: Union[Tuple, List, array]) -> array:
+    @staticmethod
+    def extract_message_from(packet: array) -> array:
+        message_length = packet[1]
+        return packet[:message_length]
+
+    def receive(self) -> array:
+        is_valid_packet_received = False
+        packet = None
+        reads_done_so_far = 0
+        max_num_reads = 64
+        while not is_valid_packet_received and reads_done_so_far < max_num_reads:
+            packet = self._receive()
+            reads_done_so_far += 1
+            is_valid_packet_received = self.check_message(packet)
+            logger.debug(f"[recv] num reads made: {reads_done_so_far}")
+        return self.extract_message_from(packet)
+
+    def create_packet_from(self, message: array | tuple | list) -> array:
         if isinstance(message, array) and len(message) == self.bulk_out_packet_size:
             # nothing to do, packet is already in good shape
             return message
@@ -106,3 +124,7 @@ class UsbCommunication:
         payload = array('B', message)
         packet[0:len(payload)] = payload
         return packet
+
+    def send_receive(self, message):
+        self.send(message)
+        return self.receive()
