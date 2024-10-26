@@ -56,3 +56,38 @@ class ApplicationBoard:
         software_id = message[10] << 8 | message[11]
         board_id = message[12]
         return BoardInfo(board_id=board_id, hardware_id=hardware_id, software_id=software_id, shuttle_id=shuttle_id)
+
+    def switch_app(self, address: int | None = None):
+        self.stop_polling_streaming()
+        # sleep(0.15)
+        self.disable_timer()
+        # sleep(0.15)
+        self.stop_interrupt_streaming()
+        # sleep(0.15)
+        address_serialized = (int(a) for a in struct.pack('>L', address))
+        payload = 0x01, 0x30, *address_serialized
+        ok = self.protocol.send_recv(payload)
+        # for _ in range(100):
+        #     msg = self.protocol.recv()
+        # raise AppBoardError("Switch app failed")
+        # self.protocol = UsbCommunication()
+        return ok
+
+    def switch_usb_dfu_bl(self):
+        return self.switch_app(0)
+
+    def switch_usb_mtp(self):
+        return self.switch_app(0x28000)
+
+    def stop_interrupt_streaming(self):
+        payload = 0x0A, 0x00
+        self.protocol.send_recv(payload)
+
+    def stop_polling_streaming(self):
+        payload = 0x06, 0x00
+        self.protocol.send_recv(payload)
+
+    def disable_timer(self):
+        timer_disable = 0x04
+        payload = 0x01, 0x29, timer_disable
+        self.protocol.send_recv(payload)
