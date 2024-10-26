@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 from time import sleep
 
-from umrx_app_v3.mcu_board.app_board_30 import ApplicationBoard30
+from umrx_app_v3.mcu_board.app_board_v3_rev0 import ApplicationBoardV3Rev0
 from umrx_app_v3.shuttle_board.bmi088 import BMI088
 
 
@@ -17,14 +17,14 @@ if __name__ == '__main__':
             logging.StreamHandler(sys.stdout),
         ])
 
-    app_board_30 = ApplicationBoard30()
+    app_board_30 = ApplicationBoardV3Rev0()
     shuttle = BMI088()
 
     shuttle.attach_to(app_board_30)
 
     shuttle.init()
     for _ in range(4):
-        shuttle.board.protocol.recv()
+        shuttle.board.protocol.receive()
     sleep(0.2)
     shuttle.read_gyro_register_spi(0)
     sleep(0.2)
