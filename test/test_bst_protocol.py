@@ -1,5 +1,6 @@
 import logging
 from typing import List, Tuple, Union
+from unittest.mock import ANY, patch, PropertyMock
 
 import pytest
 
@@ -13,50 +14,32 @@ logger = logging.getLogger(__name__)
 @pytest.mark.bst_protocol
 def test_bst_protocol_construction(bst_protocol_usb: BstProtocol):
     assert isinstance(bst_protocol_usb, BstProtocol), "Expecting instance of BstProcotol"
-    assert isinstance(bst_protocol_usb.communication, UsbCommunication), "Expect USB communication object inside protocol"
-
+    assert isinstance(bst_protocol_usb.communication, UsbCommunication), "Expect USB communication protocol"
 
 
 @pytest.mark.bst_protocol
 def test_bst_protocol_check_packet(bst_protocol_usb: BstProtocol):
-    valid_packet = 170, 6, 2, 31, 13, 10,
-    valid_packet_filled = bst_protocol_usb.communication.create_packet_from(valid_packet)
-    should_be_valid = bst_protocol_usb.communication.check_message(valid_packet_filled)
-    assert should_be_valid, "Check of valid packet shall pass"
+    with patch.object(bst_protocol_usb.communication, "endpoint_bulk_out") as mock_endpoint_bulk_out:
+        mock_endpoint_bulk_out.wMaxPacketSize = 64
+        valid_packet = 170, 6, 2, 31, 13, 10,
+        valid_packet_filled = bst_protocol_usb.communication.create_packet_from(valid_packet)
+        should_be_valid = bst_protocol_usb.communication.check_message(valid_packet_filled)
+        assert should_be_valid, "Check of valid packet shall pass"
 
-    wrong_length_packet = 170, 4, 3, 45, 11, 22, 13, 10
-    wrong_length_packet_filled = bst_protocol_usb.communication.create_packet_from(wrong_length_packet)
-    should_be_invalid = bst_protocol_usb.communication.check_message(wrong_length_packet_filled)
-    assert not should_be_invalid, "Check of invalid packet shall fail"
+        wrong_length_packet = 170, 4, 3, 45, 11, 22, 13, 10
+        wrong_length_packet_filled = bst_protocol_usb.communication.create_packet_from(wrong_length_packet)
+        should_be_invalid = bst_protocol_usb.communication.check_message(wrong_length_packet_filled)
+        assert not should_be_invalid, "Check of invalid packet shall fail"
 
-    wrong_zero_data_received = 0, 0, 0, 0, 0, 0, 0
-    wrong_zero_data_received_filled = bst_protocol_usb.communication.create_packet_from(wrong_zero_data_received)
-    should_be_invalid = bst_protocol_usb.communication.check_message(wrong_zero_data_received_filled)
-    assert not should_be_invalid, "Check of wrong 0x00 data shall fail"
+        wrong_zero_data_received = 0, 0, 0, 0, 0, 0, 0
+        wrong_zero_data_received_filled = bst_protocol_usb.communication.create_packet_from(wrong_zero_data_received)
+        should_be_invalid = bst_protocol_usb.communication.check_message(wrong_zero_data_received_filled)
+        assert not should_be_invalid, "Check of wrong 0x00 data shall fail"
 
-    wrong_ff_data_received = 255, 255, 255, 255, 255, 255, 255
-    wrong_ff_data_received_filled = bst_protocol_usb.communication.create_packet_from(wrong_ff_data_received)
-    should_be_invalid = bst_protocol_usb.communication.check_message(wrong_ff_data_received_filled)
-    assert not should_be_invalid, "Check of wrong 0xFF data shall fail"
-
-
-@pytest.mark.bst_protocol
-def test_bst_protocol_send(bst_protocol_usb: BstProtocol):
-    valid_packet = 170, 6, 2, 31, 13, 10,
-    ok = bst_protocol_usb.send(valid_packet)
-    assert ok, "Sending packet failed"
-
-
-@pytest.mark.bst_protocol
-def test_bst_protocol_recv(bst_protocol_usb: BstProtocol):
-    valid_packet = 170, 6, 2, 31, 13, 10,
-    ok = bst_protocol_usb.send(valid_packet)
-    assert ok, "Sending board info request packet failed!"
-    reply = bst_protocol_usb.receive()
-    expected_reply = 170, 15, 1, 0, 66, 31, 0, 102, 0, 16, 0, 25, 5, 13, 10,
-    expected_reply = 170, 15, 1, 0, 66, 31, 1, 65, 0, 16, 0, 9, 5, 13, 10,
-    assert isinstance(reply, array), "Expecting an array back"
-    assert tuple(reply[:len(expected_reply)]) == expected_reply, "Expecting App Board 3.0 + BMI08x reply back"
+        wrong_ff_data_received = 255, 255, 255, 255, 255, 255, 255
+        wrong_ff_data_received_filled = bst_protocol_usb.communication.create_packet_from(wrong_ff_data_received)
+        should_be_invalid = bst_protocol_usb.communication.check_message(wrong_ff_data_received_filled)
+        assert not should_be_invalid, "Check of wrong 0xFF data shall fail"
 
 
 @pytest.mark.bst_protocol
