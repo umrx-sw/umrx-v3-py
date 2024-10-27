@@ -22,7 +22,7 @@ class UsbCommunication(Communication):
         self.endpoint_bulk_in: Union[usb.core.Endpoint, None] = None
         self.endpoint_bulk_out: Union[usb.core.Endpoint, None] = None
         self.is_initialized = False
-        self.initialize()
+        # self.initialize()
 
     def find_device(self):
         self.usb_device = usb.core.find(idVendor=self.vid, idProduct=self.pid)
@@ -47,13 +47,13 @@ class UsbCommunication(Communication):
 
         self.endpoint_bulk_out = self.interface[0x1]
         logger.info(f"{self.endpoint_bulk_out=}")
-        self.is_initialized = True
+
 
     @property
     def bulk_in_packet_size(self):
         if not self.endpoint_bulk_in:
             logger.warning(f"Input endpoint not available!")
-            return
+            return -1
         return self.endpoint_bulk_in.wMaxPacketSize
 
     @property
@@ -67,6 +67,7 @@ class UsbCommunication(Communication):
         self.find_device()
         self.get_set_usb_config()
         self.obtain_endpoints()
+        self.is_initialized = True
 
     def connect(self):
         if not self.is_initialized:
