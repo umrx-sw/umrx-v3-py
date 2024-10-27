@@ -119,7 +119,7 @@ class UsbCommunication(Communication):
             # nothing to do, packet is already in good shape
             return message
         if len(message) > self.bulk_out_packet_size:
-            raise BstBoardException("Cannot construct packet, the data is too long for USB transfer!")
+            raise UsbCommunicationError("Cannot construct packet, the data is too long for USB transfer!")
         packet = array('B', self.bulk_out_packet_size * [255])
         payload = array('B', message)
         packet[0:len(payload)] = payload
