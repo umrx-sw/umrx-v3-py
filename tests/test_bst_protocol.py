@@ -1,10 +1,9 @@
 import logging
-from typing import List, Tuple, Union
-from unittest.mock import ANY, patch, PropertyMock
+from array import array
+from unittest.mock import patch
 
 import pytest
 
-from array import array
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
 from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
 
@@ -44,7 +43,7 @@ def test_bst_protocol_check_packet(bst_protocol_usb: BstProtocol):
 
 @pytest.mark.bst_protocol
 def test_bst_protocol_extract_message_from(bst_protocol_usb: BstProtocol):
-    packet = array('B', [170, 15, 1, 0, 66, 31, 0, 102, 0, 16, 0, 9, 5, 13, 10, 255,
+    packet = array("B", [170, 15, 1, 0, 66, 31, 0, 102, 0, 16, 0, 9, 5, 13, 10, 255,
                          255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
                          255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
                          255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
@@ -58,10 +57,10 @@ def test_bst_protocol_extract_message_from(bst_protocol_usb: BstProtocol):
 @pytest.mark.bst_protocol
 def test_bst_protocol_create_message_from(bst_protocol_usb: BstProtocol):
 
-    def check_result(result: array, payload: Union[array, Tuple, List]):
+    def check_result(result: array, payload: array | tuple | list):
         assert isinstance(result, array), "Expecting message as array"
         assert len(result) == len(payload) + 4, "Expecting message size does not match"
-        assert result[2:2+len(payload)] == array('B', payload), "Incorrect payload in the message"
+        assert result[2:2+len(payload)] == array("B", payload), "Incorrect payload in the message"
         assert result[0] == 0xAA, "Start byte of message invalid"
         assert result[1] == len(result), "Message length is wrong in the message"
         assert result[-2] == 0xD and result[-1] == 0xA, "Message stop sequence invalid"
@@ -74,6 +73,6 @@ def test_bst_protocol_create_message_from(bst_protocol_usb: BstProtocol):
     message = bst_protocol_usb.create_message_from(payload_list)
     check_result(message, payload_list)
 
-    payload_array = array('B', [2, 31])
+    payload_array = array("B", [2, 31])
     message = bst_protocol_usb.create_message_from(payload_array)
     check_result(message, payload_array)

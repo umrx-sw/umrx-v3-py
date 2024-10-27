@@ -1,10 +1,9 @@
 import logging
+from array import array
 
 import pytest
 
-from array import array
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
-from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
 
 logger = logging.getLogger(__name__)
 

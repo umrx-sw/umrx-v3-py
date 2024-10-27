@@ -1,19 +1,17 @@
 import logging
 import sys
-
 from pathlib import Path
 from time import sleep
 
 from umrx_app_v3.mcu_board.app_board_v3_rev0 import ApplicationBoardV3Rev0
 from umrx_app_v3.shuttle_board.bmi088 import BMI088
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.basicConfig(
         level=logging.DEBUG,
-        format='[%(levelname)-8s]:  %(message)s',
+        format="[%(levelname)-8s]:  %(message)s",
         handlers=[
-            logging.FileHandler(f'{Path(__file__).stem}.log', mode='w'),
+            logging.FileHandler(f"{Path(__file__).stem}.log", mode="w"),
             logging.StreamHandler(sys.stdout),
         ])
 

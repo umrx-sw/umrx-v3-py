@@ -2,10 +2,8 @@ import logging
 
 import pytest
 
-from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
-from umrx_app_v3.mcu_board.bst_app_board import BoardInfo
 from umrx_app_v3.mcu_board.app_board_v3_rev0 import ApplicationBoardV3Rev0
-from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
+from umrx_app_v3.mcu_board.bst_app_board import BoardInfo
 
 logger = logging.getLogger(__name__)
 

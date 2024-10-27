@@ -1,7 +1,9 @@
-import sys
 import logging
-from umrx_app_v3.mcu_board.comm.comm import Communication
+import sys
+
 import serial
+
+from umrx_app_v3.mcu_board.comm.comm import Communication
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +28,7 @@ class SerialCommunication(Communication):
 
     def receive(self):
         ok = False
-        read_from_serial = bytes()
+        read_from_serial = b""
         while not ok:
             # read until we get something in the buffer
             in_waiting = self.port.in_waiting
@@ -44,25 +46,24 @@ class SerialCommunication(Communication):
 
     def find_device(self):
         match sys.platform:
-            case 'linux':
+            case "linux":
                 self.find_device_on_linux()
-            case 'win32':
-                raise NotImplementedError(f"Searching device is not implemented for Windows!")
-            case 'darwin':
-                raise NotImplementedError(f"Searching device is not implemented for Mac!")
+            case "win32":
+                raise NotImplementedError("Searching device is not implemented for Windows!")
+            case "darwin":
+                raise NotImplementedError("Searching device is not implemented for Mac!")
             case _:
                 raise NotImplementedError(f"Searching device is not implemented for {sys.platform}!")
 
     def find_device_on_linux(self):
         import pyudev
         context = pyudev.Context()
-        for device in context.list_devices(subsystem='tty'):
-            if device.get('ID_VENDOR') == 'Bosch_Sensortec_GmbH':
+        for device in context.list_devices(subsystem="tty"):
+            if device.get("ID_VENDOR") == "Bosch_Sensortec_GmbH":
                 self.port_name = device.device_node
                 logger.info(f"Found serial device: port={self.port_name}")
                 return True
-        else:
-            return False
+        return False
 
     def initialize(self):
         if self.port_name is None:

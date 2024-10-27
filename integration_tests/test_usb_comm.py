@@ -1,9 +1,9 @@
 import logging
+from array import array
 
 import pytest
 import usb.core
 
-from array import array
 from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
 
 logger = logging.getLogger(__name__)
@@ -19,22 +19,21 @@ def test_usb_comm_construction(usb_comm: UsbCommunication):
 
 @pytest.mark.usb_comm
 def test_usb_comm_endpoint_packet(usb_comm: UsbCommunication):
-    assert usb_comm.bulk_in_packet_size == 64, f"Invalid packet size for bulk IN"
-    assert usb_comm.bulk_out_packet_size == 64, f"Invalid packet size for bulk OUT"
+    assert usb_comm.bulk_in_packet_size == 64, "Invalid packet size for bulk IN"
+    assert usb_comm.bulk_out_packet_size == 64, "Invalid packet size for bulk OUT"
 
 
 @pytest.mark.usb_comm
 def test_usb_comm_recv(usb_comm: UsbCommunication):
     data = usb_comm.receive()
-    assert isinstance(data, array), f"Expecting `array` of bytes back"
+    assert isinstance(data, array), "Expecting `array` of bytes back"
 
 
 @pytest.mark.usb_comm
 def test_usb_comm_send(usb_comm: UsbCommunication):
     packet_payload = 170, 6, 2, 31, 13, 10,
-    packet_payload_array = array('B', packet_payload)
-    packet_to_send = array('B', 64 * [0])
+    packet_payload_array = array("B", packet_payload)
+    packet_to_send = array("B", 64 * [0])
     packet_to_send[0:len(packet_payload_array)] = packet_payload_array
     ok = usb_comm.send(packet_to_send)
-    assert ok, f"Sending packet failed!"
-
+    assert ok, "Sending packet failed!"

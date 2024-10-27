@@ -1,8 +1,5 @@
 import logging
 
-import pytest
-
-from array import array
 from umrx_app_v3.mcu_board.comm.serial_comm import SerialCommunication
 
 logger = logging.getLogger(__name__)

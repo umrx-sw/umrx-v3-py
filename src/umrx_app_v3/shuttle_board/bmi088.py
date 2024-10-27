@@ -1,19 +1,16 @@
 import json
 import logging
 import struct
-import sys
-
 from array import array
-from math import nan
-from typing import Callable
+from collections.abc import Callable
 from dataclasses import dataclass
+from math import nan
 from pathlib import Path
-from time import sleep
 from typing import ClassVar
 
-from umrx_app_v3.mcu_board.bst_app_board import ApplicationBoard
 from umrx_app_v3.mcu_board.app_board_v3_rev0 import ApplicationBoardV3Rev0
 from umrx_app_v3.mcu_board.app_board_v3_rev1 import ApplicationBoardV3Rev1
+from umrx_app_v3.mcu_board.bst_app_board import ApplicationBoard
 
 
 @dataclass
@@ -85,9 +82,9 @@ class BMI088AccelPacket:
 class BMI088:
     def __init__(self, *a, **kw):
         self.file_path = Path(__file__)
-        self.command_file = self.file_path.parent / 'bmi088_commands.json'
+        self.command_file = self.file_path.parent / "bmi088_commands.json"
         self.commands = None
-        self.board: ApplicationBoard | None = kw['board'] if kw.get('board') else None
+        self.board: ApplicationBoard | None = kw["board"] if kw.get("board") else None
         self.parse_commands()
 
     def attach_to(self, board: ApplicationBoard):
@@ -105,28 +102,28 @@ class BMI088:
 
     def parse_commands(self):
         assert self.command_file.exists(), f"Cannot find the {self.command_file}!"
-        with open(self.command_file, 'r') as fd:
+        with open(self.command_file) as fd:
             self.commands = json.load(fd)
 
     def init(self):
         commands = self.commands["init"]
-        self.send_recv_commands(commands, log_str='[BMI088_INIT]')
+        self.send_recv_commands(commands, log_str="[BMI088_INIT]")
 
     def start_broadcast(self):
         commands = self.commands["start_broadcast"]
-        self.send_recv_commands(commands, log_str='[BMI088_START_BROADCAST]')
+        self.send_recv_commands(commands, log_str="[BMI088_START_BROADCAST]")
 
     def stop_broadcast(self):
         commands = self.commands["stop_broadcast"]
-        self.send_recv_commands(commands, log_str='[BMI088_START_BROADCAST]')
+        self.send_recv_commands(commands, log_str="[BMI088_START_BROADCAST]")
 
     def read_register(self):
         commands = self.commands["read_register"]
-        self.send_recv_commands(commands, log_str='[BMI088_READ_REG]')
+        self.send_recv_commands(commands, log_str="[BMI088_READ_REG]")
 
     def write_register(self):
         commands = self.commands["write_register"]
-        self.send_recv_commands(commands, log_str='[BMI088_WRITE_REG]')
+        self.send_recv_commands(commands, log_str="[BMI088_WRITE_REG]")
 
     def receive_broadcast(self, num_packets: int = -1):
         received_packets = 0
@@ -155,10 +152,9 @@ class BMI088:
     def decode(self, packet: array) -> BMI088GyroPacket | BMI088AccelPacket:
         if self.is_gyro_broadcast(packet):
             return self.decode_gyro_broadcast(packet)
-        elif self.is_accel_broadcast(packet):
+        if self.is_accel_broadcast(packet):
             return self.decode_accel_broadcast(packet)
-        else:
-            logging.error(f"{packet} is of unknown type, neither gyro nor accel")
+        logging.error(f"{packet} is of unknown type, neither gyro nor accel")
 
     @staticmethod
     def is_gyro_broadcast(packet: array) -> bool:
@@ -173,25 +169,25 @@ class BMI088:
     @staticmethod
     def check_broadcast(func):
         def inner(self, packet):
-            if not packet[4] == 135:
-                logging.info(f"[ERROR] in broadcast!")
+            if packet[4] != 135:
+                logging.info("[ERROR] in broadcast!")
             return func(self, packet)
         return inner
 
     @check_broadcast
     def decode_gyro_broadcast(self, packet: array) -> BMI088GyroPacket:
-        x_raw, y_raw, z_raw = struct.unpack('<hhh', packet[5:11])
+        x_raw, y_raw, z_raw = struct.unpack("<hhh", packet[5:11])
         return BMI088GyroPacket(g_x_raw=x_raw, g_y_raw=y_raw, g_z_raw=z_raw)
 
     @check_broadcast
     def decode_accel_broadcast(self, packet: array) -> BMI088AccelPacket:
-        x_raw, y_raw, z_raw = struct.unpack('<hhh', packet[6:12])
+        x_raw, y_raw, z_raw = struct.unpack("<hhh", packet[6:12])
         return BMI088AccelPacket(a_x_raw=x_raw, a_y_raw=y_raw, a_z_raw=z_raw)
 
     def send_recv_commands(self, command_list, log_str=""):
         for command in command_list:
             logging.info(f"{command=}")
-            init_command_array = array('B', command)
+            init_command_array = array("B", command)
             self.board.protocol.send(init_command_array)
             response = self.board.protocol.recv()
             logging.info(f"{log_str}: {response=}")
@@ -205,8 +201,7 @@ class BMI088:
         print(response)
 
     def read_accel_register_spi(self, reg_addr: int):
-        """
-        170, 18, 2, 22, 1, 7, 1, 1, 0, 0, 2, 0, 2, 1, 0, 1, 13, 10,
+        """170, 18, 2, 22, 1, 7, 1, 1, 0, 0, 2, 0, 2, 1, 0, 1, 13, 10,
         170, 18, 2, 22, 1, 7, 1, 1, 0, 0, 1, 0, 2, 1, 0, 1, 13, 10,
         :param reg_addr:
         :return:
@@ -219,5 +214,5 @@ class BMI088:
         print(response)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     """ See `examples` for how to use the shuttle board"""

@@ -11,5 +11,4 @@ class AppBoardV3Rev1Error(Exception):
 
 class ApplicationBoardV3Rev1(ApplicationBoard):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs, comm='serial')
-
+        super().__init__(**kwargs, comm="serial")

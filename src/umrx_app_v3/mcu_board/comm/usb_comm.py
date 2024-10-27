@@ -1,7 +1,7 @@
 import logging
-import usb.core
 from array import array
-from typing import Union, Tuple, List
+
+import usb.core
 
 from umrx_app_v3.mcu_board.comm.comm import Communication
 
@@ -16,19 +16,19 @@ class UsbCommunication(Communication):
     def __init__(self, *a, **kw):
         self.vid = 0x152a
         self.pid = 0x80c0
-        self.usb_device: Union[usb.core.Device, None] = None
-        self.configuration: Union[usb.core.Configuration, None] = None
-        self.interface: Union[usb.core.Interface, None] = None
-        self.endpoint_bulk_in: Union[usb.core.Endpoint, None] = None
-        self.endpoint_bulk_out: Union[usb.core.Endpoint, None] = None
+        self.usb_device: usb.core.Device | None = None
+        self.configuration: usb.core.Configuration | None = None
+        self.interface: usb.core.Interface | None = None
+        self.endpoint_bulk_in: usb.core.Endpoint | None = None
+        self.endpoint_bulk_out: usb.core.Endpoint | None = None
         self.is_initialized = False
         # self.initialize()
 
     def find_device(self):
         self.usb_device = usb.core.find(idVendor=self.vid, idProduct=self.pid)
         if self.usb_device is None:
-            raise UsbCommunicationError(f'BST Board with VID={self.vid}, PID={self.pid} not connected!'
-                                    ' Did you plug in the board to PC and turn it ON?')
+            raise UsbCommunicationError(f"BST Board with VID={self.vid}, PID={self.pid} not connected!"
+                                    " Did you plug in the board to PC and turn it ON?")
 
     def get_set_usb_config(self):
         self.usb_device.set_configuration()
@@ -40,7 +40,7 @@ class UsbCommunication(Communication):
         logging.info(f"{self.interface=}")
         if self.usb_device.is_kernel_driver_active(self.interface.bInterfaceNumber):
             self.usb_device.detach_kernel_driver(self.interface.bInterfaceNumber)
-            logger.info(f"Detaching kernel driver done")
+            logger.info("Detaching kernel driver done")
 
         self.endpoint_bulk_in = self.interface[0x0]
         logger.info(f"{self.endpoint_bulk_in=}")
@@ -52,15 +52,15 @@ class UsbCommunication(Communication):
     @property
     def bulk_in_packet_size(self):
         if not self.endpoint_bulk_in:
-            logger.warning(f"Input endpoint not available!")
+            logger.warning("Input endpoint not available!")
             return -1
         return self.endpoint_bulk_in.wMaxPacketSize
 
     @property
     def bulk_out_packet_size(self):
         if not self.endpoint_bulk_out:
-            logger.warning(f"Output endpoint not available!")
-            return
+            logger.warning("Output endpoint not available!")
+            return None
         return self.endpoint_bulk_out.wMaxPacketSize
 
     def initialize(self):
@@ -121,8 +121,8 @@ class UsbCommunication(Communication):
             return message
         if len(message) > self.bulk_out_packet_size:
             raise UsbCommunicationError("Cannot construct packet, the data is too long for USB transfer!")
-        packet = array('B', self.bulk_out_packet_size * [255])
-        payload = array('B', message)
+        packet = array("B", self.bulk_out_packet_size * [255])
+        payload = array("B", message)
         packet[0:len(payload)] = payload
         return packet
 

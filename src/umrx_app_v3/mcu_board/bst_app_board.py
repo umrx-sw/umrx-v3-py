@@ -2,8 +2,9 @@ import inspect
 import logging
 import struct
 from array import array
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable, Any, Union
+from typing import Any
 
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
 
@@ -24,7 +25,7 @@ class BoardInfo:
 
 class ApplicationBoard:
     def __init__(self, **kw):
-        self.protocol: BstProtocol = kw['protocol'] if kw.get('protocol') and isinstance(kw['protocol'], BstProtocol) else BstProtocol(kw)
+        self.protocol: BstProtocol = kw["protocol"] if kw.get("protocol") and isinstance(kw["protocol"], BstProtocol) else BstProtocol(kw)
 
     @property
     def board_info(self) -> BoardInfo:
@@ -34,8 +35,8 @@ class ApplicationBoard:
 
     def check_message_length(*, expected: int = 0, not_less_then: int = 0) -> Callable:
         def decorator(function: Callable) -> Callable:
-            def wrapper(*args: Any, **kwargs: Any) -> Union[None, Any]:
-                message = kwargs['message'] if kwargs.get('message') else args[1]
+            def wrapper(*args: Any, **kwargs: Any) -> None | Any:
+                message = kwargs["message"] if kwargs.get("message") else args[1]
                 wrapper.__signature__ = inspect.signature(function)
                 if expected and len(message) != expected:
                     logger.error("Expected message length: %s got %s", expected, len(message))
@@ -64,7 +65,7 @@ class ApplicationBoard:
         # sleep(0.15)
         self.stop_interrupt_streaming()
         # sleep(0.15)
-        address_serialized = (int(a) for a in struct.pack('>L', address))
+        address_serialized = (int(a) for a in struct.pack(">L", address))
         payload = 0x01, 0x30, *address_serialized
         ok = self.protocol.send_receive(payload)
         # for _ in range(100):
