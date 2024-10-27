@@ -80,7 +80,7 @@ filterwarnings = [
   "ignore::DeprecationWarning",
   "ignore::pytest.PytestUnraisableExceptionWarning",
 ]
-testpaths = ["src", "test"]
+testpaths = ["src", "tests"]
 xfail_strict = true
 markers =[
   "usb_comm: mark tests related to low-level USB config",
