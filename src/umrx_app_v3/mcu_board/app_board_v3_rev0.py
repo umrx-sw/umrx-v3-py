@@ -11,4 +11,4 @@ class AppBoardV3Rev0Error(Exception):
 
 class ApplicationBoardV3Rev0(ApplicationBoard):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(**kwargs, comm='usb')

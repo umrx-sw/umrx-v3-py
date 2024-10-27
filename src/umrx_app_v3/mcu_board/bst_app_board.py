@@ -23,8 +23,8 @@ class BoardInfo:
 
 
 class ApplicationBoard:
-    def __init__(self, **kwargs):
-        self.protocol: BstProtocol = kwargs['protocol'] if kwargs.get('protocol') else BstProtocol()
+    def __init__(self, **kw):
+        self.protocol: BstProtocol = kw['protocol'] if kw.get('protocol') and isinstance(kw['protocol'], BstProtocol) else BstProtocol(kw)
 
     @property
     def board_info(self) -> BoardInfo:

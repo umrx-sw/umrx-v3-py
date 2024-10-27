@@ -9,7 +9,20 @@ logger = logging.getLogger(__name__)
 
 class BstProtocol:
     def __init__(self, *a, **kw):
-        self.usb: UsbCommunication = kw['usb'] if kw.get('usb') else UsbCommunication()
+        self.communication: SerialCommunication | UsbCommunication | None = None
+        if kw.get('comm'):
+            if kw['comm'] == 'usb':
+                if kw.get('usb') and isinstance(kw['usb'], UsbCommunication):
+                    self.communication = kw['usb']
+                else:
+                    self.communication = UsbCommunication()
+            elif kw['comm'] == 'serial':
+                if kw.get('serial') and isinstance(kw['serial'], SerialCommunication):
+                    self.communication = kw['serial']
+                else:
+                    self.communication = SerialCommunication()
+            else:
+                raise ValueError(f"Provided communication type {kw['comm']} is not supported")
 
 
     @staticmethod
@@ -25,15 +38,15 @@ class BstProtocol:
         return message
 
     def send(self, message: array | tuple | list):
-        return self.usb.send(message)
+        return self.communication.send(message)
 
     def receive(self):
-        return self.usb.receive()
+        return self.communication.receive()
 
     def send_recv(self, payload: array | tuple | list):
-        if self.usb.check_message(payload):
+        if self.communication.check_message(payload):
             # valid message was provided already, no need to wrap it further
             message = payload
         else:
             message = BstProtocol.create_message_from(payload)
-        return self.usb.send_receive(message)
+        return self.communication.send_receive(message)
