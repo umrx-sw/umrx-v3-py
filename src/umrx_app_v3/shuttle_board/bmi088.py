@@ -5,13 +5,15 @@ import sys
 
 from array import array
 from math import nan
-from typing import Union, Callable
+from typing import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from time import sleep
 from typing import ClassVar
 
-from umrx_app_v3.mcu_board.app_board_30 import ApplicationBoard30
+from umrx_app_v3.mcu_board.bst_app_board import ApplicationBoard
+from umrx_app_v3.mcu_board.app_board_v3_rev0 import ApplicationBoardV3Rev0
+from umrx_app_v3.mcu_board.app_board_v3_rev1 import ApplicationBoardV3Rev1
 
 
 @dataclass
@@ -85,15 +87,20 @@ class BMI088:
         self.file_path = Path(__file__)
         self.command_file = self.file_path.parent / 'bmi088_commands.json'
         self.commands = None
-        self.board: Union[ApplicationBoard30, None] = kw['board'] if kw.get('board') else None
+        self.board: ApplicationBoard | None = kw['board'] if kw.get('board') else None
         self.parse_commands()
 
-    def attach_to(self, board: ApplicationBoard30):
+    def attach_to(self, board: ApplicationBoard):
         self.board = board
 
     @classmethod
-    def create_instance(cls):
-        board = ApplicationBoard30()
+    def create_instance_for_v3_rev0(cls):
+        board = ApplicationBoardV3Rev0()
+        return BMI088(board=board)
+
+    @classmethod
+    def create_instance_for_v3_rev1(cls):
+        board = ApplicationBoardV3Rev1()
         return BMI088(board=board)
 
     def parse_commands(self):
@@ -125,7 +132,7 @@ class BMI088:
         received_packets = 0
         logging.getLogger().setLevel(logging.INFO)
         while num_packets == -1 or received_packets < num_packets:
-            response = self.board.protocol.recv()
+            response = self.board.protocol.receive()
             yield self.decode(response)
             # logging.info(f"[BMI088_BROADCAST]: {response=}")
             received_packets += 1
@@ -134,7 +141,7 @@ class BMI088:
         received_packets = 0
         logging.getLogger().setLevel(logging.INFO)
         while num_packets == -1 or received_packets < num_packets:
-            response = self.board.protocol.recv()
+            response = self.board.protocol.receive()
             if predicate(response):
                 yield interpret(response)
                 received_packets += 1
@@ -145,7 +152,7 @@ class BMI088:
     def receive_accel_broadcast(self, num_packets: int = -1):
         return self.receive_specific_broadcast_packets(self.is_accel_broadcast, self.decode_accel_broadcast, num_packets)
 
-    def decode(self, packet: array) -> Union[BMI088GyroPacket, BMI088AccelPacket]:
+    def decode(self, packet: array) -> BMI088GyroPacket | BMI088AccelPacket:
         if self.is_gyro_broadcast(packet):
             return self.decode_gyro_broadcast(packet)
         elif self.is_accel_broadcast(packet):
@@ -194,7 +201,7 @@ class BMI088:
         num_of_bytes_to_read = 1
         payload = 2, 22, 2, 3, 3, 1, (device_address >> 8) & 0xFF, device_address & 0xFF, reg_addr & 0xFF, \
                   (num_of_bytes_to_read >> 8) & 0xFF, num_of_bytes_to_read & 0xFF, 1, 0, 1,
-        response = self.board.protocol.send_recv(payload)
+        response = self.board.protocol.send_receive(payload)
         print(response)
 
     def read_accel_register_spi(self, reg_addr: int):
@@ -208,7 +215,7 @@ class BMI088:
         num_of_bytes_to_read = 2
         payload = 2, 22, 1, 7, 1, 1, (device_address >> 8) & 0xFF, device_address & 0xFF, reg_addr & 0xFF, \
                   (num_of_bytes_to_read >> 8) & 0xFF, num_of_bytes_to_read & 0xFF, 1, 0, 1,
-        response = self.board.protocol.send_recv(payload)
+        response = self.board.protocol.send_receive(payload)
         print(response)
 
 
