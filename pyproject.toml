@@ -161,4 +161,4 @@ cmd = "coverage xml"
 
 [tool.poe.tasks.integration-test]
 help = "Run the integration tests"
-cmd = "pytest --forked --failed-first --log-cli-level=DEBUG integration_tests/test_shuttle_bmi088.py"
+cmd = "pytest --failed-first --color=yes --log-cli-level=DEBUG integration_tests/*"
