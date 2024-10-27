@@ -29,7 +29,7 @@ class ApplicationBoard:
     @property
     def board_info(self) -> BoardInfo:
         payload = 2, 31,
-        response = self.protocol.send_recv(payload)
+        response = self.protocol.send_receive(payload)
         return self.parse_board_info(response)
 
     def check_message_length(*, expected: int = 0, not_less_then: int = 0) -> Callable:
@@ -66,11 +66,10 @@ class ApplicationBoard:
         # sleep(0.15)
         address_serialized = (int(a) for a in struct.pack('>L', address))
         payload = 0x01, 0x30, *address_serialized
-        ok = self.protocol.send_recv(payload)
+        ok = self.protocol.send_receive(payload)
         # for _ in range(100):
         #     msg = self.protocol.recv()
         # raise AppBoardError("Switch app failed")
-        # self.protocol = UsbCommunication()
         return ok
 
     def switch_usb_dfu_bl(self):
@@ -81,13 +80,13 @@ class ApplicationBoard:
 
     def stop_interrupt_streaming(self):
         payload = 0x0A, 0x00
-        self.protocol.send_recv(payload)
+        self.protocol.send_receive(payload)
 
     def stop_polling_streaming(self):
         payload = 0x06, 0x00
-        self.protocol.send_recv(payload)
+        self.protocol.send_receive(payload)
 
     def disable_timer(self):
         timer_disable = 0x04
         payload = 0x01, 0x29, timer_disable
-        self.protocol.send_recv(payload)
+        self.protocol.send_receive(payload)

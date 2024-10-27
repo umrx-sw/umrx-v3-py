@@ -43,7 +43,7 @@ class BstProtocol:
     def receive(self):
         return self.communication.receive()
 
-    def send_recv(self, payload: array | tuple | list):
+    def send_receive(self, payload: array | tuple | list):
         if self.communication.check_message(payload):
             # valid message was provided already, no need to wrap it further
             message = payload
