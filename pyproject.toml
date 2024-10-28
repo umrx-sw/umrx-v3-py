@@ -117,7 +117,9 @@ lint.ignore = [
   "TD002",
   "TD003",
   "PLR2004",
-  "ERA001"
+  "ERA001",
+  "G004",
+  "EM101"
 ]
 lint.unfixable = ["ERA001", "F841", "T201", "T203"]
 src = ["integration_tests", "src", "tests"]
