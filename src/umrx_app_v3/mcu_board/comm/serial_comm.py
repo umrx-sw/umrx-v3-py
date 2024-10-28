@@ -1,5 +1,6 @@
 import logging
 import sys
+from array import array
 
 import serial
 
@@ -8,25 +9,24 @@ from umrx_app_v3.mcu_board.comm.comm import Communication
 logger = logging.getLogger(__name__)
 
 
-class SerialCommunicationError(Exception):
-    ...
+class SerialCommunicationError(Exception): ...
 
 
 class SerialCommunication(Communication):
-    def __init__(self):
-        self.vid = 0x108c  # App Board 3.1
-        self.pid = 0xab38
+    def __init__(self) -> None:
+        self.vid = 0x108C  # App Board 3.1
+        self.pid = 0xAB38
         self.port: serial.Serial | None = None
         self.port_name: str | None = None
         self.buffer_size = 125
         self.is_initialized: bool = False
 
-    def send(self, message):
+    def send(self, message: array | list | tuple) -> bool:
         bytes_written = self.port.write(message)
         self.port.flush()
         return bytes_written == len(message)
 
-    def receive(self):
+    def receive(self) -> array | bytes:
         ok = False
         read_from_serial = b""
         while not ok:
@@ -38,25 +38,30 @@ class SerialCommunication(Communication):
             ok = len(read_from_serial) > 0
         return read_from_serial
 
-    def send_receive(self, message):
+    def send_receive(self, message: array | tuple | list) -> array | bytes:
         send_ok = self.send(message)
         if not send_ok:
-            raise SerialCommunicationError("Sending packet failed!")
+            error_message = "Sending packet failed!"
+            raise SerialCommunicationError(error_message)
         return self.receive()
 
-    def find_device(self):
+    def find_device(self) -> bool:
         match sys.platform:
             case "linux":
-                self.find_device_on_linux()
+                return self.find_device_on_linux()
             case "win32":
-                raise NotImplementedError("Searching device is not implemented for Windows!")
+                error_message = "Searching device is not implemented for Windows!"
+                raise NotImplementedError(error_message)
             case "darwin":
-                raise NotImplementedError("Searching device is not implemented for Mac!")
+                error_message = "Searching device is not implemented for Mac!"
+                raise NotImplementedError(error_message)
             case _:
-                raise NotImplementedError(f"Searching device is not implemented for {sys.platform}!")
+                error_message = f"Searching device is not implemented for {sys.platform}!"
+                raise NotImplementedError(error_message)
 
-    def find_device_on_linux(self):
+    def find_device_on_linux(self) -> bool:
         import pyudev
+
         context = pyudev.Context()
         for device in context.list_devices(subsystem="tty"):
             if device.get("ID_VENDOR") == "Bosch_Sensortec_GmbH":
@@ -65,7 +70,7 @@ class SerialCommunication(Communication):
                 return True
         return False
 
-    def initialize(self):
+    def initialize(self) -> None:
         if self.port_name is None:
             self.find_device()
         self.port = serial.Serial(port=self.port_name)
@@ -74,9 +79,9 @@ class SerialCommunication(Communication):
         if not self.port.is_open:
             self.port.open()
 
-    def connect(self):
+    def connect(self) -> None:
         if not self.is_initialized:
             self.initialize()
 
-    def disconnect(self):
+    def disconnect(self) -> None:
         pass

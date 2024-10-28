@@ -13,7 +13,8 @@ if __name__ == "__main__":
         handlers=[
             logging.FileHandler(f"{Path(__file__).stem}.log", mode="w"),
             logging.StreamHandler(sys.stdout),
-        ])
+        ],
+    )
 
     app_board_30 = ApplicationBoardV3Rev0()
     shuttle = BMI088()

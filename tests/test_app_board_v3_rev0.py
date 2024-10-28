@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.mark.app_board
-def test_app_board_v3_rev0_construction(app_board_v3_rev0: ApplicationBoardV3Rev0):
+def test_app_board_v3_rev0_construction(app_board_v3_rev0: ApplicationBoardV3Rev0) -> None:
     assert isinstance(app_board_v3_rev0, ApplicationBoardV3Rev0), "Expecting instance of ApplicationBoard30"
     assert isinstance(app_board_v3_rev0.protocol, BstProtocol), "Expecting BST protocol object inside App Board 3.0"
     assert isinstance(app_board_v3_rev0.protocol.communication, UsbCommunication), "Expecting UsbCommunication"

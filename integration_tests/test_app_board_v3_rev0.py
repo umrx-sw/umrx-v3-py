@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.mark.app_board
-def test_app_board_v3_rev0_board_info(app_board_v3_rev0: ApplicationBoardV3Rev0):
+def test_app_board_v3_rev0_board_info(app_board_v3_rev0: ApplicationBoardV3Rev0) -> None:
     info = app_board_v3_rev0.board_info
     assert isinstance(info, BoardInfo), "Expecting BoardInfo instance"
     assert info.board_id == 0x05, "Wrong board ID"

@@ -11,8 +11,7 @@ from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
 logger = logging.getLogger(__name__)
 
 
-class AppBoardError(Exception):
-    ...
+class AppBoardError(Exception): ...
 
 
 @dataclass
@@ -24,12 +23,14 @@ class BoardInfo:
 
 
 class ApplicationBoard:
-    def __init__(self, **kw):
-        self.protocol: BstProtocol = kw["protocol"] if kw.get("protocol") and isinstance(kw["protocol"], BstProtocol) else BstProtocol(kw)
+    def __init__(self, **kw: Any) -> None:
+        self.protocol: BstProtocol = (
+            kw["protocol"] if kw.get("protocol") and isinstance(kw["protocol"], BstProtocol) else BstProtocol(kw)
+        )
 
     @property
     def board_info(self) -> BoardInfo:
-        payload = 2, 31,
+        payload = 2, 31
         response = self.protocol.send_receive(payload)
         return self.parse_board_info(response)
 
@@ -47,7 +48,9 @@ class ApplicationBoard:
                     logger.error("Check failed, function `%s` will not be executed ", function.__name__)
                     return None
                 return function(*args, **kwargs)
+
             return wrapper
+
         return decorator
 
     @check_message_length(expected=15)
@@ -58,7 +61,7 @@ class ApplicationBoard:
         board_id = message[12]
         return BoardInfo(board_id=board_id, hardware_id=hardware_id, software_id=software_id, shuttle_id=shuttle_id)
 
-    def switch_app(self, address: int | None = None):
+    def switch_app(self, address: int | None = None) -> None:
         self.stop_polling_streaming()
         # sleep(0.15)
         self.disable_timer()
@@ -67,27 +70,26 @@ class ApplicationBoard:
         # sleep(0.15)
         address_serialized = (int(a) for a in struct.pack(">L", address))
         payload = 0x01, 0x30, *address_serialized
-        ok = self.protocol.send_receive(payload)
+        self.protocol.send_receive(payload)
         # for _ in range(100):
         #     msg = self.protocol.recv()
         # raise AppBoardError("Switch app failed")
-        return ok
 
-    def switch_usb_dfu_bl(self):
+    def switch_usb_dfu_bl(self) -> None:
         return self.switch_app(0)
 
-    def switch_usb_mtp(self):
+    def switch_usb_mtp(self) -> None:
         return self.switch_app(0x28000)
 
-    def stop_interrupt_streaming(self):
+    def stop_interrupt_streaming(self) -> None:
         payload = 0x0A, 0x00
         self.protocol.send_receive(payload)
 
-    def stop_polling_streaming(self):
+    def stop_polling_streaming(self) -> None:
         payload = 0x06, 0x00
         self.protocol.send_receive(payload)
 
-    def disable_timer(self):
+    def disable_timer(self) -> None:
         timer_disable = 0x04
         payload = 0x01, 0x29, timer_disable
         self.protocol.send_receive(payload)

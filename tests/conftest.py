@@ -11,11 +11,7 @@ from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
 from umrx_app_v3.shuttle_board.bmi088 import BMI088
 
 handler = logging.StreamHandler(sys.stdout)
-handler.setFormatter(
-    logging.Formatter(
-        "[%(asctime)s][%(levelname)-8s][%(name)s]: %(message)s"
-    )
-)
+handler.setFormatter(logging.Formatter("[%(asctime)s][%(levelname)-8s][%(name)s]: %(message)s"))
 
 # get root logger
 logger = logging.getLogger()

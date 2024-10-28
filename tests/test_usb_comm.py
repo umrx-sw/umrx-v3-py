@@ -11,46 +11,49 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.mark.usb_comm
-def test_usb_comm_construction(usb_comm: UsbCommunication):
-    assert usb_comm.vid == 0x152a and usb_comm.pid == 0x80c0, "Expected VID & PID wrong"
+def test_usb_comm_construction(usb_comm: UsbCommunication) -> None:
+    assert usb_comm.vid == 0x152A, "Wrong vendor ID"
+    assert usb_comm.pid == 0x80C0, "Wrong product ID"
     assert usb_comm.is_initialized is False, "Should not be initialized on creation"
 
 
 @pytest.mark.usb_comm
-def test_usb_comm_find_device(usb_comm: UsbCommunication):
+def test_usb_comm_find_device(usb_comm: UsbCommunication) -> None:
     with patch.object(usb.core, "find") as mock_find:
         usb_comm.find_device()
     mock_find.assert_called_once()
 
 
 @pytest.mark.usb_comm
-def test_usb_comm_find_device_raises(usb_comm: UsbCommunication):
-    with (pytest.raises(UsbCommunicationError),
-          patch.object(usb.core, "find", return_value=None)):
+def test_usb_comm_find_device_raises(usb_comm: UsbCommunication) -> None:
+    with pytest.raises(UsbCommunicationError), patch.object(usb.core, "find", return_value=None):
         usb_comm.find_device()
 
 
 @pytest.mark.usb_comm
-def test_usb_comm_bulk_in_packet_size(usb_comm: UsbCommunication):
+def test_usb_comm_bulk_in_packet_size(usb_comm: UsbCommunication) -> None:
     with patch.object(usb_comm, "endpoint_bulk_in", PropertyMock()):
         usb_comm.endpoint_bulk_in = None
         assert usb_comm.bulk_in_packet_size == -1, "Expect to get -1 for non-existing endpoint"
 
 
 @pytest.mark.usb_comm
-def test_usb_comm_send_empty_msg(usb_comm: UsbCommunication):
+def test_usb_comm_send_empty_msg(usb_comm: UsbCommunication) -> None:
     ok = usb_comm.send([])
     assert ok is False, "Do not expect OK when sending empty message"
 
 
 @pytest.mark.usb_comm
-def test_usb_comm_send_well_formatted_message(usb_comm: UsbCommunication):
-    with (patch.object(usb_comm, "create_packet_from", return_value=array("B", [1, 2, 3])) as mock_create_packet_from,
-         patch.object(usb_comm, "endpoint_bulk_out") as mock_endpoint_bulk_out):
+def test_usb_comm_send_well_formatted_message(usb_comm: UsbCommunication) -> None:
+    with (
+        patch.object(usb_comm, "create_packet_from", return_value=array("B", [1, 2, 3])),
+        patch.object(usb_comm, "endpoint_bulk_out") as mock_endpoint_bulk_out,
+    ):
         message = array("B", [3, 2, 1])
         mock_endpoint_bulk_out.write.return_value = 3
         ok = usb_comm.send(message)
     assert ok, " OK when sending good message"
+
 
 # @pytest.mark.usb_comm
 # def test_usb_comm_recv(usb_comm: UsbCommunication):
@@ -69,18 +72,17 @@ def test_usb_comm_send_well_formatted_message(usb_comm: UsbCommunication):
 
 
 @pytest.mark.usb_comm
-def test_usb_comm_create_packet_from(usb_comm: UsbCommunication):
-
-    def check_result(result: array, initial_content: array | tuple | list):
+def test_usb_comm_create_packet_from(usb_comm: UsbCommunication) -> None:
+    def check_result(result: array, initial_content: array | tuple | list) -> None:
         assert isinstance(result, array), "Expecting array of bytes to send"
         assert len(result) == usb_comm.bulk_out_packet_size, "Expecting packet siz of equal endpoint's wMaxPacketSize"
-        assert result[0:len(initial_content)] == array("B", initial_content), "Start content shall be equal"
-        assert all(el == 255 for el in result[len(initial_content):]), "End of the packet shall be filled"
+        assert result[0 : len(initial_content)] == array("B", initial_content), "Start content shall be equal"
+        assert all(el == 255 for el in result[len(initial_content) :]), "End of the packet shall be filled"
 
     with patch.object(usb_comm, "endpoint_bulk_out") as mock_endpoint_bulk_out:
         mock_endpoint_bulk_out.wMaxPacketSize = 64
 
-        packet_payload_tuple = 170, 6, 2, 31, 13, 10,
+        packet_payload_tuple = 170, 6, 2, 31, 13, 10
         packet = usb_comm.create_packet_from(packet_payload_tuple)
         check_result(packet, packet_payload_tuple)
 

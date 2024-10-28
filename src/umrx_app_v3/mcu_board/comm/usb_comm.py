@@ -1,5 +1,6 @@
 import logging
 from array import array
+from types import TracebackType
 
 import usb.core
 
@@ -8,14 +9,13 @@ from umrx_app_v3.mcu_board.comm.comm import Communication
 logger = logging.getLogger(__name__)
 
 
-class UsbCommunicationError(Exception):
-    ...
+class UsbCommunicationError(Exception): ...
 
 
 class UsbCommunication(Communication):
-    def __init__(self, *a, **kw):
-        self.vid = 0x152a
-        self.pid = 0x80c0
+    def __init__(self) -> None:
+        self.vid = 0x152A
+        self.pid = 0x80C0
         self.usb_device: usb.core.Device | None = None
         self.configuration: usb.core.Configuration | None = None
         self.interface: usb.core.Interface | None = None
@@ -24,17 +24,17 @@ class UsbCommunication(Communication):
         self.is_initialized = False
         # self.initialize()
 
-    def find_device(self):
+    def find_device(self) -> None:
         self.usb_device = usb.core.find(idVendor=self.vid, idProduct=self.pid)
         if self.usb_device is None:
-            raise UsbCommunicationError(f"BST Board with VID={self.vid}, PID={self.pid} not connected!"
-                                    " Did you plug in the board to PC and turn it ON?")
+            error_message = f"BST Board with VID={self.vid}, PID={self.pid} not found! Is it connected and turned ON?"
+            raise UsbCommunicationError(error_message)
 
-    def get_set_usb_config(self):
+    def get_set_usb_config(self) -> None:
         self.usb_device.set_configuration()
         self.configuration = self.usb_device.get_active_configuration()
 
-    def obtain_endpoints(self):
+    def obtain_endpoints(self) -> None:
         self.interface = self.configuration[(0, 0)]
         usb.util.claim_interface(self.usb_device, self.interface.bInterfaceNumber)
         logging.info(f"{self.interface=}")
@@ -48,38 +48,39 @@ class UsbCommunication(Communication):
         self.endpoint_bulk_out = self.interface[0x1]
         logger.info(f"{self.endpoint_bulk_out=}")
 
-
     @property
-    def bulk_in_packet_size(self):
+    def bulk_in_packet_size(self) -> int:
         if not self.endpoint_bulk_in:
             logger.warning("Input endpoint not available!")
             return -1
         return self.endpoint_bulk_in.wMaxPacketSize
 
     @property
-    def bulk_out_packet_size(self):
+    def bulk_out_packet_size(self) -> int | None:
         if not self.endpoint_bulk_out:
             logger.warning("Output endpoint not available!")
             return None
         return self.endpoint_bulk_out.wMaxPacketSize
 
-    def initialize(self):
+    def initialize(self) -> None:
         self.find_device()
         self.get_set_usb_config()
         self.obtain_endpoints()
         self.is_initialized = True
 
-    def connect(self):
+    def connect(self) -> None:
         if not self.is_initialized:
             self.initialize()
 
-    def disconnect(self):
+    def disconnect(self) -> None:
         pass
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         self.connect()
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(
+        self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None
+    ) -> None:
         self.disconnect()
 
     def send(self, message: array | tuple | list) -> bool:
@@ -93,15 +94,15 @@ class UsbCommunication(Communication):
             logger.warning(f"Number of bytes written: {bytes_written} != packet length: {len(packet)}")
         return bytes_written == len(packet)
 
-    def _receive(self) -> array:
-        data_recv = self.endpoint_bulk_in.read(self.bulk_in_packet_size)
-        logging.debug(f"{data_recv}")
-        return data_recv
-
     @staticmethod
     def extract_message_from(packet: array) -> array:
         message_length = packet[1]
         return packet[:message_length]
+
+    def _receive(self) -> array:
+        data_recv = self.endpoint_bulk_in.read(self.bulk_in_packet_size)
+        logging.debug(f"{data_recv}")
+        return data_recv
 
     def receive(self) -> array:
         is_valid_packet_received = False
@@ -120,12 +121,13 @@ class UsbCommunication(Communication):
             # nothing to do, packet is already in good shape
             return message
         if len(message) > self.bulk_out_packet_size:
-            raise UsbCommunicationError("Cannot construct packet, the data is too long for USB transfer!")
+            error_message = "Cannot construct packet, the data is too long for USB transfer!"
+            raise UsbCommunicationError(error_message)
         packet = array("B", self.bulk_out_packet_size * [255])
         payload = array("B", message)
-        packet[0:len(payload)] = payload
+        packet[0 : len(payload)] = payload
         return packet
 
-    def send_receive(self, message):
+    def send_receive(self, message: array | tuple | list) -> array:
         self.send(message)
         return self.receive()

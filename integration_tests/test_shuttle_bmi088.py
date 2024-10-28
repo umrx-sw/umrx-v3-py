@@ -11,13 +11,13 @@ logger = logging.getLogger()
 
 
 @pytest.mark.bmi08x
-def test_bmi088_construction(bmi088: BMI088, caplog):
+def test_bmi088_construction(bmi088: BMI088) -> None:
     assert isinstance(bmi088, BMI088), "Expecting instance of BMI088"
     assert isinstance(bmi088.board, ApplicationBoardV3Rev0), f"Expecting ApplicationBoard30, got {type(bmi088.board)}"
 
 
 @pytest.mark.bmi08x
-def test_bmi088_check_gyro_broadcast(bmi088: BMI088):
+def test_bmi088_check_gyro_broadcast(bmi088: BMI088) -> None:
     valid_packet = 170, 18, 1, 0, 135, 244, 255, 176, 255, 54, 0, 0, 0, 0, 0, 2, 13, 10
     packet = array("B", valid_packet)
     should_be_valid = bmi088.is_gyro_broadcast(packet)
@@ -30,7 +30,7 @@ def test_bmi088_check_gyro_broadcast(bmi088: BMI088):
 
 
 @pytest.mark.bmi08x
-def test_bmi088_check_accel_broadcast(bmi088: BMI088):
+def test_bmi088_check_accel_broadcast(bmi088: BMI088) -> None:
     valid_broadcast_packet = 170, 26, 1, 0, 135, 0, 0, 0, 0, 0, 0, 0, 54, 0, 0, 1, 128, 0, 0, 16, 0, 0, 0, 1, 13, 10
     packet = array("B", valid_broadcast_packet)
     should_be_valid = bmi088.is_accel_broadcast(packet)
@@ -43,7 +43,7 @@ def test_bmi088_check_accel_broadcast(bmi088: BMI088):
 
 
 @pytest.mark.bmi08x
-def test_bmi088_gyro_broadcast_decode(bmi088: BMI088):
+def test_bmi088_gyro_broadcast_decode(bmi088: BMI088) -> None:
     valid_packet = 170, 18, 1, 0, 135, 244, 255, 176, 255, 54, 0, 0, 0, 0, 0, 2, 13, 10
     packet = array("B", valid_packet)
     decoded_gyro_packet = bmi088.decode(packet)
@@ -67,8 +67,7 @@ def test_bmi088_gyro_broadcast_decode(bmi088: BMI088):
 
 
 @pytest.mark.bmi08x
-def test_bmi088_accel_broadcast_decode(bmi088: BMI088):
-
+def test_bmi088_accel_broadcast_decode(bmi088: BMI088) -> None:
     valid_packet = 170, 26, 1, 0, 135, 0, 0, 0, 0, 0, 0, 0, 54, 0, 0, 1, 128, 0, 0, 16, 0, 0, 0, 1, 13, 10
     packet = array("B", valid_packet)
     decoded_accel_packet = bmi088.decode(packet)

@@ -1,5 +1,6 @@
 import logging
 from array import array
+from typing import Any
 
 from umrx_app_v3.mcu_board.comm.serial_comm import SerialCommunication
 from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
@@ -8,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class BstProtocol:
-    def __init__(self, *a, **kw):
+    def __init__(self, **kw: Any) -> None:
         self.communication: SerialCommunication | UsbCommunication | None = None
         if kw.get("comm"):
             if kw["comm"] == "usb":
@@ -22,8 +23,8 @@ class BstProtocol:
                 else:
                     self.communication = SerialCommunication()
             else:
-                raise ValueError(f"Provided communication type {kw['comm']} is not supported")
-
+                error_message = f"Provided communication type {kw['comm']} is not supported"
+                raise ValueError(error_message)
 
     @staticmethod
     def create_message_from(payload: array | tuple | list) -> array:
@@ -37,14 +38,14 @@ class BstProtocol:
         message[-2], message[-1] = 0xD, 0xA
         return message
 
-    def send(self, message: array | tuple | list):
+    def send(self, message: array | tuple | list) -> bool:
         return self.communication.send(message)
 
-    def receive(self):
+    def receive(self) -> array | bytes:
         return self.communication.receive()
 
-    def send_receive(self, payload: array | tuple | list):
-        if self.communication.check_message(payload):
+    def send_receive(self, payload: array | tuple | list) -> array | bytes:
+        if self.communication.check_message(payload):  # noqa: SIM108
             # valid message was provided already, no need to wrap it further
             message = payload
         else:

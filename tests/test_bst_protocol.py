@@ -11,16 +11,16 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.mark.bst_protocol
-def test_bst_protocol_construction(bst_protocol_usb: BstProtocol):
+def test_bst_protocol_construction(bst_protocol_usb: BstProtocol) -> None:
     assert isinstance(bst_protocol_usb, BstProtocol), "Expecting instance of BstProcotol"
     assert isinstance(bst_protocol_usb.communication, UsbCommunication), "Expect USB communication protocol"
 
 
 @pytest.mark.bst_protocol
-def test_bst_protocol_check_packet(bst_protocol_usb: BstProtocol):
+def test_bst_protocol_check_packet(bst_protocol_usb: BstProtocol) -> None:
     with patch.object(bst_protocol_usb.communication, "endpoint_bulk_out") as mock_endpoint_bulk_out:
         mock_endpoint_bulk_out.wMaxPacketSize = 64
-        valid_packet = 170, 6, 2, 31, 13, 10,
+        valid_packet = 170, 6, 2, 31, 13, 10
         valid_packet_filled = bst_protocol_usb.communication.create_packet_from(valid_packet)
         should_be_valid = bst_protocol_usb.communication.check_message(valid_packet_filled)
         assert should_be_valid, "Check of valid packet shall pass"
@@ -42,30 +42,95 @@ def test_bst_protocol_check_packet(bst_protocol_usb: BstProtocol):
 
 
 @pytest.mark.bst_protocol
-def test_bst_protocol_extract_message_from(bst_protocol_usb: BstProtocol):
-    packet = array("B", [170, 15, 1, 0, 66, 31, 0, 102, 0, 16, 0, 9, 5, 13, 10, 255,
-                         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-                         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-                         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-                         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255])
+def test_bst_protocol_extract_message_from(bst_protocol_usb: BstProtocol) -> None:
+    packet = array(
+        "B",
+        [
+            170,
+            15,
+            1,
+            0,
+            66,
+            31,
+            0,
+            102,
+            0,
+            16,
+            0,
+            9,
+            5,
+            13,
+            10,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+            255,
+        ],
+    )
     message = bst_protocol_usb.communication.extract_message_from(packet)
     assert len(message) == int(packet[1]), "Wrong length of the extracted message"
     assert message[0] == 0xAA, "Wrong start of the packet"
-    assert message[-2] == 0x0D and message[-1] == 0x0A, "Wrong end of the packet"
+    assert message[-2] == 0x0D, "Wrong end of the packet"
+    assert message[-1] == 0x0A, "Wrong end of the packet"
 
 
 @pytest.mark.bst_protocol
-def test_bst_protocol_create_message_from(bst_protocol_usb: BstProtocol):
-
-    def check_result(result: array, payload: array | tuple | list):
+def test_bst_protocol_create_message_from(bst_protocol_usb: BstProtocol) -> None:
+    def check_result(result: array, payload: array | tuple | list) -> None:
         assert isinstance(result, array), "Expecting message as array"
         assert len(result) == len(payload) + 4, "Expecting message size does not match"
-        assert result[2:2+len(payload)] == array("B", payload), "Incorrect payload in the message"
+        assert result[2 : 2 + len(payload)] == array("B", payload), "Incorrect payload in the message"
         assert result[0] == 0xAA, "Start byte of message invalid"
         assert result[1] == len(result), "Message length is wrong in the message"
-        assert result[-2] == 0xD and result[-1] == 0xA, "Message stop sequence invalid"
+        assert result[-2] == 0xD, "Message stop sequence invalid"
+        assert result[-1] == 0xA, "Message stop sequence invalid"
 
-    payload_tuple = 2, 31,
+    payload_tuple = 2, 31
     message = bst_protocol_usb.create_message_from(payload_tuple)
     check_result(message, payload_tuple)
 
