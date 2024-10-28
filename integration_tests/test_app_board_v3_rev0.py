@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 @pytest.mark.app_board
 def test_app_board_v3_rev0_board_info(app_board_v3_rev0: ApplicationBoardV3Rev0) -> None:
+    app_board_v3_rev0.protocol.communication.connect()
     info = app_board_v3_rev0.board_info
     assert isinstance(info, BoardInfo), "Expecting BoardInfo instance"
     assert info.board_id == 0x05, "Wrong board ID"
@@ -19,5 +20,11 @@ def test_app_board_v3_rev0_board_info(app_board_v3_rev0: ApplicationBoardV3Rev0)
     assert info.shuttle_id == 0x141, "Wrong shuttle ID for BMI08x"
 
 
-# def test_app_board_v3_rev0_switch_app_mtp(app_board_v3_rev0: ApplicationBoardV3Rev0):
-#     ok = app_board_v3_rev0.switch_usb_mtp()
+def test_app_board_v3_rev0_switch_app_mtp(app_board_v3_rev0: ApplicationBoardV3Rev0):
+    app_board_v3_rev0.protocol.communication.connect()
+    app_board_v3_rev0.switch_usb_mtp()
+
+
+def test_app_board_v3_rev0_switch_app_dfu(app_board_v3_rev0: ApplicationBoardV3Rev0):
+    app_board_v3_rev0.protocol.communication.connect()
+    app_board_v3_rev0.switch_usb_dfu_bl()

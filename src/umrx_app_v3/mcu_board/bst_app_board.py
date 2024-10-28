@@ -71,10 +71,7 @@ class ApplicationBoard:
         time.sleep(0.15)
         address_serialized = (int(a) for a in struct.pack(">L", address))
         payload = 0x01, 0x30, *address_serialized
-        self.protocol.send(payload)
-        # for _ in range(100):
-        #     msg = self.protocol.recv()
-        # raise AppBoardError("Switch app failed")
+        self.protocol.send_receive(payload)
 
     def switch_usb_dfu_bl(self) -> None:
         return self.switch_app(0)
