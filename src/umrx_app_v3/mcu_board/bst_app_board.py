@@ -1,6 +1,7 @@
 import inspect
 import logging
 import struct
+import time
 from array import array
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -63,14 +64,14 @@ class ApplicationBoard:
 
     def switch_app(self, address: int | None = None) -> None:
         self.stop_polling_streaming()
-        # sleep(0.15)
+        time.sleep(0.15)
         self.disable_timer()
-        # sleep(0.15)
+        time.sleep(0.15)
         self.stop_interrupt_streaming()
-        # sleep(0.15)
+        time.sleep(0.15)
         address_serialized = (int(a) for a in struct.pack(">L", address))
         payload = 0x01, 0x30, *address_serialized
-        self.protocol.send_receive(payload)
+        self.protocol.send(payload)
         # for _ in range(100):
         #     msg = self.protocol.recv()
         # raise AppBoardError("Switch app failed")
