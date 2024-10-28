@@ -5,7 +5,7 @@ from array import array
 import pytest
 
 from umrx_app_v3.mcu_board.app_board_v3_rev0 import ApplicationBoardV3Rev0
-from umrx_app_v3.shuttle_board.bmi088 import BMI088
+from umrx_app_v3.shuttle_board.bmi088 import BMI088, BMI088AccelPacket, BMI088GyroPacket
 
 logger = logging.getLogger()
 
@@ -48,6 +48,8 @@ def test_bmi088_gyro_broadcast_decode(bmi088: BMI088) -> None:
     packet = array("B", valid_packet)
     decoded_gyro_packet = bmi088.decode(packet)
 
+    assert isinstance(decoded_gyro_packet, BMI088GyroPacket), "Wrong instance received"
+
     g_x_raw_unsigned = (packet[6] << 8) | packet[5]
     expected_g_x_raw, *_ = struct.unpack(">h", struct.pack(">H", g_x_raw_unsigned))
     assert decoded_gyro_packet.g_x_raw == expected_g_x_raw, "Raw value g_x_raw is wrong!"
@@ -71,6 +73,8 @@ def test_bmi088_accel_broadcast_decode(bmi088: BMI088) -> None:
     valid_packet = 170, 26, 1, 0, 135, 0, 0, 0, 0, 0, 0, 0, 54, 0, 0, 1, 128, 0, 0, 16, 0, 0, 0, 1, 13, 10
     packet = array("B", valid_packet)
     decoded_accel_packet = bmi088.decode(packet)
+
+    assert isinstance(decoded_accel_packet, BMI088AccelPacket), "Wrong instance received"
 
     a_x_raw_unsigned = (packet[7] << 8) | packet[6]
     expected_a_x_raw, *_ = struct.unpack(">h", struct.pack(">H", a_x_raw_unsigned))
