@@ -186,7 +186,7 @@ class BMI088:
 
     @staticmethod
     def check_broadcast(func: Callable) -> Callable:
-        def inner(self: BMI088, packet: array) -> Any:
+        def inner(self: Self, packet: array) -> Any:
             if packet[4] != 135:
                 logging.info("[ERROR] in broadcast!")
             return func(self, packet)
