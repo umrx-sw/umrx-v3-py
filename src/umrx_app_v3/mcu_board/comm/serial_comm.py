@@ -32,9 +32,9 @@ class SerialCommunication(Communication):
         while not ok:
             # read until we get something in the buffer
             in_waiting = self.port.in_waiting
-            logger.info(f"waiting buffer: {in_waiting}")
-            read_from_serial += self.port.read(self.buffer_size)
-            logger.info(f"buffer size: {len(read_from_serial)}")
+            # logger.info(f"waiting buffer: {in_waiting}")
+            read_from_serial += self.port.read(in_waiting)
+            # logger.info(f"buffer size: {len(read_from_serial)}")
             ok = len(read_from_serial) > 0
         return read_from_serial
 
@@ -64,9 +64,9 @@ class SerialCommunication(Communication):
 
         context = pyudev.Context()
         for device in context.list_devices(subsystem="tty"):
-            if device.get("ID_VENDOR") == "Bosch_Sensortec_GmbH":
+            if int(device.get("ID_MODEL_ID"), 16) == self.pid and int(device.get("ID_VENDOR_ID"), 16) == self.vid:
                 self.port_name = device.device_node
-                logger.info(f"Found serial device: port={self.port_name}")
+                logger.debug(f"Found board: port={self.port_name}")
                 return True
         return False
 
