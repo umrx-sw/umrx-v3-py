@@ -166,7 +166,7 @@ class BMI088:
             self.is_accel_broadcast, self.decode_accel_broadcast, num_packets
         )
 
-    def decode(self, packet: array) -> BMI088GyroPacket | BMI088AccelPacket:
+    def decode(self, packet: array[int]) -> BMI088GyroPacket | BMI088AccelPacket:
         if self.is_gyro_broadcast(packet):
             return self.decode_gyro_broadcast(packet)
         if self.is_accel_broadcast(packet):
@@ -175,17 +175,17 @@ class BMI088:
         raise BMI088Error(error_message)
 
     @staticmethod
-    def is_gyro_broadcast(packet: array) -> bool:
+    def is_gyro_broadcast(packet: array[int]) -> bool:
         expected_packet_length = 18
         return len(packet) == expected_packet_length
 
     @staticmethod
-    def is_accel_broadcast(packet: array) -> bool:
+    def is_accel_broadcast(packet: array[int]) -> bool:
         expected_packet_length = 26
         return len(packet) == expected_packet_length
 
     @staticmethod
-    def check_broadcast(func: Callable) -> Callable:
+    def check_broadcast(func: Callable[..., array[int]]) -> Callable[..., array[int]]:
         def inner(self: Self, packet: array) -> Any:
             if packet[4] != 135:
                 logging.info("[ERROR] in broadcast!")
@@ -194,12 +194,12 @@ class BMI088:
         return inner
 
     @check_broadcast
-    def decode_gyro_broadcast(self, packet: array) -> BMI088GyroPacket:
+    def decode_gyro_broadcast(self, packet: array[int]) -> BMI088GyroPacket:
         x_raw, y_raw, z_raw = struct.unpack("<hhh", packet[5:11])
         return BMI088GyroPacket(g_x_raw=x_raw, g_y_raw=y_raw, g_z_raw=z_raw)
 
     @check_broadcast
-    def decode_accel_broadcast(self, packet: array) -> BMI088AccelPacket:
+    def decode_accel_broadcast(self, packet: array[int]) -> BMI088AccelPacket:
         x_raw, y_raw, z_raw = struct.unpack("<hhh", packet[6:12])
         return BMI088AccelPacket(a_x_raw=x_raw, a_y_raw=y_raw, a_z_raw=z_raw)
 

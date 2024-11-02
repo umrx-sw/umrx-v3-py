@@ -26,7 +26,7 @@ class Communication(abc.ABC):
     def disconnect(self) -> None: ...
 
     @staticmethod
-    def check_message(packet: list | array) -> bool:
+    def check_message(packet: list[int] | array[int] | tuple[int, ...]) -> bool:
         packet_start = 0xAA
         is_packet_start_found = packet[0] == packet_start
         packet_size = packet[1]
