@@ -62,21 +62,34 @@ class ApplicationBoard:
         board_id = message[12]
         return BoardInfo(board_id=board_id, hardware_id=hardware_id, software_id=software_id, shuttle_id=shuttle_id)
 
+    def set_vdd_vddio(self, vdd: float, vddio: float) -> None:
+        payload = 0x01, 0x14, *self.voltage_to_payload(vdd), 0x01, *self.voltage_to_payload(vddio), 0x01
+        self.protocol.send_receive(payload)
+
+    @staticmethod
+    def voltage_to_payload(voltage: float) -> tuple[int, ...]:
+        voltage_milli_volt = int(voltage * 1000)
+        return tuple(int(el) for el in struct.pack(">H", voltage_milli_volt))
+
     def switch_app(self, address: int | None = None) -> None:
+        address_serialized = (int(a) for a in struct.pack(">L", address))
+        payload = 0x01, 0x30, *address_serialized
+        self.protocol.send_receive(payload)
+
+    def start_communication(self) -> None:
         self.stop_polling_streaming()
         time.sleep(0.15)
         self.disable_timer()
         time.sleep(0.15)
         self.stop_interrupt_streaming()
         time.sleep(0.15)
-        address_serialized = (int(a) for a in struct.pack(">L", address))
-        payload = 0x01, 0x30, *address_serialized
-        self.protocol.send_receive(payload)
 
     def switch_usb_dfu_bl(self) -> None:
+        self.start_communication()
         return self.switch_app(0)
 
     def switch_usb_mtp(self) -> None:
+        self.start_communication()
         return self.switch_app(0x28000)
 
     def stop_interrupt_streaming(self) -> None:
