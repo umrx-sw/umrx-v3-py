@@ -17,7 +17,7 @@ class UsbCommunicationError(Exception): ...
 
 class UsbCommunication(Communication):
     def __init__(self, **kwargs: Any) -> None:
-        self.vid_v3_rev0, self.pid_v3_rev0 = 0x152A, 0x80C0 # default VID/PID for 3.0 HW
+        self.vid_v3_rev0, self.pid_v3_rev0 = 0x152A, 0x80C0  # default VID/PID for 3.0 HW
         self.vid = kwargs["vid"] if kwargs.get("vid") else self.vid_v3_rev0
         self.pid = kwargs["pid"] if kwargs.get("pid") else self.pid_v3_rev0
         self.usb_device: usb.core.Device | None = None
