@@ -5,6 +5,7 @@ import pytest
 
 from umrx_app_v3.mcu_board.app_board_v3_rev0 import ApplicationBoardV3Rev0
 from umrx_app_v3.mcu_board.app_board_v3_rev1 import ApplicationBoardV3Rev1
+from umrx_app_v3.mcu_board.bst_app_board import ApplicationBoard
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
 from umrx_app_v3.mcu_board.comm.serial_comm import SerialCommunication
 from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
@@ -38,6 +39,16 @@ def bst_protocol_usb(usb_comm: UsbCommunication) -> BstProtocol:
 @pytest.fixture(scope="session", autouse=True)
 def bst_protocol_serial(serial_comm: SerialCommunication) -> BstProtocol:
     return BstProtocol(comm="serial", serial=serial_comm)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def bst_app_board_with_serial(bst_protocol_serial: SerialCommunication) -> ApplicationBoard:
+    return ApplicationBoard(protocol=bst_protocol_serial)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def bst_app_board_with_usb(bst_protocol_usb: UsbCommunication) -> ApplicationBoard:
+    return ApplicationBoard(protocol=bst_protocol_usb)
 
 
 @pytest.fixture(scope="session", autouse=True)
