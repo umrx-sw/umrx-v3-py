@@ -20,6 +20,11 @@ def test_app_board_v3_rev0_board_info(app_board_v3_rev1: ApplicationBoardV3Rev1)
     assert info.shuttle_id == 0x66, "Wrong shuttle ID for BMI08x"
 
 
-def test_app_board_v3_rev1_switch_app_mtp(app_board_v3_rev1: ApplicationBoardV3Rev1):
-    app_board_v3_rev1.protocol.communication.connect()
+def test_app_board_v3_rev1_switch_app_mtp(app_board_v3_rev1: ApplicationBoardV3Rev1) -> None:
+    app_board_v3_rev1.initialize_usb()
     app_board_v3_rev1.switch_usb_mtp()
+
+
+def test_app_board_v3_rev1_switch_usb_dfu_bl(app_board_v3_rev1: ApplicationBoardV3Rev1) -> None:
+    app_board_v3_rev1.initialize_usb()
+    app_board_v3_rev1.switch_usb_dfu_bl()

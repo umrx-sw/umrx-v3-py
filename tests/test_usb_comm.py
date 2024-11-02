@@ -55,6 +55,30 @@ def test_usb_comm_send_well_formatted_message(usb_comm: UsbCommunication) -> Non
     assert ok, " OK when sending good message"
 
 
+@pytest.mark.usb_comm
+def test_usb_comm_serialize_baud_rate_1200(usb_comm: UsbCommunication) -> None:
+    res = usb_comm.serialize_baud_rate(1200)
+    assert res == (0xB0, 0x04, 0x00, 0x00, 0x00, 0x00, 0x08), "Serialized wrong"
+
+
+@pytest.mark.usb_comm
+def test_usb_comm_serialize_baud_rate_little_endian(usb_comm: UsbCommunication) -> None:
+    res = usb_comm.serialize_baud_rate(0xAABBCCDD)
+    assert res == (0xDD, 0xCC, 0xBB, 0xAA, 0x00, 0x00, 0x08), "Serialized wrong"
+
+
+@pytest.mark.usb_comm
+def test_usb_comm_control_transfer(usb_comm: UsbCommunication) -> None:
+    with (
+        patch.object(usb_comm, "usb_device"),
+        patch.object(usb_comm.usb_device, "ctrl_transfer") as mocked_ctrl_transfer,
+        patch("time.sleep", return_value=None),
+    ):
+        usb_comm.send_control_transfer(1200)
+
+        assert mocked_ctrl_transfer.call_count == 6, "Wrong number of calls"
+
+
 # @pytest.mark.usb_comm
 # def test_usb_comm_recv(usb_comm: UsbCommunication):
 #     data = usb_comm.receive()
