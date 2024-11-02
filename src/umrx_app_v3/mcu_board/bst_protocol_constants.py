@@ -1,0 +1,204 @@
+"""
+(c) Bosch Sensortec GmbH, Reutlingen, Germany
+Open Source as per the BSD-3 Clause
+
+The content of the file (constant enum classes) is taken from:
+COINES_SDK/coines-api/pc/python/coinespy/coines.py
+"""
+
+from enum import Enum
+
+COINES_MAX_INT_LINE = 2
+
+
+class ErrorCodes(Enum):
+    COINES_SUCCESS = 0
+    COINES_E_FAILURE = -1
+    COINES_E_COMM_IO_ERROR = -2
+    COINES_E_COMM_INIT_FAILED = -3
+    COINES_E_UNABLE_OPEN_DEVICE = -4
+    COINES_E_DEVICE_NOT_FOUND = -5
+    COINES_E_UNABLE_CLAIM_INTERFACE = -6
+    COINES_E_MEMORY_ALLOCATION = -7
+    COINES_E_NOT_SUPPORTED = -8
+    COINES_E_NULL_PTR = -9
+    COINES_E_COMM_WRONG_RESPONSE = -10
+    COINES_E_SPI16BIT_NOT_CONFIGURED = -11
+    COINES_E_SPI_INVALID_BUS_INTERFACE = -12
+    COINES_E_SPI_CONFIG_EXIST = -13
+    COINES_E_SPI_BUS_NOT_ENABLED = -14
+    COINES_E_SPI_CONFIG_FAILED = -15
+    COINES_E_I2C_INVALID_BUS_INTERFACE = -16
+    COINES_E_I2C_BUS_NOT_ENABLED = -17
+    COINES_E_I2C_CONFIG_FAILED = -18
+    COINES_E_I2C_CONFIG_EXIST = -19
+    COINES_E_TIMER_INIT_FAILED = -20
+    COINES_E_TIMER_INVALID_INSTANCE = -21
+    COINES_E_TIMER_CC_CHANNEL_NOT_AVAILABLE = -22
+    COINES_E_EEPROM_RESET_FAILED = -23
+    COINES_E_EEPROM_READ_FAILED = -24
+    COINES_E_INIT_FAILED = -25
+    COINES_E_STREAM_NOT_CONFIGURED = -26
+    COINES_E_STREAM_INVALID_BLOCK_SIZE = -27
+    COINES_E_STREAM_SENSOR_ALREADY_CONFIGURED = -28
+    COINES_E_STREAM_CONFIG_MEMORY_FULL = -29
+    COINES_E_INVALID_PAYLOAD_LEN = -30
+    COINES_E_CHANNEL_ALLOCATION_FAILED = -31
+    COINES_E_CHANNEL_DE_ALLOCATION_FAILED = -32
+    COINES_E_CHANNEL_ASSIGN_FAILED = -33
+    COINES_E_CHANNEL_ENABLE_FAILED = -34
+    COINES_E_CHANNEL_DISABLE_FAILED = -35
+    COINES_E_INVALID_PIN_NUMBER = -36
+    COINES_E_MAX_SENSOR_COUNT_REACHED = -37
+    COINES_E_EEPROM_WRITE_FAILED = -38
+    COINES_E_INVALID_EEPROM_RW_LENGTH = -39
+    COINES_E_INVALID_SCOM_CONFIG = -40
+    COINES_E_INVALID_BLE_CONFIG = -41
+    COINES_E_SCOM_PORT_IN_USE = -42
+    COINES_E_UART_INIT_FAILED = -43
+    COINES_E_UART_WRITE_FAILED = -44
+    COINES_E_UART_INSTANCE_NOT_SUPPORT = -45
+    COINES_E_BLE_ADAPTOR_NOT_FOUND = -46
+    COINES_E_ADAPTER_BLUETOOTH_NOT_ENABLED = -47
+    COINES_E_BLE_PERIPHERAL_NOT_FOUND = -48
+    COINES_E_BLE_LIBRARY_NOT_LOADED = -49
+    COINES_E_APP_BOARD_BLE_NOT_FOUND = -50
+    COINES_E_BLE_COMM_FAILED = -51
+    COINES_E_INCOMPATIBLE_FIRMWARE = -52
+    COINES_E_UNDEFINED_CODE = -100
+
+
+class PinDirection(Enum):
+    INPUT = 0
+    OUTPUT = 1
+
+
+class PinValue(Enum):
+    LOW = 0
+    HIGH = 1
+
+
+class CommInterface(Enum):
+    USB = 0
+    SERIAL = 1
+    BLE = 2
+
+
+class I2CMode(Enum):
+    STANDARD_MODE = 0    # Standard mode - 100kHz
+    FAST_MODE = 1        # Fast mode - 400kHz
+    SPEED_3_4_MHZ = 2          # High Speed mode - 3.4 MHz
+    SPEED_1_7_MHZ = 3         # High Speed mode 2 - 1.7 MHz
+
+
+class SPISpeed(Enum):
+    SPI_10_MHZ = 6
+    SPI_7_5_MHZ = 8
+    SPI_6_MHZ = 10
+    SPI_5_MHZ = 12
+    SPI_3_75_MHZ = 16
+    SPI_3_MHZ = 20
+    SPI_2_5_MHZ = 24
+    SPI_2_MHZ = 30
+    SPI_1_5_MHZ = 40
+    SPI_1_25_MHZ = 48
+    SPI_1_2_MHZ = 50
+    SPI_1_MHZ = 60
+    SPI_750_KHZ = 80
+    SPI_600_KHZ = 100
+    SPI_500_KHZ = 120
+    SPI_400_KHZ = 150
+    SPI_300_KHZ = 200
+    SPI_250_KHZ = 240
+
+
+class SPITransferBits(Enum):
+    SPI8BIT = 8     # 8 bit register read/write
+    SPI16BIT = 16   # 16 bit register read/write
+
+
+class SPIMode(Enum):
+    MODE0 = 0x00   # SPI Mode 0: CPOL=0; CPHA=0
+    MODE1 = 0x01   # SPI Mode 1: CPOL=0; CPHA=1
+    MODE2 = 0x02   # SPI Mode 2: CPOL=1; CPHA=0
+    MODE3 = 0x03   # SPI Mode 3: CPOL=1; CPHA=1
+
+
+class MultiIOPin(Enum):
+    SHUTTLE_PIN_7 = 0x09    # CS pin
+    SHUTTLE_PIN_8 = 0x05    # Multi-IO 5
+    SHUTTLE_PIN_9 = 0x00    # Multi-IO 0
+    SHUTTLE_PIN_14 = 0x01   # Multi-IO 1
+    SHUTTLE_PIN_15 = 0x02   # Multi-IO 2
+    SHUTTLE_PIN_16 = 0x03   # Multi-IO 3
+    SHUTTLE_PIN_19 = 0x08   # Multi-IO 8
+    SHUTTLE_PIN_20 = 0x06   # Multi-IO 6
+    SHUTTLE_PIN_21 = 0x07   # Multi-IO 7
+    SHUTTLE_PIN_22 = 0x04   # Multi-IO 4
+    SHUTTLE_PIN_SDO = 0x1F
+
+    # APP3.0 pins
+    MINI_SHUTTLE_PIN_1_4 = 0x10  # GPIO0
+    MINI_SHUTTLE_PIN_1_5 = 0x11  # GPIO1
+    MINI_SHUTTLE_PIN_1_6 = 0x12  # GPIO2/INT1
+    MINI_SHUTTLE_PIN_1_7 = 0x13  # GPIO3/INT2
+    MINI_SHUTTLE_PIN_2_5 = 0x14  # GPIO4
+    MINI_SHUTTLE_PIN_2_6 = 0x15  # GPIO5
+    MINI_SHUTTLE_PIN_2_1 = 0x16  # CS
+    MINI_SHUTTLE_PIN_2_3 = 0x17  # SDO
+    MINI_SHUTTLE_PIN_2_7 = 0x1D  # GPIO6
+    MINI_SHUTTLE_PIN_2_8 = 0x1E  # GPIO7
+
+
+class SensorInterface(Enum):
+    SPI = 0
+    I2C = 1
+
+
+class I2CBus(Enum):
+    BUS_I2C_0 = 0
+    BUS_I2C_1 = 1
+    BUS_I2C_MAX = 2
+
+
+class SPIBus(Enum):
+    BUS_SPI_0 = 0
+    BUS_SPI_1 = 1
+    BUS_SPI_MAX = 2
+
+
+class StreamingMode(Enum):
+    STREAMING_MODE_POLLING = 0
+    STREAMING_MODE_INTERRUPT = 1
+
+
+class StreamingState(Enum):
+    STREAMING_START = 1
+    STREAMING_STOP = 0
+
+
+class PinInterruptMode(Enum):
+    # Trigger interrupt on pin state change
+    PIN_INTERRUPT_CHANGE = 0
+    # Trigger interrupt when pin changes from low to high
+    PIN_INTERRUPT_RISING_EDGE = 1
+    # Trigger interrupt when pin changes from high to low
+    PIN_INTERRUPT_FALLING_EDGE = 2
+    PIN_INTERRUPT_MODE_MAXIMUM = 4
+
+
+class TimerConfig(Enum):
+    TIMER_STOP = 0
+    TIMER_START = 1
+    TIMER_RESET = 2
+
+
+class TimerStampConfig(Enum):
+    TIMESTAMP_ENABLE = 0x03
+    TIMESTAMP_DISABLE = 0x04
+
+
+class SamplingUnits(Enum):
+    SAMPLING_TIME_IN_MICRO_SEC = 0x01
+    SAMPLING_TIME_IN_MILLI_SEC = 0x02
+
