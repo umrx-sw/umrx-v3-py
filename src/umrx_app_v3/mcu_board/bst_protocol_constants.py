@@ -238,3 +238,8 @@ class TimerStampConfig(Enum):
 class SamplingUnits(Enum):
     SAMPLING_TIME_IN_MICRO_SEC = 0x01
     SAMPLING_TIME_IN_MILLI_SEC = 0x02
+
+
+class InterfaceSDO(Enum):
+    SDO_LOW = 0
+    SDO_HIGH = 1

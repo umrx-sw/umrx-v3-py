@@ -2,7 +2,7 @@ import logging
 import struct
 from array import array
 
-from umrx_app_v3.mcu_board.bst_protocol_constants import CommandId, CommandType, TimerStampConfig
+from umrx_app_v3.mcu_board.bst_protocol_constants import CommandId, CommandType
 from umrx_app_v3.mcu_board.commands.command import Command
 
 logger = logging.getLogger(__name__)
