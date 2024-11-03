@@ -1,9 +1,10 @@
-"""
-(c) Bosch Sensortec GmbH, Reutlingen, Germany
+"""(c) Bosch Sensortec GmbH, Reutlingen, Germany.
+
 Open Source as per the BSD-3 Clause
 
 The content of the file is taken from:
 COINES_SDK/coines-api/pc/python/coinespy/coines.py
+
 """
 
 from enum import Enum
@@ -45,10 +46,6 @@ class CommandId(Enum):
     START_STOP_POLLING_RESPONSE = 0x46
     APP_SWITCH = 0x30
     SPI_WRITE_AND_READ_16BIT = 0x33
-    START_STOP_STREAM_POLLING = 0x06
-    START_STOP_STREAM_INT = 0x0A
-    STREAM_INT = 0x0E
-    STREAM_POLLING = 0x0F
 
 
 class ErrorCode(Enum):
@@ -125,10 +122,10 @@ class CommInterface(Enum):
 
 
 class I2CMode(Enum):
-    STANDARD_MODE = 0    # Standard mode - 100kHz
-    FAST_MODE = 1        # Fast mode - 400kHz
-    SPEED_3_4_MHZ = 2          # High Speed mode - 3.4 MHz
-    SPEED_1_7_MHZ = 3         # High Speed mode 2 - 1.7 MHz
+    STANDARD_MODE = 0  # Standard mode - 100kHz
+    FAST_MODE = 1  # Fast mode - 400kHz
+    SPEED_3_4_MHZ = 2  # High Speed mode - 3.4 MHz
+    SPEED_1_7_MHZ = 3  # High Speed mode 2 - 1.7 MHz
 
 
 class SPISpeed(Enum):
@@ -153,28 +150,28 @@ class SPISpeed(Enum):
 
 
 class SPITransferBits(Enum):
-    SPI8BIT = 8     # 8 bit register read/write
-    SPI16BIT = 16   # 16 bit register read/write
+    SPI8BIT = 8  # 8 bit register read/write
+    SPI16BIT = 16  # 16 bit register read/write
 
 
 class SPIMode(Enum):
-    MODE0 = 0x00   # SPI Mode 0: CPOL=0; CPHA=0
-    MODE1 = 0x01   # SPI Mode 1: CPOL=0; CPHA=1
-    MODE2 = 0x02   # SPI Mode 2: CPOL=1; CPHA=0
-    MODE3 = 0x03   # SPI Mode 3: CPOL=1; CPHA=1
+    MODE0 = 0x00  # SPI Mode 0: CPOL=0; CPHA=0
+    MODE1 = 0x01  # SPI Mode 1: CPOL=0; CPHA=1
+    MODE2 = 0x02  # SPI Mode 2: CPOL=1; CPHA=0
+    MODE3 = 0x03  # SPI Mode 3: CPOL=1; CPHA=1
 
 
 class MultiIOPin(Enum):
-    SHUTTLE_PIN_7 = 0x09    # CS pin
-    SHUTTLE_PIN_8 = 0x05    # Multi-IO 5
-    SHUTTLE_PIN_9 = 0x00    # Multi-IO 0
-    SHUTTLE_PIN_14 = 0x01   # Multi-IO 1
-    SHUTTLE_PIN_15 = 0x02   # Multi-IO 2
-    SHUTTLE_PIN_16 = 0x03   # Multi-IO 3
-    SHUTTLE_PIN_19 = 0x08   # Multi-IO 8
-    SHUTTLE_PIN_20 = 0x06   # Multi-IO 6
-    SHUTTLE_PIN_21 = 0x07   # Multi-IO 7
-    SHUTTLE_PIN_22 = 0x04   # Multi-IO 4
+    SHUTTLE_PIN_7 = 0x09  # CS pin
+    SHUTTLE_PIN_8 = 0x05  # Multi-IO 5
+    SHUTTLE_PIN_9 = 0x00  # Multi-IO 0
+    SHUTTLE_PIN_14 = 0x01  # Multi-IO 1
+    SHUTTLE_PIN_15 = 0x02  # Multi-IO 2
+    SHUTTLE_PIN_16 = 0x03  # Multi-IO 3
+    SHUTTLE_PIN_19 = 0x08  # Multi-IO 8
+    SHUTTLE_PIN_20 = 0x06  # Multi-IO 6
+    SHUTTLE_PIN_21 = 0x07  # Multi-IO 7
+    SHUTTLE_PIN_22 = 0x04  # Multi-IO 4
     SHUTTLE_PIN_SDO = 0x1F
 
     # APP3.0 pins
@@ -241,4 +238,3 @@ class TimerStampConfig(Enum):
 class SamplingUnits(Enum):
     SAMPLING_TIME_IN_MICRO_SEC = 0x01
     SAMPLING_TIME_IN_MILLI_SEC = 0x02
-

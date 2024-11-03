@@ -9,9 +9,9 @@ from umrx_app_v3.mcu_board.bst_app_board import ApplicationBoard
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
 from umrx_app_v3.mcu_board.comm.serial_comm import SerialCommunication
 from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
-from umrx_app_v3.shuttle_board.bmi088 import BMI088
 from umrx_app_v3.mcu_board.commands.board_info import BoardInfoCmd
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd
+from umrx_app_v3.shuttle_board.bmi088 import BMI088
 
 handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(logging.Formatter("[%(asctime)s][%(levelname)-8s][%(name)s]: %(message)s"))

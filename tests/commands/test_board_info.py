@@ -1,7 +1,9 @@
-import pytest
 from array import array
 
-from umrx_app_v3.mcu_board.commands.board_info import BoardInfoCmd, BoardInfo
+import pytest
+
+from umrx_app_v3.mcu_board.commands.board_info import BoardInfo, BoardInfoCmd
+
 
 @pytest.mark.app_board
 def test_app_board_parse_board_info(board_info_cmd: BoardInfoCmd) -> None:

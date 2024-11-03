@@ -1,8 +1,9 @@
-from dataclasses import dataclass
-import logging
 from array import array
+from dataclasses import dataclass
+
+from umrx_app_v3.mcu_board.bst_protocol_constants import CommandId, CommandType
 from umrx_app_v3.mcu_board.commands.command import Command
-from umrx_app_v3.mcu_board.bst_protocol_constants import CommandType, CommandId
+
 
 @dataclass
 class BoardInfo:
@@ -13,9 +14,8 @@ class BoardInfo:
 
 
 class BoardInfoCmd(Command):
-
     @staticmethod
-    def assemble():
+    def assemble() -> array[int]:
         payload = CommandType.DD_GET.value, CommandId.BOARD_INFORMATION.value
         return Command.create_message_from(payload)
 

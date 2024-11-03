@@ -2,14 +2,13 @@ import abc
 import inspect
 import logging
 from array import array
-from typing import Callable, Any, Optional
-
+from collections.abc import Callable
+from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 
 
 class Command(abc.ABC):
-
     @staticmethod
     @abc.abstractmethod
     def assemble(*args: Optional, **kwargs: Optional) -> Any: ...

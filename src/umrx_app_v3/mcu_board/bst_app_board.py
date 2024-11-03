@@ -1,16 +1,12 @@
-import inspect
 import logging
 import struct
 import time
-from array import array
-from collections.abc import Callable
 from typing import Any
 
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
-
 from umrx_app_v3.mcu_board.commands.board_info import BoardInfo, BoardInfoCmd
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd
-from umrx_app_v3.mcu_board.commands.streaming import StopPollingStreamingCmd, StopInterruptStreamingCmd
+from umrx_app_v3.mcu_board.commands.streaming import StopInterruptStreamingCmd, StopPollingStreamingCmd
 from umrx_app_v3.mcu_board.commands.timer import StopTimerCmd
 
 logger = logging.getLogger(__name__)
