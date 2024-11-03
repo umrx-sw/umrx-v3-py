@@ -10,6 +10,8 @@ from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
 from umrx_app_v3.mcu_board.comm.serial_comm import SerialCommunication
 from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
 from umrx_app_v3.shuttle_board.bmi088 import BMI088
+from umrx_app_v3.mcu_board.commands.board_info import BoardInfoCmd
+from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd
 
 handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(logging.Formatter("[%(asctime)s][%(levelname)-8s][%(name)s]: %(message)s"))
@@ -19,6 +21,16 @@ logger = logging.getLogger()
 logger.handlers = []
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def board_info_cmd() -> BoardInfoCmd:
+    return BoardInfoCmd()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def set_vdd_vddio_command() -> SetVddVddioCmd:
+    return SetVddVddioCmd()
 
 
 @pytest.fixture(scope="session", autouse=True)

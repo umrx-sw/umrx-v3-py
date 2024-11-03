@@ -19,34 +19,11 @@ def test_app_board_construction(bst_app_board_with_serial: ApplicationBoard) -> 
 
 
 @pytest.mark.app_board
-def test_app_board_voltage_to_payload(bst_app_board_with_serial: ApplicationBoard) -> None:
-    payload = bst_app_board_with_serial.voltage_to_payload(1.8)
-    assert payload == (0x07, 0x08)
-
-    payload = bst_app_board_with_serial.voltage_to_payload(3.3)
-    assert payload == (0x0C, 0xE4)
-
-
-@pytest.mark.app_board
 def test_app_board_vdd_vddio(bst_app_board_with_serial: ApplicationBoard) -> None:
-    with patch.object(bst_app_board_with_serial.protocol.communication, "send_receive") as mocked_send_receive:
+    with patch.object(bst_app_board_with_serial.protocol, "send_receive") as mocked_send_receive:
         bst_app_board_with_serial.set_vdd_vddio(1.8, 3.3)
         arg = array("B", [0xAA, 0x0C, 0x01, 0x14, 0x07, 0x08, 0x01, 0x0C, 0xE4, 0x01, 0x0D, 0x0A])
         mocked_send_receive.assert_called_with(arg)
-
-
-@pytest.mark.app_board
-def test_app_board_parse_board_info(bst_app_board_with_serial: ApplicationBoard) -> None:
-    resp = array("B", [0xAA, 0x0F, 0x01, 0x00, 0x42, 0x1F, 0x01, 0x41, 0x00, 0x10, 0x00, 0x09, 0x05, 0x0D, 0x0A])
-    board_info = bst_app_board_with_serial.parse_board_info(resp)
-
-    assert board_info.hardware_id == 0x10
-
-    assert board_info.software_id == 0x09
-
-    assert board_info.board_id == 0x05
-
-    assert board_info.shuttle_id == 0x141
 
 
 @pytest.mark.app_board

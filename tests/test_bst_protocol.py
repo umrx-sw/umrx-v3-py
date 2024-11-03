@@ -6,6 +6,7 @@ import pytest
 
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
 from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
+from umrx_app_v3.mcu_board.commands.command import Command
 
 logger = logging.getLogger(__name__)
 
@@ -22,22 +23,22 @@ def test_bst_protocol_check_packet(bst_protocol_usb: BstProtocol) -> None:
         mock_endpoint_bulk_out.wMaxPacketSize = 64
         valid_packet = 170, 6, 2, 31, 13, 10
         valid_packet_filled = bst_protocol_usb.communication.create_packet_from(valid_packet)
-        should_be_valid = bst_protocol_usb.communication.check_message(valid_packet_filled)
+        should_be_valid = Command.check_message(valid_packet_filled)
         assert should_be_valid, "Check of valid packet shall pass"
 
         wrong_length_packet = 170, 4, 3, 45, 11, 22, 13, 10
         wrong_length_packet_filled = bst_protocol_usb.communication.create_packet_from(wrong_length_packet)
-        should_be_invalid = bst_protocol_usb.communication.check_message(wrong_length_packet_filled)
+        should_be_invalid = Command.check_message(wrong_length_packet_filled)
         assert not should_be_invalid, "Check of invalid packet shall fail"
 
         wrong_zero_data_received = 0, 0, 0, 0, 0, 0, 0
         wrong_zero_data_received_filled = bst_protocol_usb.communication.create_packet_from(wrong_zero_data_received)
-        should_be_invalid = bst_protocol_usb.communication.check_message(wrong_zero_data_received_filled)
+        should_be_invalid = Command.check_message(wrong_zero_data_received_filled)
         assert not should_be_invalid, "Check of wrong 0x00 data shall fail"
 
         wrong_ff_data_received = 255, 255, 255, 255, 255, 255, 255
         wrong_ff_data_received_filled = bst_protocol_usb.communication.create_packet_from(wrong_ff_data_received)
-        should_be_invalid = bst_protocol_usb.communication.check_message(wrong_ff_data_received_filled)
+        should_be_invalid = Command.check_message(wrong_ff_data_received_filled)
         assert not should_be_invalid, "Check of wrong 0xFF data shall fail"
 
 
@@ -131,13 +132,13 @@ def test_bst_protocol_create_message_from(bst_protocol_usb: BstProtocol) -> None
         assert result[-1] == 0xA, "Message stop sequence invalid"
 
     payload_tuple = 2, 31
-    message = bst_protocol_usb.create_message_from(payload_tuple)
+    message = Command.create_message_from(payload_tuple)
     check_result(message, payload_tuple)
 
     payload_list = [2, 31]
-    message = bst_protocol_usb.create_message_from(payload_list)
+    message = Command.create_message_from(payload_list)
     check_result(message, payload_list)
 
     payload_array = array("B", [2, 31])
-    message = bst_protocol_usb.create_message_from(payload_array)
+    message = Command.create_message_from(payload_array)
     check_result(message, payload_array)

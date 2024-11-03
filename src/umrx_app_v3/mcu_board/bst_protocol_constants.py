@@ -9,10 +9,12 @@ COINES_SDK/coines-api/pc/python/coinespy/coines.py
 from enum import Enum
 
 
-class Command(Enum):
+class CommandType(Enum):
     DD_SET = 0x01
     DD_GET = 0x02
     DD_STREAMING_SETTINGS = 0x03
+    DD_START_STOP_STREAMING_POLLING = 0x06
+    DD_START_STOP_STREAMING_INTERRUPT = 0x0A
 
 
 class CommandId(Enum):
