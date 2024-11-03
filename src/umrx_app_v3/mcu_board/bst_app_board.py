@@ -1,9 +1,9 @@
 import logging
-import struct
 import time
 from typing import Any
 
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
+from umrx_app_v3.mcu_board.commands.app_switch import AppSwitchCmd
 from umrx_app_v3.mcu_board.commands.board_info import BoardInfo, BoardInfoCmd
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd
 from umrx_app_v3.mcu_board.commands.streaming import StopInterruptStreamingCmd, StopPollingStreamingCmd
@@ -31,9 +31,8 @@ class ApplicationBoard:
         payload = SetVddVddioCmd.assemble(vdd, vddio)
         self.protocol.send_receive(payload)
 
-    def switch_app(self, address: int | None = None) -> None:
-        address_serialized = (int(a) for a in struct.pack(">L", address))
-        payload = 0x01, 0x30, *address_serialized
+    def switch_app(self, address: int = 0) -> None:
+        payload = AppSwitchCmd.assemble(address)
         self.protocol.send_receive(payload)
 
     def start_communication(self) -> None:
