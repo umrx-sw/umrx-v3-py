@@ -1,12 +1,13 @@
 import logging
 import time
+from array import array
 from typing import Any
 
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
 from umrx_app_v3.mcu_board.bst_protocol_constants import I2CMode
 from umrx_app_v3.mcu_board.commands.app_switch import AppSwitchCmd
 from umrx_app_v3.mcu_board.commands.board_info import BoardInfo, BoardInfoCmd
-from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd
+from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd, I2CReadCmd
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd
 from umrx_app_v3.mcu_board.commands.streaming import StopInterruptStreamingCmd, StopPollingStreamingCmd
 from umrx_app_v3.mcu_board.commands.timer import StopTimerCmd
@@ -68,3 +69,10 @@ class ApplicationBoard:
     def configure_i2c(self, mode: I2CMode = I2CMode.STANDARD_MODE) -> None:
         for payload in I2CConfigureCmd.assemble(mode):
             self.protocol.send_receive(payload)
+
+    def read_i2c(self, i2c_address: int, register_address: int, bytes_to_read: int) -> array[int]:
+        payload = I2CReadCmd.assemble(
+            i2c_address=i2c_address, register_address=register_address, bytes_to_read=bytes_to_read
+        )
+        response = self.protocol.send_receive(payload)
+        return I2CReadCmd.parse(response)
