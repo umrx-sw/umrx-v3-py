@@ -1,4 +1,5 @@
 import logging
+import struct
 from array import array
 from collections.abc import Generator
 
@@ -9,6 +10,7 @@ from umrx_app_v3.mcu_board.bst_protocol_constants import (
     I2CMode,
     InterfaceSDO,
     SensorInterface,
+    StreamingDDMode,
 )
 from umrx_app_v3.mcu_board.commands.command import Command
 
@@ -51,3 +53,34 @@ class I2CConfigureCmd(I2CCmd):
 
     @staticmethod
     def parse(message: array[int]) -> None: ...
+
+
+class I2CReadCmd(I2CCmd):
+    @staticmethod
+    def assemble(i2c_address: int, register_address: int, bytes_to_read: int) -> array[int]:
+        i2c_interface = 0
+        sensor_id, analog_switch = 1, 1
+        i2c_address_serialized = (int(a) for a in struct.pack(">H", i2c_address))
+        bytes_to_read_serialized = (int(a) for a in struct.pack(">H", bytes_to_read))
+        write_only_once = 1
+        delay_between_writes = 0
+        read_response = 1
+        payload = (
+            CommandType.DD_GET.value,
+            CommandId.SENSOR_WRITE_AND_READ.value,
+            StreamingDDMode.BURST_MODE.value,
+            i2c_interface,
+            sensor_id,
+            analog_switch,
+            *i2c_address_serialized,
+            register_address,
+            *bytes_to_read_serialized,
+            write_only_once,
+            delay_between_writes,
+            read_response,
+        )
+        return Command.create_message_from(payload)
+
+    @staticmethod
+    def parse(message: array[int]) -> array[int]:
+        pass

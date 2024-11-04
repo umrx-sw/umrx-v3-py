@@ -121,6 +121,12 @@ class CommInterface(Enum):
     BLE = 2
 
 
+class StreamingDDMode(Enum):
+    BURST_MODE = 1
+    NORMAL_MODE = 2
+    BURST_MODE_CONTINUOUS = 3
+
+
 class I2CMode(Enum):
     STANDARD_MODE = 0  # Standard mode - 100kHz
     FAST_MODE = 1  # Fast mode - 400kHz
