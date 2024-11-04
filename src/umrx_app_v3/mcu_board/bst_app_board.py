@@ -3,8 +3,10 @@ import time
 from typing import Any
 
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
+from umrx_app_v3.mcu_board.bst_protocol_constants import I2CMode
 from umrx_app_v3.mcu_board.commands.app_switch import AppSwitchCmd
 from umrx_app_v3.mcu_board.commands.board_info import BoardInfo, BoardInfoCmd
+from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd
 from umrx_app_v3.mcu_board.commands.streaming import StopInterruptStreamingCmd, StopPollingStreamingCmd
 from umrx_app_v3.mcu_board.commands.timer import StopTimerCmd
@@ -62,3 +64,7 @@ class ApplicationBoard:
     def disable_timer(self) -> None:
         payload = StopTimerCmd.assemble()
         self.protocol.send_receive(payload)
+
+    def configure_i2c(self, mode: I2CMode = I2CMode.STANDARD_MODE) -> None:
+        for payload in I2CConfigureCmd.assemble(mode):
+            self.protocol.send_receive(payload)
