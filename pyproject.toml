@@ -90,6 +90,7 @@ markers =[
   "bst_protocol: mark tests for Bosch SensorTec protocol on top of USB data transfer",
   "app_board: mark tests for application Board 3.0 test",
   "bmi08x: mart test for bmi088 board",
+  "commands: mark communication commands"
 ]
 
 [tool.pytest-watcher]

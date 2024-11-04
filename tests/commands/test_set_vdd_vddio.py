@@ -3,7 +3,7 @@ import pytest
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd
 
 
-@pytest.mark.app_board
+@pytest.mark.commands
 def test_app_board_voltage_to_payload(set_vdd_vddio_command: SetVddVddioCmd) -> None:
     payload = set_vdd_vddio_command.voltage_to_payload(1.8)
     assert payload == (0x07, 0x08)

@@ -5,7 +5,7 @@ import pytest
 from umrx_app_v3.mcu_board.commands.board_info import BoardInfo, BoardInfoCmd
 
 
-@pytest.mark.app_board
+@pytest.mark.commands
 def test_app_board_parse_board_info(board_info_cmd: BoardInfoCmd) -> None:
     resp = array("B", [0xAA, 0x0F, 0x01, 0x00, 0x42, 0x1F, 0x01, 0x41, 0x00, 0x10, 0x00, 0x09, 0x05, 0x0D, 0x0A])
     board_info = board_info_cmd.parse(resp)
