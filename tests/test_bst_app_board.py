@@ -6,6 +6,7 @@ import pytest
 
 from umrx_app_v3.mcu_board.bst_app_board import ApplicationBoard
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
+from umrx_app_v3.mcu_board.bst_protocol_constants import I2CMode
 from umrx_app_v3.mcu_board.comm.serial_comm import SerialCommunication
 
 logger = logging.getLogger(__name__)
@@ -64,6 +65,15 @@ def test_app_board_stop_interrupt_streaming(bst_app_board_with_serial: Applicati
 
 
 @pytest.mark.app_board
+def test_app_board_app_switch(bst_app_board_with_serial: ApplicationBoard) -> None:
+    with (
+        patch.object(bst_app_board_with_serial.protocol, "send_receive") as mocked_send_receive,
+    ):
+        bst_app_board_with_serial.switch_app(0xAABB)
+        mocked_send_receive.assert_called_once()
+
+
+@pytest.mark.app_board
 def test_app_board_switch_usb_mtp(bst_app_board_with_serial: ApplicationBoard) -> None:
     with (
         patch.object(bst_app_board_with_serial, "start_communication") as mocked_start_communication,
@@ -83,3 +93,12 @@ def test_app_board_switch_usb_dfu_bl(bst_app_board_with_serial: ApplicationBoard
         bst_app_board_with_serial.switch_usb_dfu_bl()
         mocked_start_communication.assert_called_once()
         mocked_switch_app.assert_called_once()
+
+
+@pytest.mark.app_board
+def test_app_board_configure_i2c(bst_app_board_with_serial: ApplicationBoard) -> None:
+    with (
+        patch.object(bst_app_board_with_serial.protocol, "send_receive") as mocked_send_receive,
+    ):
+        bst_app_board_with_serial.configure_i2c(I2CMode.STANDARD_MODE)
+        assert mocked_send_receive.call_count == 2
