@@ -116,6 +116,37 @@ class ErrorCode(Enum):
     ERROR_UNDEFINED_CODE = -100
 
 
+class MultiIOPin(Enum):
+    # APP3.0 pins
+    MINI_SHUTTLE_PIN_1_4 = 0x10  # GPIO0
+    MINI_SHUTTLE_PIN_1_5 = 0x11  # GPIO1
+    MINI_SHUTTLE_PIN_1_6 = 0x12  # GPIO2/INT1
+    MINI_SHUTTLE_PIN_1_7 = 0x13  # GPIO3/INT2
+    MINI_SHUTTLE_PIN_2_5 = 0x14  # GPIO4
+    MINI_SHUTTLE_PIN_2_6 = 0x15  # GPIO5
+    MINI_SHUTTLE_PIN_2_1 = 0x16  # CS
+    MINI_SHUTTLE_PIN_2_3 = 0x17  # SDO
+    MINI_SHUTTLE_PIN_2_7 = 0x1D  # GPIO6
+    MINI_SHUTTLE_PIN_2_8 = 0x1E  # GPIO7
+
+    # Additional 3.0 / 3.1 pins
+    LED_R_PIN = 0x18
+    LED_G_PIN = 0x19
+    LED_B_PIN = 0x1A
+    BUTTON_1_PIN = 0x1B
+    BUTTON_2_PIN = 0x1C
+
+    # 3.1 HW-specific pins
+    PMIC_RESET_PIN = 0x20
+    PMIC_LSLDO_PIN = 0x21
+    PMIC_CD_PIN = 0x22
+    PMIC_INTERRUPT_PIN = 0x23
+    PMIC_VDDIO_EN = 0x24
+    PMIC_VDD_EN = 0x25
+    PMIC_LS_EN = 0x26  # level shifter
+    PMIC_VIN_DEC = 0x27  # Vin detection
+
+
 class PinDirection(Enum):
     INPUT = 0
     OUTPUT = 1
@@ -176,32 +207,6 @@ class SPIMode(Enum):
     MODE1 = 0x01  # SPI Mode 1: CPOL=0; CPHA=1
     MODE2 = 0x02  # SPI Mode 2: CPOL=1; CPHA=0
     MODE3 = 0x03  # SPI Mode 3: CPOL=1; CPHA=1
-
-
-class MultiIOPin(Enum):
-    SHUTTLE_PIN_7 = 0x09  # CS pin
-    SHUTTLE_PIN_8 = 0x05  # Multi-IO 5
-    SHUTTLE_PIN_9 = 0x00  # Multi-IO 0
-    SHUTTLE_PIN_14 = 0x01  # Multi-IO 1
-    SHUTTLE_PIN_15 = 0x02  # Multi-IO 2
-    SHUTTLE_PIN_16 = 0x03  # Multi-IO 3
-    SHUTTLE_PIN_19 = 0x08  # Multi-IO 8
-    SHUTTLE_PIN_20 = 0x06  # Multi-IO 6
-    SHUTTLE_PIN_21 = 0x07  # Multi-IO 7
-    SHUTTLE_PIN_22 = 0x04  # Multi-IO 4
-    SHUTTLE_PIN_SDO = 0x1F
-
-    # APP3.0 pins
-    MINI_SHUTTLE_PIN_1_4 = 0x10  # GPIO0
-    MINI_SHUTTLE_PIN_1_5 = 0x11  # GPIO1
-    MINI_SHUTTLE_PIN_1_6 = 0x12  # GPIO2/INT1
-    MINI_SHUTTLE_PIN_1_7 = 0x13  # GPIO3/INT2
-    MINI_SHUTTLE_PIN_2_5 = 0x14  # GPIO4
-    MINI_SHUTTLE_PIN_2_6 = 0x15  # GPIO5
-    MINI_SHUTTLE_PIN_2_1 = 0x16  # CS
-    MINI_SHUTTLE_PIN_2_3 = 0x17  # SDO
-    MINI_SHUTTLE_PIN_2_7 = 0x1D  # GPIO6
-    MINI_SHUTTLE_PIN_2_8 = 0x1E  # GPIO7
 
 
 class SensorInterface(Enum):
