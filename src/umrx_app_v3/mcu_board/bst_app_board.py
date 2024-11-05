@@ -8,7 +8,7 @@ from umrx_app_v3.mcu_board.bst_protocol_constants import I2CMode
 from umrx_app_v3.mcu_board.commands.app_switch import AppSwitchCmd
 from umrx_app_v3.mcu_board.commands.board_info import BoardInfo, BoardInfoCmd
 from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd, I2CReadCmd
-from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd
+from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd, Volts
 from umrx_app_v3.mcu_board.commands.streaming import StopInterruptStreamingCmd, StopPollingStreamingCmd
 from umrx_app_v3.mcu_board.commands.timer import StopTimerCmd
 
@@ -30,7 +30,7 @@ class ApplicationBoard:
         response = self.protocol.send_receive(cmd)
         return BoardInfoCmd.parse(response)
 
-    def set_vdd_vddio(self, vdd: float, vddio: float) -> None:
+    def set_vdd_vddio(self, vdd: Volts, vddio: Volts) -> None:
         payload = SetVddVddioCmd.assemble(vdd, vddio)
         self.protocol.send_receive(payload)
 

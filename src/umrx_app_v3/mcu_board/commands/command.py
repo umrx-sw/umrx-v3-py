@@ -8,6 +8,9 @@ from typing import Any, Optional
 logger = logging.getLogger(__name__)
 
 
+class CommandError(Exception): ...
+
+
 class Command(abc.ABC):
     @staticmethod
     @abc.abstractmethod
