@@ -1,9 +1,9 @@
 import logging
-import sys
 from array import array
 from typing import Any
 
 import serial
+import serial.tools.list_ports
 
 from umrx_app_v3.mcu_board.comm.comm import Communication
 
@@ -47,30 +47,10 @@ class SerialCommunication(Communication):
         return self.receive()
 
     def find_device(self) -> bool:
-        match sys.platform:
-            case "linux":
-                return self.find_device_on_linux()
-            case "win32":
-                error_message = "Searching device is not implemented for Windows!"
-                raise NotImplementedError(error_message)
-            case "darwin":
-                error_message = "Searching device is not implemented for Mac!"
-                raise NotImplementedError(error_message)
-            case _:
-                error_message = f"Searching device is not implemented for {sys.platform}!"
-                raise NotImplementedError(error_message)
-
-    def find_device_on_linux(self) -> bool:
-        import pyudev
-
-        context = pyudev.Context()
-        for device in context.list_devices(subsystem="tty"):
-            model_id = device.get("ID_MODEL_ID")
-            vendor_id = device.get("ID_VENDOR_ID")
-            if model_id is None or vendor_id is None:
-                continue
-            if int(model_id, 16) == self.pid and int(vendor_id, 16) == self.vid:
-                self.port_name = device.device_node
+        ports = serial.tools.list_ports.comports()
+        for port_info in sorted(ports):
+            if port_info.vid == self.vid and port_info.pid == self.pid:
+                self.port_name = port_info.device
                 logger.debug(f"Found board: port={self.port_name}")
                 return True
         return False

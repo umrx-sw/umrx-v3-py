@@ -16,7 +16,6 @@ repository = "https://github.com/umrx-sw/umrx-v3-py"
 pyusb = "1.2.1"
 python = ">=3.12.0,<3.14.0"
 pyserial = "^3.5"
-pyudev = "^0.24.3"
 
 [tool.poetry.dev-dependencies]
 coverage = { extras = ["toml"], version = ">=7.2.5" }
