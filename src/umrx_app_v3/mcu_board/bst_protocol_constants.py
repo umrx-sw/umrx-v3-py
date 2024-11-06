@@ -177,36 +177,36 @@ class I2CMode(Enum):
 
 
 class SPISpeed(Enum):
-    SPI_10_MHZ = 6
-    SPI_7_5_MHZ = 8
-    SPI_6_MHZ = 10
-    SPI_5_MHZ = 12
-    SPI_3_75_MHZ = 16
-    SPI_3_MHZ = 20
-    SPI_2_5_MHZ = 24
-    SPI_2_MHZ = 30
-    SPI_1_5_MHZ = 40
-    SPI_1_25_MHZ = 48
-    SPI_1_2_MHZ = 50
-    SPI_1_MHZ = 60
-    SPI_750_KHZ = 80
-    SPI_600_KHZ = 100
-    SPI_500_KHZ = 120
-    SPI_400_KHZ = 150
-    SPI_300_KHZ = 200
-    SPI_250_KHZ = 240
+    MHz_10 = 6
+    MHz_7_5 = 8
+    MHz_6 = 10
+    MHz_5 = 12
+    MHz_3_75 = 16
+    MHz_3 = 20
+    MHz_2_5 = 24
+    MHz_2 = 30
+    MHz_1_5 = 40
+    MHz_1_25 = 48
+    MHz_1_2 = 50
+    MHz_1 = 60
+    KHz_750 = 80
+    KHz_600 = 100
+    KHz_500 = 120
+    KHz_400 = 150
+    KHz_300 = 200
+    KHz_250 = 240
 
 
-class SPITransferBits(Enum):
-    SPI8BIT = 8  # 8 bit register read/write
-    SPI16BIT = 16  # 16 bit register read/write
+class SPITransfer(Enum):
+    SPI_8BIT = 8  # 8 bit register read/write
+    SPI_16BIT = 16  # 16 bit register read/write
 
 
 class SPIMode(Enum):
-    MODE0 = 0x00  # SPI Mode 0: CPOL=0; CPHA=0
-    MODE1 = 0x01  # SPI Mode 1: CPOL=0; CPHA=1
-    MODE2 = 0x02  # SPI Mode 2: CPOL=1; CPHA=0
-    MODE3 = 0x03  # SPI Mode 3: CPOL=1; CPHA=1
+    MODE_0 = 0x00  # SPI Mode 0: CPOL=0; CPHA=0
+    MODE_1 = 0x01  # SPI Mode 1: CPOL=0; CPHA=1
+    MODE_2 = 0x02  # SPI Mode 2: CPOL=1; CPHA=0
+    MODE_3 = 0x03  # SPI Mode 3: CPOL=1; CPHA=1
 
 
 class SensorInterface(Enum):
@@ -221,9 +221,8 @@ class I2CBus(Enum):
 
 
 class SPIBus(Enum):
-    BUS_SPI_0 = 0
-    BUS_SPI_1 = 1
-    BUS_SPI_MAX = 2
+    BUS_0 = 0
+    BUS_1 = 1
 
 
 class StreamingMode(Enum):
