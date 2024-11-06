@@ -1,4 +1,5 @@
 import logging
+import time
 from array import array
 from unittest.mock import patch
 
@@ -6,7 +7,7 @@ import pytest
 
 from umrx_app_v3.mcu_board.bst_app_board import ApplicationBoard
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
-from umrx_app_v3.mcu_board.bst_protocol_constants import I2CMode
+from umrx_app_v3.mcu_board.bst_protocol_constants import I2CMode, MultiIOPin, PinDirection, PinValue
 from umrx_app_v3.mcu_board.comm.serial_comm import SerialCommunication
 
 logger = logging.getLogger(__name__)
@@ -102,3 +103,44 @@ def test_app_board_configure_i2c(bst_app_board_with_serial: ApplicationBoard) ->
     ):
         bst_app_board_with_serial.configure_i2c(I2CMode.STANDARD_MODE)
         assert mocked_send_receive.call_count == 2
+
+
+@pytest.mark.app_board
+def test_app_board_read_i2c(bst_app_board_with_serial: ApplicationBoard) -> None:
+    with patch.object(
+        bst_app_board_with_serial.protocol,
+        "send_receive",
+        return_value=array("B", (0xAA, 0x0E, 0x01, 0x00, 0x42, 0x16, 0x01, 0x00, 0x01, 0x01, 0x00, 0x1E, 0x0D, 0x0A)),
+    ):
+        resp = bst_app_board_with_serial.read_i2c(0x18, 0x0, 0x1)
+
+        assert resp == array("B", (0x1E,))
+
+
+@pytest.mark.app_board
+def test_app_board_start_communication(bst_app_board_with_serial: ApplicationBoard) -> None:
+    with patch.object(bst_app_board_with_serial.protocol, "send_receive"), patch.object(time, "sleep"):
+        bst_app_board_with_serial.start_communication()
+
+
+@pytest.mark.app_board
+def test_app_board_set_pin_config(bst_app_board_with_serial: ApplicationBoard) -> None:
+    with patch.object(bst_app_board_with_serial.protocol, "send_receive") as mocked_send_receive:
+        bst_app_board_with_serial.set_pin_config(
+            pin=MultiIOPin.MINI_SHUTTLE_PIN_2_1, direction=PinDirection.OUTPUT, value=PinValue.HIGH
+        )
+
+        expected_payload = array("B", (0xAA, 0x0C, 0x01, 0x15, 0x80, 0x16, 0x00, 0x01, 0x00, 0x01, 0x0D, 0x0A))
+        mocked_send_receive.assert_called_with(expected_payload)
+
+
+@pytest.mark.app_board
+def test_app_board_get_pin_config(bst_app_board_with_serial: ApplicationBoard) -> None:
+    with patch.object(
+        bst_app_board_with_serial.protocol,
+        "send_receive",
+        return_value=array("B", (0xAA, 0x0E, 0x01, 0x00, 0x42, 0x15, 0x00, 0x16, 0x00, 0x01, 0x00, 0x00, 0x0D, 0x0A)),
+    ):
+        direction, value = bst_app_board_with_serial.get_pin_config(MultiIOPin.MINI_SHUTTLE_PIN_2_6)
+        assert direction == PinDirection.OUTPUT
+        assert value == PinValue.LOW

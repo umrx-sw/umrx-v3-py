@@ -8,7 +8,7 @@ from umrx_app_v3.mcu_board.bst_protocol_constants import I2CMode, MultiIOPin, Pi
 from umrx_app_v3.mcu_board.commands.app_switch import AppSwitchCmd
 from umrx_app_v3.mcu_board.commands.board_info import BoardInfo, BoardInfoCmd
 from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd, I2CReadCmd
-from umrx_app_v3.mcu_board.commands.pin_config import SetPinConfigCmd
+from umrx_app_v3.mcu_board.commands.pin_config import GetPinConfigCmd, SetPinConfigCmd
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd, Volts
 from umrx_app_v3.mcu_board.commands.streaming import StopInterruptStreamingCmd, StopPollingStreamingCmd
 from umrx_app_v3.mcu_board.commands.timer import StopTimerCmd
@@ -81,3 +81,8 @@ class ApplicationBoard:
     def set_pin_config(self, pin: MultiIOPin, direction: PinDirection, value: PinValue) -> None:
         payload = SetPinConfigCmd.assemble(pin=pin, direction=direction, value=value)
         self.protocol.send_receive(payload)
+
+    def get_pin_config(self, pin: MultiIOPin) -> tuple[PinDirection, PinValue]:
+        payload = GetPinConfigCmd.assemble(pin=pin)
+        response = self.protocol.send_receive(payload)
+        return GetPinConfigCmd.parse(response)

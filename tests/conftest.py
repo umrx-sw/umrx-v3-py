@@ -12,7 +12,7 @@ from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
 from umrx_app_v3.mcu_board.commands.app_switch import AppSwitchCmd
 from umrx_app_v3.mcu_board.commands.board_info import BoardInfoCmd
 from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd, I2CReadCmd
-from umrx_app_v3.mcu_board.commands.pin_config import SetPinConfigCmd
+from umrx_app_v3.mcu_board.commands.pin_config import GetPinConfigCmd, SetPinConfigCmd
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd
 from umrx_app_v3.shuttle_board.bmi088 import BMI088
 
@@ -44,6 +44,11 @@ def set_vdd_vddio_command() -> SetVddVddioCmd:
 @pytest.fixture(scope="session", autouse=True)
 def set_pin_config_command() -> SetPinConfigCmd:
     return SetPinConfigCmd()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def get_pin_config_command() -> GetPinConfigCmd:
+    return GetPinConfigCmd()
 
 
 @pytest.fixture(scope="session", autouse=True)
