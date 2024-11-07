@@ -8,6 +8,7 @@ from typing import Any
 import usb.core
 
 from umrx_app_v3.mcu_board.comm.comm import Communication
+from umrx_app_v3.mcu_board.commands.command import Command
 
 logger = logging.getLogger(__name__)
 
@@ -121,7 +122,7 @@ class UsbCommunication(Communication):
         while not is_valid_packet_received and reads_done_so_far < max_num_reads:
             packet = self._receive()
             reads_done_so_far += 1
-            is_valid_packet_received = self.check_message(packet)
+            is_valid_packet_received = Command.check_message(packet)
             logger.debug(f"[recv] num reads made: {reads_done_so_far}")
         return self.extract_message_from(packet)
 
