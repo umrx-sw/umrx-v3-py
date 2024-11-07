@@ -74,33 +74,16 @@ def test_command_spi_read_assemble(spi_read_command: SPIReadCmd) -> None:
     assert payload == expected_payload
 
 
-# @pytest.mark.commands
-# def test_command_i2c_read_parse_valid_response(i2c_read_command: I2CReadCmd) -> None:
-#     valid_resp = b"\xaa\x0e\x01\x00B\x16\x01\x00\x01\x01\x00\x1e\r\n"
-#     payload = i2c_read_command.parse(valid_resp)
-#     assert payload == array("B", (0x1E,))
-#
-#
-# @pytest.mark.commands
-# def test_command_i2c_read_parse_invalid_response(i2c_read_command: I2CReadCmd) -> None:
-#     invalid_resp_header = b"XD\x01\x00B\x16\x01\x00\x01\x01\x00\x1e\r\n"
-#     with pytest.raises(CommandError):
-#         i2c_read_command.parse(invalid_resp_header)
-#
-#     invalid_resp_status = b"\xaa\x0e\x01\x03B\x16\x01\x00\x01\x01\x00\x1e\r\n"
-#     with pytest.raises(CommandError):
-#         i2c_read_command.parse(invalid_resp_status)
-#
-#     invalid_resp_feature = b"\xaa\x0e\x01\x00B\x11\x01\x00\x01\x01\x00\x1e\r\n"
-#     with pytest.raises(CommandError):
-#         i2c_read_command.parse(invalid_resp_feature)
-#
-#
+@pytest.mark.commands
+def test_command_spi_read_parse_valid_response(spi_read_command: SPIReadCmd) -> None:
+    valid_resp = array('B', (0xAA, 0x14, 0x01, 0x00, 0x42, 0x16, 0x01, 0x92, 0x07,
+                             0x01, 0x00, 0x00, 0x67, 0x00, 0xDA, 0x00, 0x51, 0x15, 0x0D, 0x0A,))
+    payload = spi_read_command.parse(valid_resp)
+    assert len(payload) == 7
+    assert payload == array("B", (0x00, 0x67, 0x00, 0xDA, 0x00, 0x51, 0x15))
 
-#
-#
-# @pytest.mark.commands
-# def test_command_i2c_read_parse_extended_read(i2c_read_command: I2CReadCmd) -> None:
-#     extended_read_resp = b"\xaa\x0f\x01\x00C\x16\x01\x00\x00\x02\x00\x1e\x1d\r\n"
-#     payload = i2c_read_command.parse(extended_read_resp)
-#     assert payload == array("B", (0x1E, 0x1D))
+    valid_resp = array('B', (0xAA, 0x13, 0x01, 0x00, 0x42, 0x16, 0x01, 0x82, 0x06, 0x01, 0x00,
+                             0x3F, 0x00, 0xFE, 0xFF, 0x17, 0x00, 0x0D, 0x0A,))
+    payload = spi_read_command.parse(valid_resp)
+    assert len(payload) == 6
+    assert payload == array("B", (0x3F, 0x00, 0xFE, 0xFF, 0x17, 0x00,))

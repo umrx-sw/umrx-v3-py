@@ -91,4 +91,5 @@ class SPIReadCmd(SPICmd):
         return Command.create_message_from(payload)
 
     @staticmethod
-    def parse(message: array[int]) -> array[int]: ...
+    def parse(message: array[int]) -> array[int]:
+        return Command.parse_read_response(message)

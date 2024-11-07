@@ -85,28 +85,7 @@ class I2CReadCmd(I2CCmd):
 
     @staticmethod
     def parse(message: array[int]) -> array[int]:
-        if not Command.check_message(message):
-            error_message = f"Cannot parse invalid message {message}"
-            raise CommandError(error_message)
-        message_len = message[1]
-        message_feature = message[CoinesResponse.DD_RESPONSE_FEATURE_POSITION.value]
-        feature_correct = message_feature == CommandId.SENSOR_WRITE_AND_READ.value
-        message_status = message[CoinesResponse.DD_RESPONSE_STATUS_POSITION.value]
-        status_ok = message_status == ErrorCode.SUCCESS.value
-        if not (feature_correct and status_ok):
-            error_message = f"Error in message: {feature_correct=}, {status_ok=}, {message=}"
-            raise CommandError(error_message)
-
-        extended_read_idx = CoinesResponse.DD_RESPONSE_COMMAND_ID_POSITION.value
-        if message[extended_read_idx] == CoinesResponse.DD_RESPONSE_EXTENDED_READ_ID.value:
-            payload_msb = message[CoinesResponse.DD_RESPONSE_PACKET_LENGTH_MSB_POSITION.value]
-            payload_lsb = message[CoinesResponse.DD_RESPONSE_PACKET_LENGTH_LSB_POSITION.value]
-            payload_len = (payload_msb << 8) | payload_lsb
-        else:
-            payload_len = message_len - CoinesResponse.DD_RESPONSE_OVERHEAD_BYTES.value
-
-        payload_start = CoinesResponse.DD_RESPONSE_OVERHEAD_BYTES.value - 2
-        return array("B", (int(el) for el in message[payload_start : payload_start + payload_len]))
+        return Command.parse_read_response(message)
 
 
 class I2CWriteCmd(I2CCmd):
