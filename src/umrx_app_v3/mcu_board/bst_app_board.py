@@ -4,13 +4,14 @@ from array import array
 from typing import Any
 
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
-from umrx_app_v3.mcu_board.bst_protocol_constants import I2CMode, MultiIOPin, PinDirection, PinValue
+from umrx_app_v3.mcu_board.bst_protocol_constants import I2CMode, MultiIOPin, PinDirection, PinValue, SPISpeed
 from umrx_app_v3.mcu_board.commands.app_switch import AppSwitchCmd
 from umrx_app_v3.mcu_board.commands.board_info import BoardInfo, BoardInfoCmd
 from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd, I2CReadCmd
 from umrx_app_v3.mcu_board.commands.pin_config import GetPinConfigCmd, SetPinConfigCmd
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd, Volts
 from umrx_app_v3.mcu_board.commands.streaming import StopInterruptStreamingCmd, StopPollingStreamingCmd
+from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd, SPIReadCmd
 from umrx_app_v3.mcu_board.commands.timer import StopTimerCmd
 
 logger = logging.getLogger(__name__)
@@ -89,3 +90,14 @@ class ApplicationBoard:
         payload = GetPinConfigCmd.assemble(pin=pin)
         response = self.protocol.send_receive(payload)
         return GetPinConfigCmd.parse(response)
+
+    def configure_spi(self, speed: SPISpeed = SPISpeed.MHz_5) -> None:
+        for payload in SPIConfigureCmd.assemble(speed):
+            self.protocol.send_receive(payload)
+
+    def read_spi(self, cs_pin: MultiIOPin, register_address: int, bytes_to_read: int) -> array[int]:
+        payload = SPIReadCmd.assemble(
+            cs_pin=cs_pin, register_address=register_address, bytes_to_read=bytes_to_read
+        )
+        response = self.protocol.send_receive(payload)
+        return SPIReadCmd.parse(response)
