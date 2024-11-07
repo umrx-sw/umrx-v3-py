@@ -10,8 +10,8 @@ from umrx_app_v3.mcu_board.commands.board_info import BoardInfo, BoardInfoCmd
 from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd, I2CReadCmd
 from umrx_app_v3.mcu_board.commands.pin_config import GetPinConfigCmd, SetPinConfigCmd
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd, Volts
-from umrx_app_v3.mcu_board.commands.streaming import StopInterruptStreamingCmd, StopPollingStreamingCmd
 from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd, SPIReadCmd
+from umrx_app_v3.mcu_board.commands.streaming import StopInterruptStreamingCmd, StopPollingStreamingCmd
 from umrx_app_v3.mcu_board.commands.timer import StopTimerCmd
 
 logger = logging.getLogger(__name__)
@@ -96,8 +96,6 @@ class ApplicationBoard:
             self.protocol.send_receive(payload)
 
     def read_spi(self, cs_pin: MultiIOPin, register_address: int, bytes_to_read: int) -> array[int]:
-        payload = SPIReadCmd.assemble(
-            cs_pin=cs_pin, register_address=register_address, bytes_to_read=bytes_to_read
-        )
+        payload = SPIReadCmd.assemble(cs_pin=cs_pin, register_address=register_address, bytes_to_read=bytes_to_read)
         response = self.protocol.send_receive(payload)
         return SPIReadCmd.parse(response)
