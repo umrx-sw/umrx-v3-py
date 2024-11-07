@@ -7,7 +7,7 @@ from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
 from umrx_app_v3.mcu_board.bst_protocol_constants import I2CMode, MultiIOPin, PinDirection, PinValue, SPISpeed
 from umrx_app_v3.mcu_board.commands.app_switch import AppSwitchCmd
 from umrx_app_v3.mcu_board.commands.board_info import BoardInfo, BoardInfoCmd
-from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd, I2CReadCmd
+from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd, I2CReadCmd, I2CWriteCmd
 from umrx_app_v3.mcu_board.commands.pin_config import GetPinConfigCmd, SetPinConfigCmd
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd, Volts
 from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd, SPIReadCmd
@@ -81,6 +81,12 @@ class ApplicationBoard:
         )
         response = self.protocol.send_receive(payload)
         return I2CReadCmd.parse(response)
+
+    def write_i2c(self, i2c_address: int, start_register_address: int, data_to_write: array[int]) -> None:
+        payload = I2CWriteCmd.assemble(
+            i2c_address=i2c_address, start_register_address=start_register_address, data_to_write=data_to_write
+        )
+        self.protocol.send_receive(payload)
 
     def set_pin_config(self, pin: MultiIOPin, direction: PinDirection, value: PinValue) -> None:
         payload = SetPinConfigCmd.assemble(pin=pin, direction=direction, value=value)

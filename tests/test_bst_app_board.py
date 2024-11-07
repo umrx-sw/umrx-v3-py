@@ -116,6 +116,20 @@ def test_app_board_read_i2c(bst_app_board_with_serial: ApplicationBoard) -> None
 
         assert resp == array("B", (0x1E,))
 
+@pytest.mark.app_board
+def test_app_board_write_i2c(bst_app_board_with_serial: ApplicationBoard) -> None:
+    with patch.object(
+        bst_app_board_with_serial.protocol,
+        "send_receive",
+    ) as mocked_send_receive:
+        bst_app_board_with_serial.write_i2c(0x68, 0x0F,
+                                            array('B', (0x03,)))
+
+        expected_payload = array('B', (0xAA, 0x13, 0x01, 0x16, 0x01, 0x00, 0x01, 0x01, 0x00,
+                                       0x68, 0x0F, 0x00, 0x01, 0x01, 0x00, 0x00, 0x03, 0x0D, 0x0A,))
+        mocked_send_receive.assert_called_with(expected_payload)
+
+
 
 @pytest.mark.app_board
 def test_app_board_start_communication(bst_app_board_with_serial: ApplicationBoard) -> None:
