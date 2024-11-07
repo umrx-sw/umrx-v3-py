@@ -11,7 +11,7 @@ from umrx_app_v3.mcu_board.comm.serial_comm import SerialCommunication
 from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
 from umrx_app_v3.mcu_board.commands.app_switch import AppSwitchCmd
 from umrx_app_v3.mcu_board.commands.board_info import BoardInfoCmd
-from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd, I2CReadCmd
+from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd, I2CReadCmd, I2CWriteCmd
 from umrx_app_v3.mcu_board.commands.pin_config import GetPinConfigCmd, SetPinConfigCmd
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd
 from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd, SPIReadCmd
@@ -60,6 +60,11 @@ def i2c_configure_command() -> I2CConfigureCmd:
 @pytest.fixture(scope="session", autouse=True)
 def i2c_read_command() -> I2CReadCmd:
     return I2CReadCmd()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def i2c_write_command() -> I2CWriteCmd:
+    return I2CWriteCmd()
 
 
 @pytest.fixture(scope="session", autouse=True)

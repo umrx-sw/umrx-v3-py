@@ -107,3 +107,38 @@ class I2CReadCmd(I2CCmd):
 
         payload_start = CoinesResponse.DD_RESPONSE_OVERHEAD_BYTES.value - 2
         return array("B", (int(el) for el in message[payload_start : payload_start + payload_len]))
+
+
+class I2CWriteCmd(I2CCmd):
+    @staticmethod
+    def assemble(i2c_address: int, start_register_address: int, data_to_write: array[int]) -> array[int]:
+        max_payload_size = 46
+        if len(data_to_write) > max_payload_size:
+            error_message = f"Cannot write > {max_payload_size} at once, attempted {len(data_to_write)}. Split payload"
+            raise CommandError(error_message)
+        i2c_interface = 0
+        sensor_id, analog_switch = 1, 1
+        i2c_address_serialized = (int(a) for a in struct.pack(">H", i2c_address))
+        write_only_once = 1
+        delay_between_writes = 0
+        read_response = 0
+        payload = (
+            CommandType.DD_SET.value,
+            CommandId.SENSOR_WRITE_AND_READ.value,
+            StreamingDDMode.BURST_MODE.value,
+            i2c_interface,
+            sensor_id,
+            analog_switch,
+            *i2c_address_serialized,
+            start_register_address,
+            0,
+            len(data_to_write),
+            write_only_once,
+            delay_between_writes,
+            read_response,
+            *data_to_write,
+        )
+        return Command.create_message_from(payload)
+
+    @staticmethod
+    def parse(message: array[int]) -> None: ...
