@@ -25,6 +25,9 @@ class ApplicationBoard:
             kw["protocol"] if kw.get("protocol") and isinstance(kw["protocol"], BstProtocol) else BstProtocol(kw)
         )
 
+    def initialize(self) -> None:
+        self.protocol.initialize()
+
     @property
     def board_info(self) -> BoardInfo:
         cmd = BoardInfoCmd.assemble()

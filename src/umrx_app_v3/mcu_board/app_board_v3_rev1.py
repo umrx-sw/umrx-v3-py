@@ -26,7 +26,3 @@ class ApplicationBoardV3Rev1(ApplicationBoard):
     def initialize_usb(self) -> None:
         if not self.usb_comm.is_initialized:
             self.usb_comm.initialize()
-
-    def initialize(self) -> None:
-        if not self.protocol.communication.is_initialized:
-            self.protocol.communication.initialize()

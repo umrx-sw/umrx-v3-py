@@ -26,6 +26,9 @@ class BstProtocol:
                 error_message = f"Provided communication type {kw['comm']} is not supported"
                 raise ValueError(error_message)
 
+    def initialize(self) -> None:
+        self.communication.connect()
+
     def send(self, message: array | tuple | list) -> bool:
         return self.communication.send(message)
 
