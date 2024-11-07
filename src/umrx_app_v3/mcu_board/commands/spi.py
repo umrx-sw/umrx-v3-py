@@ -15,7 +15,7 @@ from umrx_app_v3.mcu_board.bst_protocol_constants import (
     SPITransfer,
     StreamingDDMode,
 )
-from umrx_app_v3.mcu_board.commands.command import Command
+from umrx_app_v3.mcu_board.commands.command import Command, CommandError
 
 logger = logging.getLogger(__name__)
 
@@ -93,3 +93,36 @@ class SPIReadCmd(SPICmd):
     @staticmethod
     def parse(message: array[int]) -> array[int]:
         return Command.parse_read_response(message)
+
+
+class SPIWriteCmd(Command):
+    @staticmethod
+    def assemble(cs_pin: MultiIOPin, start_register_address: int, data_to_write: array[int]) -> array[int]:
+        ok, message = Command.check_for_max_payload(data_to_write)
+        if not ok:
+            raise CommandError(message)
+        sensor_id, analog_switch = 1, 1
+        device_address = 0, 0
+        write_only_once = 1
+        delay_between_writes = 0
+        read_response = 0
+        payload = (
+            CommandType.DD_SET.value,
+            CommandId.SENSOR_WRITE_AND_READ.value,
+            StreamingDDMode.BURST_MODE.value,
+            cs_pin.value,
+            sensor_id,
+            analog_switch,
+            *device_address,
+            start_register_address & 0x7F,
+            0,
+            len(data_to_write),
+            write_only_once,
+            delay_between_writes,
+            read_response,
+            *data_to_write,
+        )
+        return Command.create_message_from(payload)
+
+    @staticmethod
+    def parse(message: array[int]) -> None: ...

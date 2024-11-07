@@ -3,7 +3,7 @@ from array import array
 import pytest
 
 from umrx_app_v3.mcu_board.bst_protocol_constants import MultiIOPin, SPIBus, SPIMode, SPISpeed
-from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd, SPIReadCmd
+from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd, SPIReadCmd, SPIWriteCmd
 
 
 @pytest.mark.commands
@@ -132,3 +132,75 @@ def test_command_spi_read_parse_valid_response(spi_read_command: SPIReadCmd) -> 
     payload = spi_read_command.parse(valid_resp)
     assert len(payload) == 6
     assert payload == array("B", (0x3F, 0x00, 0xFE, 0xFF, 0x17, 0x00))
+
+
+@pytest.mark.commands
+def test_command_spi_write_assemble(spi_write_command: SPIWriteCmd) -> None:
+    payload = spi_write_command.assemble(
+        cs_pin=MultiIOPin.MINI_SHUTTLE_PIN_2_5, start_register_address=0x0F, data_to_write=array("B", (0x03,))
+    )
+
+    expected_payload = array(
+        "B",
+        (
+            0xAA,
+            0x13,
+            0x01,
+            0x16,
+            0x01,
+            0x14,
+            0x01,
+            0x01,
+            0x00,
+            0x00,
+            0x0F,
+            0x00,
+            0x01,
+            0x01,
+            0x00,
+            0x00,
+            0x03,
+            0x0D,
+            0x0A,
+        ),
+    )
+
+    assert payload == expected_payload
+
+    payload = spi_write_command.assemble(
+        cs_pin=MultiIOPin.MINI_SHUTTLE_PIN_2_1, start_register_address=0x7D, data_to_write=array("B", (0x04,))
+    )
+
+    expected_payload = array(
+        "B",
+        (
+            0xAA,
+            0x13,
+            0x01,
+            0x16,
+            0x01,
+            0x16,
+            0x01,
+            0x01,
+            0x00,
+            0x00,
+            0x7D,
+            0x00,
+            0x01,
+            0x01,
+            0x00,
+            0x00,
+            0x04,
+            0x0D,
+            0x0A,
+        ),
+    )
+
+    assert payload == expected_payload
+
+
+@pytest.mark.commands
+def test_command_spi_write_parse(spi_write_command: SPIWriteCmd) -> None:
+    dummy_response = array("B", (0xD0, 0xDE))
+
+    assert spi_write_command.parse(dummy_response) is None

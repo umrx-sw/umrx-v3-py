@@ -14,7 +14,7 @@ from umrx_app_v3.mcu_board.commands.board_info import BoardInfoCmd
 from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd, I2CReadCmd, I2CWriteCmd
 from umrx_app_v3.mcu_board.commands.pin_config import GetPinConfigCmd, SetPinConfigCmd
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd
-from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd, SPIReadCmd
+from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd, SPIReadCmd, SPIWriteCmd
 from umrx_app_v3.shuttle_board.bmi088 import BMI088
 
 handler = logging.StreamHandler(sys.stdout)
@@ -75,6 +75,11 @@ def spi_configure_command() -> SPIConfigureCmd:
 @pytest.fixture(scope="session", autouse=True)
 def spi_read_command() -> SPIReadCmd:
     return SPIReadCmd()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def spi_write_command() -> SPIWriteCmd:
+    return SPIWriteCmd()
 
 
 @pytest.fixture(scope="session", autouse=True)
