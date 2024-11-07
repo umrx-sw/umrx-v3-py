@@ -4,6 +4,7 @@ import logging
 from array import array
 from collections.abc import Callable
 from typing import Any, Optional
+
 from umrx_app_v3.mcu_board.bst_protocol_constants import CoinesResponse, CommandId, ErrorCode
 
 logger = logging.getLogger(__name__)

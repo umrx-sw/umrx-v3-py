@@ -4,10 +4,8 @@ from array import array
 from collections.abc import Generator
 
 from umrx_app_v3.mcu_board.bst_protocol_constants import (
-    CoinesResponse,
     CommandId,
     CommandType,
-    ErrorCode,
     I2CBus,
     I2CMode,
     InterfaceSDO,
