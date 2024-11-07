@@ -10,7 +10,7 @@ from umrx_app_v3.mcu_board.commands.board_info import BoardInfo, BoardInfoCmd
 from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd, I2CReadCmd, I2CWriteCmd
 from umrx_app_v3.mcu_board.commands.pin_config import GetPinConfigCmd, SetPinConfigCmd
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd, Volts
-from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd, SPIReadCmd
+from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd, SPIReadCmd, SPIWriteCmd
 from umrx_app_v3.mcu_board.commands.streaming import StopInterruptStreamingCmd, StopPollingStreamingCmd
 from umrx_app_v3.mcu_board.commands.timer import StopTimerCmd
 
@@ -105,3 +105,9 @@ class ApplicationBoard:
         payload = SPIReadCmd.assemble(cs_pin=cs_pin, register_address=register_address, bytes_to_read=bytes_to_read)
         response = self.protocol.send_receive(payload)
         return SPIReadCmd.parse(response)
+
+    def write_spi(self, cs_pin: MultiIOPin, start_register_address: int, data_to_write: array[int]) -> None:
+        payload = SPIWriteCmd.assemble(
+            cs_pin=cs_pin, start_register_address=start_register_address, data_to_write=data_to_write
+        )
+        self.protocol.send_receive(payload)
