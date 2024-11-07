@@ -89,10 +89,9 @@ class I2CReadCmd(I2CCmd):
 class I2CWriteCmd(I2CCmd):
     @staticmethod
     def assemble(i2c_address: int, start_register_address: int, data_to_write: array[int]) -> array[int]:
-        max_payload_size = 46
-        if len(data_to_write) > max_payload_size:
-            error_message = f"Cannot write > {max_payload_size} at once, attempted {len(data_to_write)}. Split payload"
-            raise CommandError(error_message)
+        ok, message = Command.check_for_max_payload(data_to_write)
+        if not ok:
+            raise CommandError(message)
         i2c_interface = 0
         sensor_id, analog_switch = 1, 1
         i2c_address_serialized = (int(a) for a in struct.pack(">H", i2c_address))

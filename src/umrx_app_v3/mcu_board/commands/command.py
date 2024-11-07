@@ -87,3 +87,11 @@ class Command(abc.ABC):
 
         payload_start = CoinesResponse.DD_RESPONSE_OVERHEAD_BYTES.value - 2
         return array("B", (int(el) for el in message[payload_start : payload_start + payload_len]))
+
+    @staticmethod
+    def check_for_max_payload(data_to_write: array[int]) -> tuple[bool, str]:
+        max_payload_size = 46
+        if len(data_to_write) > max_payload_size:
+            error_message = f"Cannot write > {max_payload_size} at once, attempted {len(data_to_write)}. Split payload"
+            return False, error_message
+        return True, ""
