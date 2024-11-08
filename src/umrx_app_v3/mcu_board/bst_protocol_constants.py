@@ -226,29 +226,28 @@ class SPIBus(Enum):
 
 
 class StreamingMode(Enum):
-    STREAMING_MODE_POLLING = 0
-    STREAMING_MODE_INTERRUPT = 1
+    POLLING = 0
+    INTERRUPT = 1
 
 
 class StreamingState(Enum):
-    STREAMING_START = 1
-    STREAMING_STOP = 0
+    START = 1
+    STOP = 0
 
 
 class PinInterruptMode(Enum):
     # Trigger interrupt on pin state change
-    PIN_INTERRUPT_CHANGE = 0
+    STATE_CHANGE = 0
     # Trigger interrupt when pin changes from low to high
-    PIN_INTERRUPT_RISING_EDGE = 1
+    RISING_EDGE = 1
     # Trigger interrupt when pin changes from high to low
-    PIN_INTERRUPT_FALLING_EDGE = 2
-    PIN_INTERRUPT_MODE_MAXIMUM = 4
+    FALLING_EDGE = 2
 
 
 class TimerConfig(Enum):
-    TIMER_STOP = 0
-    TIMER_START = 1
-    TIMER_RESET = 2
+    STOP = 0
+    START = 1
+    RESET = 2
 
 
 class TimerStampConfig(Enum):
@@ -256,9 +255,9 @@ class TimerStampConfig(Enum):
     TIMESTAMP_DISABLE = 0x04
 
 
-class SamplingUnits(Enum):
-    SAMPLING_TIME_IN_MICRO_SEC = 0x01
-    SAMPLING_TIME_IN_MILLI_SEC = 0x02
+class StreamingSamplingUnit(Enum):
+    MICRO_SECOND = 0x01
+    MILLI_SECOND = 0x02
 
 
 class InterfaceSDO(Enum):
