@@ -15,10 +15,9 @@ from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd, I2CReadCmd, I2CW
 from umrx_app_v3.mcu_board.commands.pin_config import GetPinConfigCmd, SetPinConfigCmd
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd
 from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd, SPIReadCmd, SPIWriteCmd
-from umrx_app_v3.mcu_board.commands.streaming import (
-    ConfigPollingStreamingCmd,
-    StopInterruptStreamingCmd,
-    StopPollingStreamingCmd,
+from umrx_app_v3.mcu_board.commands.streaming_interrupt import StopInterruptStreamingCmd
+from umrx_app_v3.mcu_board.commands.streaming_polling import (
+    StreamingPollingCmd,
 )
 from umrx_app_v3.shuttle_board.bmi088 import BMI088
 
@@ -88,18 +87,13 @@ def spi_write_command() -> SPIWriteCmd:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def stop_polling_streaming_command() -> StopPollingStreamingCmd:
-    return StopPollingStreamingCmd()
-
-
-@pytest.fixture(scope="session", autouse=True)
 def stop_interrupt_streaming_command() -> StopInterruptStreamingCmd:
     return StopInterruptStreamingCmd()
 
 
 @pytest.fixture
-def config_polling_streaming_command() -> ConfigPollingStreamingCmd:
-    return ConfigPollingStreamingCmd()
+def streaming_polling_command() -> StreamingPollingCmd:
+    return StreamingPollingCmd()
 
 
 @pytest.fixture(scope="session", autouse=True)

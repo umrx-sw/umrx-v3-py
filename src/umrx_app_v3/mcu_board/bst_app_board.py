@@ -11,7 +11,8 @@ from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd, I2CReadCmd, I2CW
 from umrx_app_v3.mcu_board.commands.pin_config import GetPinConfigCmd, SetPinConfigCmd
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd, Volts
 from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd, SPIReadCmd, SPIWriteCmd
-from umrx_app_v3.mcu_board.commands.streaming import StopInterruptStreamingCmd, StopPollingStreamingCmd
+from umrx_app_v3.mcu_board.commands.streaming_interrupt import StopInterruptStreamingCmd
+from umrx_app_v3.mcu_board.commands.streaming_polling import StreamingPollingCmd
 from umrx_app_v3.mcu_board.commands.timer import StopTimerCmd
 
 logger = logging.getLogger(__name__)
@@ -64,7 +65,7 @@ class ApplicationBoard:
         self.protocol.send_receive(payload)
 
     def stop_polling_streaming(self) -> None:
-        payload = StopPollingStreamingCmd.assemble()
+        payload = StreamingPollingCmd.stop_streaming()
         self.protocol.send_receive(payload)
 
     def disable_timer(self) -> None:
