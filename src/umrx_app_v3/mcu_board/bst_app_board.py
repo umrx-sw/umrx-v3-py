@@ -1,10 +1,17 @@
 import logging
 import time
 from array import array
-from typing import Any
+from typing import Any, Literal
 
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
-from umrx_app_v3.mcu_board.bst_protocol_constants import I2CMode, MultiIOPin, PinDirection, PinValue, SPISpeed
+from umrx_app_v3.mcu_board.bst_protocol_constants import (
+    I2CMode,
+    MultiIOPin,
+    PinDirection,
+    PinValue,
+    SPISpeed,
+    StreamingSamplingUnit,
+)
 from umrx_app_v3.mcu_board.commands.app_switch import AppSwitchCmd
 from umrx_app_v3.mcu_board.commands.board_info import BoardInfo, BoardInfoCmd
 from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd, I2CReadCmd, I2CWriteCmd
@@ -112,3 +119,45 @@ class ApplicationBoard:
             cs_pin=cs_pin, start_register_address=start_register_address, data_to_write=data_to_write
         )
         self.protocol.send_receive(payload)
+
+    def streaming_polling_set_spi_channel(
+        self,
+        cs_pin: MultiIOPin,
+        sampling_time: int,
+        sampling_unit: StreamingSamplingUnit,
+        register_address: int,
+        bytes_to_read: int,
+    ) -> None:
+        StreamingPollingCmd.set_streaming_channel_spi(
+            cs_pin=cs_pin,
+            sampling_time=sampling_time,
+            sampling_unit=sampling_unit,
+            register_address=register_address,
+            bytes_to_read=bytes_to_read,
+        )
+
+    def streaming_polling_set_spi_configuration(self) -> None:
+        StreamingPollingCmd.set_spi_config()
+
+    def streaming_polling_set_i2c_channel(
+        self,
+        i2c_address: int,
+        sampling_time: int,
+        sampling_unit: StreamingSamplingUnit,
+        register_address: int,
+        bytes_to_read: int,
+    ) -> None:
+        StreamingPollingCmd.set_streaming_channel_i2c(
+            i2c_address=i2c_address,
+            sampling_time=sampling_time,
+            sampling_unit=sampling_unit,
+            register_address=register_address,
+            bytes_to_read=bytes_to_read,
+        )
+
+    def set_streaming_polling_i2c(self) -> None:
+        StreamingPollingCmd.set_i2c_config()
+
+    def configure_streaming_polling(self, interface: Literal["i2c", "spi"]) -> None:
+        for command in StreamingPollingCmd.assemble(interface):
+            self.protocol.send_receive(command)
