@@ -86,13 +86,22 @@ class ConfigPollingStreamingCmd(Command):
     def assemble() -> None: ...
 
     @staticmethod
+    def start_streaming() -> array[int]:
+        infinite_samples = 0xFF
+        payload = (CommandType.DD_START_STOP_STREAMING_POLLING.value, infinite_samples)
+        return Command.create_message_from(payload)
+
+    @staticmethod
     def configure_spi() -> Generator:
         yield ConfigPollingStreamingCmd.set_sampling_time()
         for config in ConfigPollingStreamingCmd.polling_streaming_config.channel_configs:
             yield ConfigPollingStreamingCmd.assemble_spi_channel_config(config)
 
     @staticmethod
-    def configure_i2c() -> Generator: ...
+    def configure_i2c() -> Generator:
+        yield ConfigPollingStreamingCmd.set_sampling_time()
+        for config in ConfigPollingStreamingCmd.polling_streaming_config.channel_configs:
+            yield ConfigPollingStreamingCmd.assemble_i2c_channel_config(config)
 
     @staticmethod
     def set_sampling_time_direct(
@@ -151,7 +160,9 @@ class ConfigPollingStreamingCmd(Command):
         sampling_unit: StreamingSamplingUnit,
         register_address: int,
         bytes_to_read: int,
-    ) -> array[int]:
+    ) -> None:
+        if ConfigPollingStreamingCmd.polling_streaming_config is None:
+            ConfigPollingStreamingCmd.set_spi_config()
         channel_id = len(ConfigPollingStreamingCmd.polling_streaming_config.channel_configs) + 1
         config = PollingStreamingSpiChannelConfig(
             id=channel_id,
@@ -190,7 +201,52 @@ class ConfigPollingStreamingCmd(Command):
         return Command.create_message_from(payload)
 
     @staticmethod
-    def set_streaming_channel_i2c() -> None: ...
+    def set_streaming_channel_i2c(
+        i2c_address: int,
+        sampling_time: int,
+        sampling_unit: StreamingSamplingUnit,
+        register_address: int,
+        bytes_to_read: int,
+    ) -> None:
+        if ConfigPollingStreamingCmd.polling_streaming_config is None:
+            ConfigPollingStreamingCmd.set_i2c_config()
+        channel_id = len(ConfigPollingStreamingCmd.polling_streaming_config.channel_configs) + 1
+        config = PollingStreamingI2cChannelConfig(
+            id=channel_id,
+            i2c_address=i2c_address,
+            sampling_time=sampling_time,
+            sampling_unit=sampling_unit,
+            register_address=register_address,
+            bytes_to_read=bytes_to_read,
+        )
+        ConfigPollingStreamingCmd.polling_streaming_config.channel_configs.append(config)
+
+    @staticmethod
+    def assemble_i2c_channel_config(channel_config: PollingStreamingI2cChannelConfig) -> array[int]:
+        analog_switch = 1
+        i2c_interface = 0
+        i2c_address = (int(el) for el in struct.pack(">H", channel_config.i2c_address))
+        num_blocks = 1
+        payload = (
+            CommandType.DD_CONFIG_STREAM_POLLING.value,
+            channel_config.id,
+            0,
+            i2c_interface,
+            analog_switch,
+            *i2c_address,
+            *(int(el) for el in struct.pack(">H", channel_config.sampling_time)),
+            channel_config.sampling_unit.value,
+            1,
+            num_blocks,
+            channel_config.register_address,
+            0,
+            channel_config.bytes_to_read,
+            0,
+            0,
+            0,
+            0,
+        )
+        return Command.create_message_from(payload)
 
     @staticmethod
     def parse(message: array[int]) -> None: ...

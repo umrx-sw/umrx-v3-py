@@ -13,6 +13,7 @@ from umrx_app_v3.mcu_board.commands.streaming import (
     PollingStreamingSpiConfig,
     StopInterruptStreamingCmd,
     StopPollingStreamingCmd,
+    PollingStreamingI2cChannelConfig,
 )
 
 logger = logging.getLogger(__name__)
@@ -60,7 +61,7 @@ def test_command_config_polling_streaming(config_polling_streaming_command: Conf
 
 
 @pytest.mark.commands
-def test_command_assemble_spi_channel_config(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
+def test_polling_assemble_spi_channel_config(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
     config = PollingStreamingSpiChannelConfig(
         id=1,
         cs_pin=MultiIOPin.MINI_SHUTTLE_PIN_2_1,
@@ -145,7 +146,7 @@ def test_command_assemble_spi_channel_config(config_polling_streaming_command: C
 
 
 @pytest.mark.commands
-def test_command_streaming_set_spi_config(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
+def test_polling_streaming_set_spi_config(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
     config_polling_streaming_command.set_spi_config()
     assert isinstance(config_polling_streaming_command.polling_streaming_config, PollingStreamingSpiConfig)
 
@@ -153,7 +154,7 @@ def test_command_streaming_set_spi_config(config_polling_streaming_command: Conf
 
 
 @pytest.mark.commands
-def test_command_streaming_reset_spi_config(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
+def test_polling_streaming_reset_spi_config(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
     config = PollingStreamingSpiChannelConfig(
         id=1,
         cs_pin=MultiIOPin.MINI_SHUTTLE_PIN_2_1,
@@ -170,7 +171,7 @@ def test_command_streaming_reset_spi_config(config_polling_streaming_command: Co
 
 
 @pytest.mark.commands
-def test_command_streaming_configure_spi(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
+def test_polling_streaming_configure_spi(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
     config_polling_streaming_command.set_spi_config()
 
     config_polling_streaming_command.set_streaming_channel_spi(
@@ -195,7 +196,7 @@ def test_command_streaming_configure_spi(config_polling_streaming_command: Confi
 
 
 @pytest.mark.commands
-def test_command_errors_in_set_sampling_time(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
+def test_polling_errors_in_set_sampling_time(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
     config_polling_streaming_command.set_spi_config()
     config_polling_streaming_command.set_streaming_channel_spi(
         cs_pin=MultiIOPin.MINI_SHUTTLE_PIN_2_1,
@@ -228,7 +229,7 @@ def test_command_errors_in_set_sampling_time(config_polling_streaming_command: C
 
 
 @pytest.mark.commands
-def test_command_one_sensor_set_sampling_time(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
+def test_polling_one_sensor_set_sampling_time(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
     config_polling_streaming_command.set_spi_config()
     config_polling_streaming_command.set_streaming_channel_spi(
         cs_pin=MultiIOPin.MINI_SHUTTLE_PIN_2_1,
@@ -247,7 +248,7 @@ def test_command_one_sensor_set_sampling_time(config_polling_streaming_command: 
 
 
 @pytest.mark.commands
-def test_command_slow_sampling_time(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
+def test_polling_slow_sampling_time(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
     config_polling_streaming_command.set_spi_config()
     config_polling_streaming_command.set_streaming_channel_spi(
         cs_pin=MultiIOPin.MINI_SHUTTLE_PIN_2_5,
@@ -273,9 +274,104 @@ def test_command_slow_sampling_time(config_polling_streaming_command: ConfigPoll
 
 
 @pytest.mark.commands
-def test_command_streaming_set_reset_i2c_config(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
+def test_polling_streaming_set_reset_i2c_config(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
     config_polling_streaming_command.set_i2c_config()
     assert isinstance(config_polling_streaming_command.polling_streaming_config, PollingStreamingI2cConfig)
 
     config_polling_streaming_command.reset_i2c_config()
     assert len(config_polling_streaming_command.polling_streaming_config.channel_configs) == 0
+
+
+@pytest.mark.commands
+def test_polling_streaming_i2c_configure_channel(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
+    config_polling_streaming_command.set_i2c_config()
+
+    config_1 = PollingStreamingI2cChannelConfig(
+        id=1,
+        i2c_address=0x18,
+        sampling_time=625,
+        sampling_unit=StreamingSamplingUnit.MICRO_SECOND,
+        register_address=0x12,
+        bytes_to_read=6,
+    )
+    payload = config_polling_streaming_command.assemble_i2c_channel_config(config_1)
+
+    expected_payload = array("B", (0xAA, 0x17, 0x0F, 0x01, 0x00, 0x00, 0x01, 0x00, 0x18, 0x02, 0x71,
+                                   0x01, 0x01, 0x01, 0x12, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x0D, 0x0A,))
+
+    assert payload == expected_payload
+
+    config_2 = PollingStreamingI2cChannelConfig(
+        id=2,
+        i2c_address=0x68,
+        sampling_time=500,
+        sampling_unit=StreamingSamplingUnit.MICRO_SECOND,
+        register_address=0x02,
+        bytes_to_read=6,
+    )
+    payload = config_polling_streaming_command.assemble_i2c_channel_config(config_2)
+
+    expected_payload = array("B", (0xAA, 0x17, 0x0F, 0x02, 0x00, 0x00, 0x01, 0x00, 0x68, 0x01, 0xF4,
+                                   0x01, 0x01, 0x01, 0x02, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x0D, 0x0A,))
+
+    assert payload == expected_payload
+
+@pytest.mark.commands
+def test_polling_streaming_i2c_set_channel(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
+    config_polling_streaming_command.set_i2c_config()
+
+    config_1 = PollingStreamingI2cChannelConfig(
+        id=1,
+        i2c_address=0x18,
+        sampling_time=625,
+        sampling_unit=StreamingSamplingUnit.MICRO_SECOND,
+        register_address=0x12,
+        bytes_to_read=6,
+    )
+
+    config_polling_streaming_command.set_streaming_channel_i2c(
+        i2c_address=0x18,
+        sampling_time=625,
+        sampling_unit=StreamingSamplingUnit.MICRO_SECOND,
+        register_address=0x12,
+        bytes_to_read=6,
+    )
+
+    saved_config = config_polling_streaming_command.polling_streaming_config.channel_configs[0]
+
+    assert saved_config == config_1
+
+
+@pytest.mark.commands
+def test_polling_streaming_configure_i2c(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
+    config_polling_streaming_command.set_i2c_config()
+
+    config_polling_streaming_command.set_streaming_channel_i2c(
+        i2c_address=0x18,
+        sampling_time=625,
+        sampling_unit=StreamingSamplingUnit.MICRO_SECOND,
+        register_address=0x12,
+        bytes_to_read=6,
+    )
+
+    config_polling_streaming_command.set_streaming_channel_i2c(
+        i2c_address=0x68,
+        sampling_time=500,
+        sampling_unit=StreamingSamplingUnit.MICRO_SECOND,
+        register_address=0x02,
+        bytes_to_read=6,
+    )
+
+    with patch.object(Command, "create_message_from") as mocked_create:
+        for _ in config_polling_streaming_command.configure_i2c():
+            ...
+        assert mocked_create.call_count == 3
+
+
+@pytest.mark.commands
+def test_polling_streaming_start(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
+    payload = config_polling_streaming_command.start_streaming()
+
+    expected_payload = array("B", (0xAA, 0x06, 0x06, 0xFF, 0x0D, 0x0A))
+
+    assert payload == expected_payload
