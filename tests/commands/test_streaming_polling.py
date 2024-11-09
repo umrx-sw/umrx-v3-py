@@ -405,3 +405,47 @@ def test_polling_streaming_start(streaming_polling_command: StreamingPollingCmd)
     expected_payload = array("B", (0xAA, 0x06, 0x06, 0xFF, 0x0D, 0x0A))
 
     assert payload == expected_payload
+
+
+@pytest.mark.commands
+def test_polling_streaming_parse(streaming_polling_command: StreamingPollingCmd) -> None:
+    streaming_packet = array(
+        "B", (0xAA, 0x0F, 0x01, 0x00, 0x87, 0x7C, 0x00, 0xC1, 0x00, 0x4B, 0x15, 0x00, 0x01, 0x0D, 0x0A)
+    )
+    expected_payload = array("B", (0x7C, 0x00, 0xC1, 0x00, 0x4B, 0x15))
+    sensor_id, payload = streaming_polling_command.parse(streaming_packet)
+    assert sensor_id == 1
+    assert len(payload) == 6
+    assert payload == expected_payload
+
+    streaming_packet = array(
+        "B", (0xAA, 0x0F, 0x01, 0x00, 0x87, 0x06, 0x00, 0xCB, 0xFF, 0x24, 0x00, 0x00, 0x02, 0x0D, 0x0A)
+    )
+    expected_payload = array("B", (0x06, 0x00, 0xCB, 0xFF, 0x24, 0x00))
+    sensor_id, payload = streaming_polling_command.parse(streaming_packet)
+    assert sensor_id == 2
+    assert len(payload) == 6
+    assert payload == expected_payload
+
+
+@pytest.mark.commands
+def test_polling_streaming_parse_errors(streaming_polling_command: StreamingPollingCmd) -> None:
+    invalid_packet = array(
+        "B", (0xAA, 0xBB, 0x01, 0x00, 0x87, 0x06, 0x00, 0xCB, 0xFF, 0x24, 0x00, 0x00, 0x02, 0xCA, 0xFE)
+    )
+    with pytest.raises(CommandError):
+        streaming_polling_command.parse(invalid_packet)
+
+    invalid_status = array(
+        "B", (0xAA, 0x0F, 0x01, 0x04, 0x87, 0x06, 0x00, 0xCB, 0xFF, 0x24, 0x00, 0x00, 0x02, 0x0D, 0x0A)
+    )
+
+    with pytest.raises(CommandError):
+        streaming_polling_command.parse(invalid_status)
+
+    invalid_feature = array(
+        "B", (0xAA, 0x0F, 0x01, 0x04, 0x87, 0x06, 0x00, 0xCB, 0xFF, 0x24, 0x00, 0x00, 0x02, 0x0D, 0x0A)
+    )
+
+    with pytest.raises(CommandError):
+        streaming_polling_command.parse(invalid_feature)

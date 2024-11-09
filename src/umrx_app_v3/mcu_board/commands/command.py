@@ -5,7 +5,13 @@ from array import array
 from collections.abc import Callable
 from typing import Any, Optional
 
-from umrx_app_v3.mcu_board.bst_protocol_constants import CoinesResponse, CommandId, ErrorCode
+from umrx_app_v3.mcu_board.bst_protocol_constants import (
+    CoinesResponse,
+    CoinesStreamResponse,
+    CommandId,
+    ErrorCode,
+    StreamingDataResponse,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -95,3 +101,22 @@ class Command(abc.ABC):
             error_message = f"Cannot write > {max_payload_size} at once, attempted {len(data_to_write)}. Split payload"
             return False, error_message
         return True, ""
+
+    @staticmethod
+    def parse_streaming_packet(message: array[int]) -> tuple[int, array[int]]:
+        if not Command.check_message(message):
+            error_message = f"Cannot parse invalid message {message}"
+            raise CommandError(error_message)
+        message_status = message[CoinesResponse.DD_RESPONSE_STATUS_POSITION.value]
+        message_feature = message[CoinesResponse.DD_RESPONSE_COMMAND_ID_POSITION.value]
+        feature_correct = message_feature == StreamingDataResponse.POLLING.value
+        status_ok = message_status == ErrorCode.SUCCESS.value
+        if not (feature_correct and status_ok):
+            error_message = f"Error in message: {feature_correct=}, {status_ok=}, {message=}"
+            raise CommandError(error_message)
+        message_channel_msb = message[CoinesStreamResponse.SENSOR_ID_MSB.value]
+        message_channel_lsb = message[CoinesStreamResponse.SENSOR_ID_LSB.value]
+        message_channel_id = (message_channel_msb << 8) | message_channel_lsb
+        payload = message[CoinesStreamResponse.DATA_START_POSITION.value : CoinesStreamResponse.SENSOR_ID_MSB.value]
+        payload_array = array("B", (int(el) for el in payload))
+        return message_channel_id, payload_array

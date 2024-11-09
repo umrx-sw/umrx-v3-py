@@ -4,8 +4,13 @@ import struct
 from array import array
 from collections.abc import Generator
 from dataclasses import dataclass, field
+from typing import Literal
 
-from umrx_app_v3.mcu_board.bst_protocol_constants import CommandType, MultiIOPin, StreamingSamplingUnit
+from umrx_app_v3.mcu_board.bst_protocol_constants import (
+    CommandType,
+    MultiIOPin,
+    StreamingSamplingUnit,
+)
 from umrx_app_v3.mcu_board.commands.command import Command, CommandError
 
 logger = logging.getLogger(__name__)
@@ -45,10 +50,18 @@ class StreamingPollingCmd(Command):
     polling_streaming_config: PollingStreamingSpiConfig | PollingStreamingI2cConfig | None = None
 
     @staticmethod
-    def assemble() -> None: ...
+    def assemble(sensor_interface: Literal["spi", "i2c"]) -> Generator:
+        if sensor_interface == "spi":
+            yield StreamingPollingCmd.configure_spi()
+        elif sensor_interface == "i2c":
+            yield StreamingPollingCmd.configure_i2c()
+        else:
+            error_message = f"Unknown interface {sensor_interface}"
+            raise CommandError(error_message)
 
     @staticmethod
-    def parse(message: array[int]) -> None: ...
+    def parse(message: array[int]) -> tuple[int, array[int]]:
+        return Command.parse_streaming_packet(message)
 
     @staticmethod
     def set_spi_config() -> None:

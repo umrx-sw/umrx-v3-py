@@ -61,6 +61,12 @@ class CoinesResponse(Enum):
     DD_RESPONSE_EXTENDED_READ_ID = 0x43
 
 
+class CoinesStreamResponse(Enum):
+    DATA_START_POSITION = 0x05
+    SENSOR_ID_MSB = -4
+    SENSOR_ID_LSB = -3
+
+
 class ErrorCode(Enum):
     SUCCESS = 0
     ERROR_FAILURE = -1
@@ -230,6 +236,11 @@ class SPIBus(Enum):
 class StreamingMode(Enum):
     POLLING = 0
     INTERRUPT = 1
+
+
+class StreamingDataResponse(Enum):
+    POLLING = 0x87
+    INTERRUPT = 0x8A
 
 
 class StreamingState(Enum):
