@@ -8,12 +8,12 @@ from umrx_app_v3.mcu_board.bst_protocol_constants import MultiIOPin, StreamingSa
 from umrx_app_v3.mcu_board.commands.command import Command, CommandError
 from umrx_app_v3.mcu_board.commands.streaming import (
     ConfigPollingStreamingCmd,
+    PollingStreamingI2cChannelConfig,
     PollingStreamingI2cConfig,
     PollingStreamingSpiChannelConfig,
     PollingStreamingSpiConfig,
     StopInterruptStreamingCmd,
     StopPollingStreamingCmd,
-    PollingStreamingI2cChannelConfig,
 )
 
 logger = logging.getLogger(__name__)
@@ -296,8 +296,34 @@ def test_polling_streaming_i2c_configure_channel(config_polling_streaming_comman
     )
     payload = config_polling_streaming_command.assemble_i2c_channel_config(config_1)
 
-    expected_payload = array("B", (0xAA, 0x17, 0x0F, 0x01, 0x00, 0x00, 0x01, 0x00, 0x18, 0x02, 0x71,
-                                   0x01, 0x01, 0x01, 0x12, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x0D, 0x0A,))
+    expected_payload = array(
+        "B",
+        (
+            0xAA,
+            0x17,
+            0x0F,
+            0x01,
+            0x00,
+            0x00,
+            0x01,
+            0x00,
+            0x18,
+            0x02,
+            0x71,
+            0x01,
+            0x01,
+            0x01,
+            0x12,
+            0x00,
+            0x06,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x0D,
+            0x0A,
+        ),
+    )
 
     assert payload == expected_payload
 
@@ -311,10 +337,37 @@ def test_polling_streaming_i2c_configure_channel(config_polling_streaming_comman
     )
     payload = config_polling_streaming_command.assemble_i2c_channel_config(config_2)
 
-    expected_payload = array("B", (0xAA, 0x17, 0x0F, 0x02, 0x00, 0x00, 0x01, 0x00, 0x68, 0x01, 0xF4,
-                                   0x01, 0x01, 0x01, 0x02, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x0D, 0x0A,))
+    expected_payload = array(
+        "B",
+        (
+            0xAA,
+            0x17,
+            0x0F,
+            0x02,
+            0x00,
+            0x00,
+            0x01,
+            0x00,
+            0x68,
+            0x01,
+            0xF4,
+            0x01,
+            0x01,
+            0x01,
+            0x02,
+            0x00,
+            0x06,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x0D,
+            0x0A,
+        ),
+    )
 
     assert payload == expected_payload
+
 
 @pytest.mark.commands
 def test_polling_streaming_i2c_set_channel(config_polling_streaming_command: ConfigPollingStreamingCmd) -> None:
