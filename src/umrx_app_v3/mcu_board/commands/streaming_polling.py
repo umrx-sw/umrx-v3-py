@@ -45,6 +45,12 @@ class StreamingPollingCmd(Command):
     polling_streaming_config: PollingStreamingSpiConfig | PollingStreamingI2cConfig | None = None
 
     @staticmethod
+    def assemble() -> None: ...
+
+    @staticmethod
+    def parse(message: array[int]) -> None: ...
+
+    @staticmethod
     def set_spi_config() -> None:
         StreamingPollingCmd.polling_streaming_config = PollingStreamingSpiConfig()
 
@@ -59,9 +65,6 @@ class StreamingPollingCmd(Command):
     @staticmethod
     def reset_i2c_config() -> None:
         StreamingPollingCmd.set_i2c_config()
-
-    @staticmethod
-    def assemble() -> None: ...
 
     @staticmethod
     def start_streaming() -> array[int]:
@@ -231,6 +234,3 @@ class StreamingPollingCmd(Command):
             0,
         )
         return Command.create_message_from(payload)
-
-    @staticmethod
-    def parse(message: array[int]) -> None: ...
