@@ -97,7 +97,7 @@ def stop_interrupt_streaming_command() -> StopInterruptStreamingCmd:
     return StopInterruptStreamingCmd()
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture
 def config_polling_streaming_command() -> ConfigPollingStreamingCmd:
     return ConfigPollingStreamingCmd()
 
