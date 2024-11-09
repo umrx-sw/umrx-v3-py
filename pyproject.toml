@@ -54,7 +54,6 @@ output = "reports/coverage.xml"
 
 [tool.mypy]
 junit_xml = "reports/mypy.xml"
-plugins = "pydantic.mypy"
 strict = true
 disallow_subclassing_any = false
 disallow_untyped_decorators = false
