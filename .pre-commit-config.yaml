@@ -56,14 +56,7 @@ repos:
         args: [--install-types, --non-interactive, .]
         pass_filenames: false
         additional_dependencies:
-          - dacite==1.8.0
-          - fastapi==0.99.1
-          - fastapi[all]==0.99.1
-          - pydantic==1.10.16  # < 1.10.16 makes mypy crash
           - pytest==8.3.3
-          - sdbus-networkmanager==2.0.0
-          - sdbus==0.12.0
-          - sse-starlette==2.0.0
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: a23f6b85d0fdd5bb9d564e2579e678033debbdff  # v0.10.0.1
     hooks:
