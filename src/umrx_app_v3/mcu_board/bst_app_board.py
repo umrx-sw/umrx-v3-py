@@ -71,10 +71,6 @@ class ApplicationBoard:
         payload = StopInterruptStreamingCmd.assemble()
         self.protocol.send_receive(payload)
 
-    def stop_polling_streaming(self) -> None:
-        payload = StreamingPollingCmd.stop_streaming()
-        self.protocol.send_receive(payload)
-
     def disable_timer(self) -> None:
         payload = StopTimerCmd.assemble()
         self.protocol.send_receive(payload)
@@ -161,3 +157,15 @@ class ApplicationBoard:
     def configure_streaming_polling(self, interface: Literal["i2c", "spi"]) -> None:
         for command in StreamingPollingCmd.assemble(interface):
             self.protocol.send_receive(command)
+
+    def stop_polling_streaming(self) -> None:
+        payload = StreamingPollingCmd.stop_streaming()
+        self.protocol.send_receive(payload)
+
+    def start_streaming(self) -> None:
+        payload = StreamingPollingCmd.start_streaming()
+        self.protocol.send_receive(payload)
+
+    def receive_streaming(self) -> tuple[int, array[int]]:
+        message = self.protocol.receive()
+        return StreamingPollingCmd.parse(message)

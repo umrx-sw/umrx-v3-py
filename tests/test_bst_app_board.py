@@ -362,3 +362,22 @@ def test_app_board_polling_configure_spi_2_channel(bst_app_board_with_serial: Ap
         bst_app_board_with_serial.configure_streaming_polling(interface="spi")
 
         assert mocked_send_receive.call_count == 3
+
+
+@pytest.mark.app_board
+def test_app_board_start_streaming(bst_app_board_with_serial: ApplicationBoard) -> None:
+    with patch.object(bst_app_board_with_serial.protocol, "send_receive") as mocked_send_receive:
+        bst_app_board_with_serial.start_streaming()
+        expected_payload = array("B", (0xAA, 0x06, 0x06, 0xFF, 0x0D, 0x0A))
+        mocked_send_receive.assert_called_once_with(expected_payload)
+
+
+@pytest.mark.app_board
+def test_app_board_streaming_polling_receive_i2c(bst_app_board_with_serial: ApplicationBoard) -> None:
+    example_streaming_packet = array(
+        "B", (0xAA, 0x0F, 0x01, 0x00, 0x87, 0xE4, 0xFF, 0xDE, 0xFF, 0xE8, 0xFF, 0x00, 0x02, 0x0D, 0x0A)
+    )
+    with patch.object(bst_app_board_with_serial.protocol, "receive", return_value=example_streaming_packet):
+        sensor_id, payload = bst_app_board_with_serial.receive_streaming()
+        assert sensor_id == 2
+        assert payload == array("B", (0xE4, 0xFF, 0xDE, 0xFF, 0xE8, 0xFF))
