@@ -120,6 +120,9 @@ class ApplicationBoard:
         )
         self.protocol.send_receive(payload)
 
+    def streaming_polling_set_spi_configuration(self) -> None:
+        StreamingPollingCmd.set_spi_config()
+
     def streaming_polling_set_spi_channel(
         self,
         cs_pin: MultiIOPin,
@@ -136,8 +139,8 @@ class ApplicationBoard:
             bytes_to_read=bytes_to_read,
         )
 
-    def streaming_polling_set_spi_configuration(self) -> None:
-        StreamingPollingCmd.set_spi_config()
+    def streaming_polling_set_i2c_configuration(self) -> None:
+        StreamingPollingCmd.set_i2c_config()
 
     def streaming_polling_set_i2c_channel(
         self,
@@ -154,9 +157,6 @@ class ApplicationBoard:
             register_address=register_address,
             bytes_to_read=bytes_to_read,
         )
-
-    def set_streaming_polling_i2c(self) -> None:
-        StreamingPollingCmd.set_i2c_config()
 
     def configure_streaming_polling(self, interface: Literal["i2c", "spi"]) -> None:
         for command in StreamingPollingCmd.assemble(interface):

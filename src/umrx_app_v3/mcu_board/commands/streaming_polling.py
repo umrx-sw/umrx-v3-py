@@ -52,12 +52,11 @@ class StreamingPollingCmd(Command):
     @staticmethod
     def assemble(sensor_interface: Literal["spi", "i2c"]) -> Generator:
         if sensor_interface == "spi":
-            yield StreamingPollingCmd.configure_spi()
-        elif sensor_interface == "i2c":
-            yield StreamingPollingCmd.configure_i2c()
-        else:
-            error_message = f"Unknown interface {sensor_interface}"
-            raise CommandError(error_message)
+            return StreamingPollingCmd.configure_spi()
+        if sensor_interface == "i2c":
+            return StreamingPollingCmd.configure_i2c()
+        error_message = f"Unknown interface {sensor_interface}"
+        raise CommandError(error_message)
 
     @staticmethod
     def parse(message: array[int]) -> tuple[int, array[int]]:

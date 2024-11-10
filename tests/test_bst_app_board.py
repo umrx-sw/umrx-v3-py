@@ -7,8 +7,16 @@ import pytest
 
 from umrx_app_v3.mcu_board.bst_app_board import ApplicationBoard
 from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
-from umrx_app_v3.mcu_board.bst_protocol_constants import I2CMode, MultiIOPin, PinDirection, PinValue, SPISpeed
+from umrx_app_v3.mcu_board.bst_protocol_constants import (
+    I2CMode,
+    MultiIOPin,
+    PinDirection,
+    PinValue,
+    SPISpeed,
+    StreamingSamplingUnit,
+)
 from umrx_app_v3.mcu_board.comm.serial_comm import SerialCommunication
+from umrx_app_v3.mcu_board.commands.streaming_polling import StreamingPollingCmd
 
 logger = logging.getLogger(__name__)
 
@@ -260,3 +268,97 @@ def test_app_board_write_spi(bst_app_board_with_serial: ApplicationBoard) -> Non
             ),
         )
         mocked_send_receive.assert_called_with(expected_payload)
+
+
+@pytest.mark.app_board
+def test_app_board_set_streaming_polling_i2c(bst_app_board_with_serial: ApplicationBoard) -> None:
+    bst_app_board_with_serial.streaming_polling_set_i2c_configuration()
+
+    assert StreamingPollingCmd.polling_streaming_config is not None
+
+    assert len(StreamingPollingCmd.polling_streaming_config.channel_configs) == 0
+
+
+@pytest.mark.app_board
+def test_app_board_set_streaming_polling_spi(bst_app_board_with_serial: ApplicationBoard) -> None:
+    bst_app_board_with_serial.streaming_polling_set_spi_configuration()
+
+    assert StreamingPollingCmd.polling_streaming_config is not None
+
+    assert len(StreamingPollingCmd.polling_streaming_config.channel_configs) == 0
+
+
+@pytest.mark.app_board
+def test_app_board_polling_configure_i2c_2_channel(bst_app_board_with_serial: ApplicationBoard) -> None:
+    bst_app_board_with_serial.streaming_polling_set_i2c_configuration()
+
+    bst_app_board_with_serial.streaming_polling_set_i2c_channel(
+        i2c_address=0x18,
+        sampling_time=625,
+        sampling_unit=StreamingSamplingUnit.MICRO_SECOND,
+        register_address=0x12,
+        bytes_to_read=6,
+    )
+
+    bst_app_board_with_serial.streaming_polling_set_i2c_channel(
+        i2c_address=0x68,
+        sampling_time=500,
+        sampling_unit=StreamingSamplingUnit.MICRO_SECOND,
+        register_address=0x02,
+        bytes_to_read=6,
+    )
+
+    assert len(StreamingPollingCmd.polling_streaming_config.channel_configs) == 2
+
+    with patch.object(bst_app_board_with_serial.protocol, "send_receive") as mocked_send_receive:
+        bst_app_board_with_serial.configure_streaming_polling(interface="i2c")
+
+        assert mocked_send_receive.call_count == 3
+
+
+@pytest.mark.app_board
+def test_app_board_polling_configure_i2c_1_channel(bst_app_board_with_serial: ApplicationBoard) -> None:
+    bst_app_board_with_serial.streaming_polling_set_i2c_configuration()
+
+    bst_app_board_with_serial.streaming_polling_set_i2c_channel(
+        i2c_address=0x18,
+        sampling_time=625,
+        sampling_unit=StreamingSamplingUnit.MICRO_SECOND,
+        register_address=0x12,
+        bytes_to_read=6,
+    )
+
+    assert len(StreamingPollingCmd.polling_streaming_config.channel_configs) == 1
+
+    with patch.object(bst_app_board_with_serial.protocol, "send_receive") as mocked_send_receive:
+        bst_app_board_with_serial.configure_streaming_polling(interface="i2c")
+
+        assert mocked_send_receive.call_count == 2
+
+
+@pytest.mark.app_board
+def test_app_board_polling_configure_spi_2_channel(bst_app_board_with_serial: ApplicationBoard) -> None:
+    bst_app_board_with_serial.streaming_polling_set_spi_configuration()
+
+    bst_app_board_with_serial.streaming_polling_set_spi_channel(
+        cs_pin=MultiIOPin.MINI_SHUTTLE_PIN_2_1,
+        sampling_time=625,
+        sampling_unit=StreamingSamplingUnit.MICRO_SECOND,
+        register_address=0x12,
+        bytes_to_read=7,
+    )
+
+    bst_app_board_with_serial.streaming_polling_set_spi_channel(
+        cs_pin=MultiIOPin.MINI_SHUTTLE_PIN_2_5,
+        sampling_time=500,
+        sampling_unit=StreamingSamplingUnit.MICRO_SECOND,
+        register_address=0x02,
+        bytes_to_read=6,
+    )
+
+    assert len(StreamingPollingCmd.polling_streaming_config.channel_configs) == 2
+
+    with patch.object(bst_app_board_with_serial.protocol, "send_receive") as mocked_send_receive:
+        bst_app_board_with_serial.configure_streaming_polling(interface="spi")
+
+        assert mocked_send_receive.call_count == 3
