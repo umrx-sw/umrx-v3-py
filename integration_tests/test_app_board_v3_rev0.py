@@ -1,5 +1,6 @@
 import logging
 import time
+from array import array
 
 import pytest
 
@@ -65,7 +66,8 @@ def test_streaming_polling_i2c_accel_and_gyro(app_board_v3_rev0: ApplicationBoar
     app_board_v3_rev0.set_pin_config(MultiIOPin.MINI_SHUTTLE_PIN_2_6, PinDirection.OUTPUT, PinValue.HIGH)
     app_board_v3_rev0.set_vdd_vddio(3.3, 3.3)
     app_board_v3_rev0.configure_i2c()
-    time.sleep(0.5)
+    # power on accelerometer - it is OFF by default
+    app_board_v3_rev0.write_i2c(0x18, 0x7C, array("B", (0x00, 0x04)))
     app_board_v3_rev0.streaming_polling_set_i2c_channel(
         i2c_address=0x18,
         sampling_time=625,
@@ -89,3 +91,4 @@ def test_streaming_polling_i2c_accel_and_gyro(app_board_v3_rev0: ApplicationBoar
         streaming = app_board_v3_rev0.receive_streaming()
         logger.info(f"{streaming=}")
         time.sleep(0.05)
+    app_board_v3_rev0.stop_polling_streaming()

@@ -110,9 +110,7 @@ class UsbCommunication(Communication):
         return packet[:message_length]
 
     def _receive(self) -> array:
-        data_recv = self.endpoint_bulk_in.read(self.bulk_in_packet_size)
-        logging.debug(f"{data_recv}")
-        return data_recv
+        return self.endpoint_bulk_in.read(self.bulk_in_packet_size)
 
     def receive(self) -> array:
         is_valid_packet_received = False
@@ -123,7 +121,6 @@ class UsbCommunication(Communication):
             packet = self._receive()
             reads_done_so_far += 1
             is_valid_packet_received = Command.check_message(packet)
-            logger.debug(f"[recv] num reads made: {reads_done_so_far}")
         return self.extract_message_from(packet)
 
     def send_receive(self, message: array | tuple | list) -> array:
