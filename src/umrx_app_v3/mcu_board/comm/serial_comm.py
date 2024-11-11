@@ -1,11 +1,13 @@
 import logging
 from array import array
+from collections.abc import Generator
 from typing import Any
 
 import serial
 import serial.tools.list_ports
 
 from umrx_app_v3.mcu_board.comm.comm import Communication
+from umrx_app_v3.mcu_board.commands.command import Command
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +29,7 @@ class SerialCommunication(Communication):
         self.port.flush()
         return bytes_written == len(message)
 
-    def receive(self) -> array[int] | bytes:
+    def _receive(self) -> array[int] | bytes:
         ok = False
         read_from_serial = b""
         while not ok:
@@ -38,6 +40,24 @@ class SerialCommunication(Communication):
             # logger.info(f"buffer size: {len(read_from_serial)}")
             ok = len(read_from_serial) > 0
         return read_from_serial
+
+    def receive(self) -> array[int] | bytes:
+        return self._receive()
+
+    def receive_streaming(self) -> Generator:
+        message = self._receive()
+        while len(message) > 0:
+            if Command.check_message(message):
+                packet_len = message[1]
+                packet = message[:packet_len]
+                message = message[packet_len:]
+                yield packet
+            else:
+                possible_start_idx = message.find(0x0A)
+                if possible_start_idx == -1:
+                    break
+                else:
+                    message = message[possible_start_idx:]
 
     def send_receive(self, message: array[int] | tuple[int, ...] | list[int]) -> array | bytes:
         send_ok = self.send(message)

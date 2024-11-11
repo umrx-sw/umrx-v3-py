@@ -1,8 +1,10 @@
 import logging
+from array import array
 from typing import Any
 
 from umrx_app_v3.mcu_board.bst_app_board import ApplicationBoard
 from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
+from umrx_app_v3.mcu_board.commands.streaming_polling import StreamingPollingCmd
 
 logger = logging.getLogger(__name__)
 
@@ -26,3 +28,7 @@ class ApplicationBoardV3Rev1(ApplicationBoard):
     def initialize_usb(self) -> None:
         if not self.usb_comm.is_initialized:
             self.usb_comm.initialize()
+
+    def receive_streaming_multiple(self) -> tuple[int, array[int]]:
+        for message in self.protocol.communication.receive_streaming():
+            yield StreamingPollingCmd.parse(message)
