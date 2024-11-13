@@ -16,6 +16,7 @@ from umrx_app_v3.mcu_board.bst_protocol_constants import (
     StreamingSamplingUnit,
 )
 from umrx_app_v3.mcu_board.comm.serial_comm import SerialCommunication
+from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd
 from umrx_app_v3.mcu_board.commands.streaming_polling import StreamingPollingCmd
 
 logger = logging.getLogger(__name__)
@@ -193,6 +194,7 @@ def test_app_board_get_pin_config(bst_app_board_with_serial: ApplicationBoard) -
 def test_app_board_configure_spi(bst_app_board_with_serial: ApplicationBoard) -> None:
     with (
         patch.object(bst_app_board_with_serial.protocol, "send_receive") as mocked_send_receive,
+        patch.object(SPIConfigureCmd, "parse"),
     ):
         bst_app_board_with_serial.configure_spi(SPISpeed.MHz_5)
         assert mocked_send_receive.call_count == 2

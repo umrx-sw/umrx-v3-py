@@ -3,6 +3,7 @@ from array import array
 import pytest
 
 from umrx_app_v3.mcu_board.bst_protocol_constants import MultiIOPin, SPIBus, SPIMode, SPISpeed
+from umrx_app_v3.mcu_board.commands.command import CommandError
 from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd, SPIReadCmd, SPIWriteCmd
 
 
@@ -30,7 +31,12 @@ def test_command_spi_config_assemble(spi_configure_command: SPIConfigureCmd) -> 
 @pytest.mark.commands
 def test_command_spi_config_parse(spi_configure_command: SPIConfigureCmd) -> None:
     dummy_message = array("B", (0xCA, 0xFE))
-    assert spi_configure_command.parse(dummy_message) is None
+    with pytest.raises(CommandError):
+        spi_configure_command.parse(dummy_message)
+
+    good_response = array("B", [170, 12, 1, 0, 65, 25, 1, 3, 8, 12, 13, 10])
+
+    assert spi_configure_command.parse(good_response) is None
 
 
 @pytest.mark.commands
