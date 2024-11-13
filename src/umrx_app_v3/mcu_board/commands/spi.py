@@ -62,7 +62,10 @@ class SPIConfigureCmd(SPICmd):
         return Command.create_message_from(payload)
 
     @staticmethod
-    def parse(message: array[int]) -> None: ...
+    def parse(message: array[int]) -> None:
+        if not Command.check_message(message):
+            error_message = f"Cannot parse invalid message {message}"
+            raise CommandError(error_message)
 
 
 class SPIReadCmd(SPICmd):
