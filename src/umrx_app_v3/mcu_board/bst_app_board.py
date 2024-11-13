@@ -103,7 +103,8 @@ class ApplicationBoard:
 
     def configure_spi(self, speed: SPISpeed = SPISpeed.MHz_5) -> None:
         for payload in SPIConfigureCmd.assemble(speed):
-            self.protocol.send_receive(payload)
+            response = self.protocol.send_receive(payload)
+            SPIConfigureCmd.parse(response)
 
     def read_spi(self, cs_pin: MultiIOPin, register_address: int, bytes_to_read: int) -> array[int]:
         payload = SPIReadCmd.assemble(cs_pin=cs_pin, register_address=register_address, bytes_to_read=bytes_to_read)
