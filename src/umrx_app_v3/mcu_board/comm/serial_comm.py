@@ -54,10 +54,14 @@ class SerialCommunication(Communication):
                 yield packet
             else:
                 possible_start_idx = message.find(0x0A)
-                if possible_start_idx == -1:
+                if (
+                    possible_start_idx == -1
+                    or len(message) < possible_start_idx + 2
+                    or len(message) < message[possible_start_idx + 2] + 2
+                ):
                     break
                 else:
-                    message = message[possible_start_idx:]
+                    message = message[possible_start_idx + 1 :]
 
     def send_receive(self, message: array[int] | tuple[int, ...] | list[int]) -> array | bytes:
         send_ok = self.send(message)
