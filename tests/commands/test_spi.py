@@ -210,3 +210,12 @@ def test_command_spi_write_parse(spi_write_command: SPIWriteCmd) -> None:
     dummy_response = array("B", (0xD0, 0xDE))
 
     assert spi_write_command.parse(dummy_response) is None
+
+
+@pytest.mark.commands
+def test_command_spi_write_too_long(spi_write_command: SPIWriteCmd) -> None:
+    too_long_data_to_write = array("B", 0x45 * [0x33])
+    with pytest.raises(CommandError):
+        spi_write_command.assemble(
+            cs_pin=MultiIOPin.MINI_SHUTTLE_PIN_2_1, start_register_address=0x7D, data_to_write=too_long_data_to_write
+        )

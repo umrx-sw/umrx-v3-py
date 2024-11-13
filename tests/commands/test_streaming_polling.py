@@ -449,3 +449,9 @@ def test_polling_streaming_parse_errors(streaming_polling_command: StreamingPoll
 
     with pytest.raises(CommandError):
         streaming_polling_command.parse(invalid_feature)
+
+
+@pytest.mark.commands
+def test_polling_invalid_interface(streaming_polling_command: StreamingPollingCmd) -> None:
+    with pytest.raises(CommandError):
+        streaming_polling_command.assemble(sensor_interface="usb")
