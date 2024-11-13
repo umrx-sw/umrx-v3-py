@@ -154,25 +154,38 @@ def test_streaming_polling_spi_accel_and_gyro(app_board_v3_rev0: ApplicationBoar
     app_board_v3_rev0.set_pin_config(MultiIOPin.MINI_SHUTTLE_PIN_2_1, PinDirection.OUTPUT, PinValue.HIGH)
     app_board_v3_rev0.set_pin_config(MultiIOPin.MINI_SHUTTLE_PIN_2_5, PinDirection.OUTPUT, PinValue.HIGH)
     app_board_v3_rev0.set_pin_config(MultiIOPin.MINI_SHUTTLE_PIN_2_6, PinDirection.OUTPUT, PinValue.LOW)
+    time.sleep(0.01)
     app_board_v3_rev0.set_vdd_vddio(3.3, 3.3)
+    time.sleep(0.2)
     app_board_v3_rev0.configure_spi()
+    time.sleep(0.2)
+    resp = app_board_v3_rev0.read_spi(MultiIOPin.MINI_SHUTTLE_PIN_2_1, 0x0, 1)
+    logger.info("Initial read from accel, otherwise subsequent reads do not work")
 
     resp = app_board_v3_rev0.read_spi(MultiIOPin.MINI_SHUTTLE_PIN_2_5, 0x0, 1)
     logger.info(f"chip-id gyro: {resp}")
-    # assert resp[0] == 0x0F, "Expect correct address for BMI088 gyroscope"
+    assert resp[0] == 0x0F, "Expect correct address for BMI088 gyroscope"
 
-    resp = app_board_v3_rev0.read_spi(MultiIOPin.MINI_SHUTTLE_PIN_2_1, 0x0, 1)
-    # assert resp[0] == 0x1E, "Expect correct address for BMI088 accelerometer"
+    resp = app_board_v3_rev0.read_spi(MultiIOPin.MINI_SHUTTLE_PIN_2_1, 0x0, 2)
     logger.info(f"chip-id accel: {resp}")
-    # time.sleep(0.1)
-    # # power on accelerometer - it is OFF by default
-    app_board_v3_rev0.write_spi(MultiIOPin.MINI_SHUTTLE_PIN_2_1, 0x7C, array("B", (0x00, 0x00, 0x04)))
+    assert resp[1] == 0x1E, "Expect correct address for BMI088 accelerometer"
+    # power on accelerometer - it is OFF by default
+    app_board_v3_rev0.write_spi(MultiIOPin.MINI_SHUTTLE_PIN_2_1, 0x7C, array("B", (0x00,)))
+    app_board_v3_rev0.write_spi(MultiIOPin.MINI_SHUTTLE_PIN_2_1, 0x7D, array("B", (0x04,)))
+    time.sleep(0.2)
+    resp = app_board_v3_rev0.read_spi(MultiIOPin.MINI_SHUTTLE_PIN_2_1, 0x7C, 3)
+    pwr_save_mode, acc_enable = resp[1], resp[2]
+    logger.info(f"accel mode: {pwr_save_mode=}, {acc_enable=}")
+
+    assert pwr_save_mode == 0x00
+    assert acc_enable == 0x04
+
     app_board_v3_rev0.streaming_polling_set_spi_channel(
         cs_pin=MultiIOPin.MINI_SHUTTLE_PIN_2_1,
         sampling_time=625,
         sampling_unit=StreamingSamplingUnit.MICRO_SECOND,
         register_address=0x12,
-        bytes_to_read=6,
+        bytes_to_read=7,
     )
     app_board_v3_rev0.streaming_polling_set_spi_channel(
         cs_pin=MultiIOPin.MINI_SHUTTLE_PIN_2_5,
@@ -189,10 +202,11 @@ def test_streaming_polling_spi_accel_and_gyro(app_board_v3_rev0: ApplicationBoar
     for _ in range(100):
         streaming = app_board_v3_rev0.receive_streaming()
         sensor_id, payload = streaming
-        data_x, data_y, data_z = struct.unpack("<hhh", payload)
         if sensor_id == 1:
-            logger.info(f"[a] a_x={data_x:04d}, a_y={data_y:04d}, a_z={data_z:04d} ")
+            _, a_x, a_y, a_z = struct.unpack("<chhh", payload)
+            logger.info(f"[a] a_x={a_x:04d}, a_y={a_y:04d}, a_z={a_z:04d} ")
         elif sensor_id == 2:
-            logger.info(f"[g] g_x={data_x:04d}, g_y={data_y:04d}, g_z={data_z:04d} ")
+            g_x, g_y, g_z = struct.unpack("<hhh", payload)
+            logger.info(f"[g] g_x={g_x:04d}, g_y={g_y:04d}, g_z={g_z:04d} ")
         time.sleep(0.05)
     app_board_v3_rev0.stop_polling_streaming()
