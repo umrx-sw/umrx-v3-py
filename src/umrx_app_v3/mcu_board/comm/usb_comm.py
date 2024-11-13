@@ -99,7 +99,6 @@ class UsbCommunication(Communication):
             return False
         packet = self.create_packet_from(message)
         bytes_written = self.endpoint_bulk_out.write(data=packet, timeout=1)
-        logging.debug(f"{bytes_written=}")
         if bytes_written != len(packet):
             logger.warning(f"Number of bytes written: {bytes_written} != packet length: {len(packet)}")
         return bytes_written == len(packet)
