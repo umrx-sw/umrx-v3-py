@@ -80,7 +80,7 @@ class Command(abc.ABC):
         message_status = message[CoinesResponse.DD_RESPONSE_STATUS_POSITION.value]
         status_ok = message_status == ErrorCode.SUCCESS.value
         if not (feature_correct and status_ok):
-            error_message = f"Error in message: {feature_correct=}, {status_ok=}, {message=}"
+            error_message = f"Error in message: {feature_correct=}, {status_ok=}, {message_status=}, {message=}"
             raise CommandError(error_message)
 
         extended_read_idx = CoinesResponse.DD_RESPONSE_COMMAND_ID_POSITION.value
