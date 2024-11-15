@@ -54,8 +54,14 @@ def test_app_board_board_info(bst_app_board_with_serial: ApplicationBoard) -> No
 def test_app_board_disable_timer(bst_app_board_with_serial: ApplicationBoard) -> None:
     with patch.object(bst_app_board_with_serial.protocol.communication, "send_receive") as mocked_send_receive:
         bst_app_board_with_serial.disable_timer()
-        command_to_send = array("B", [0xAA, 0x07, 0x01, 0x29, 0x04, 0x0D, 0x0A])
-        mocked_send_receive.assert_called_with(command_to_send)
+        assert mocked_send_receive.call_count == 2
+
+
+@pytest.mark.app_board
+def test_app_board_enable_timer(bst_app_board_with_serial: ApplicationBoard) -> None:
+    with patch.object(bst_app_board_with_serial.protocol.communication, "send_receive") as mocked_send_receive:
+        bst_app_board_with_serial.enable_timer()
+        assert mocked_send_receive.call_count == 2
 
 
 @pytest.mark.app_board

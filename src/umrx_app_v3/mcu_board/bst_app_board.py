@@ -20,7 +20,7 @@ from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd, Volts
 from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd, SPIReadCmd, SPIWriteCmd
 from umrx_app_v3.mcu_board.commands.streaming_interrupt import StopInterruptStreamingCmd
 from umrx_app_v3.mcu_board.commands.streaming_polling import StreamingPollingCmd
-from umrx_app_v3.mcu_board.commands.timer import StopTimerCmd
+from umrx_app_v3.mcu_board.commands.timer import TimerCmd
 
 logger = logging.getLogger(__name__)
 
@@ -72,8 +72,12 @@ class ApplicationBoard:
         self.protocol.send_receive(payload)
 
     def disable_timer(self) -> None:
-        payload = StopTimerCmd.assemble()
-        self.protocol.send_receive(payload)
+        for payload in TimerCmd.disable():
+            self.protocol.send_receive(payload)
+
+    def enable_timer(self) -> None:
+        for payload in TimerCmd.enable():
+            self.protocol.send_receive(payload)
 
     def configure_i2c(self, mode: I2CMode = I2CMode.STANDARD_MODE) -> None:
         for payload in I2CConfigureCmd.assemble(mode):

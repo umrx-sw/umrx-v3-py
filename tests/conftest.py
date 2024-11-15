@@ -19,6 +19,7 @@ from umrx_app_v3.mcu_board.commands.streaming_interrupt import StopInterruptStre
 from umrx_app_v3.mcu_board.commands.streaming_polling import (
     StreamingPollingCmd,
 )
+from umrx_app_v3.mcu_board.commands.timer import TimerCmd
 from umrx_app_v3.shuttle_board.bmi088 import BMI088
 
 handler = logging.StreamHandler(sys.stdout)
@@ -94,6 +95,11 @@ def stop_interrupt_streaming_command() -> StopInterruptStreamingCmd:
 @pytest.fixture
 def streaming_polling_command() -> StreamingPollingCmd:
     return StreamingPollingCmd()
+
+
+@pytest.fixture
+def timer_command() -> TimerCmd:
+    return TimerCmd()
 
 
 @pytest.fixture(scope="session", autouse=True)

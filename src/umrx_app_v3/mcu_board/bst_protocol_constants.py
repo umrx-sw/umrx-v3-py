@@ -258,14 +258,11 @@ class PinInterruptMode(Enum):
 
 
 class TimerConfig(Enum):
-    STOP = 0
-    START = 1
-    RESET = 2
-
-
-class TimerStampConfig(Enum):
-    TIMESTAMP_ENABLE = 0x03
-    TIMESTAMP_DISABLE = 0x04
+    STOP = 0x00
+    START = 0x01
+    RESET = 0x02
+    ENABLE = 0x03
+    DISABLE = 0x04
 
 
 class StreamingSamplingUnit(Enum):
