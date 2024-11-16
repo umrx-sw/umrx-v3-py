@@ -4,7 +4,8 @@ from unittest.mock import patch
 
 import pytest
 
-from umrx_app_v3.mcu_board.bst_protocol import BstProtocol
+from umrx_app_v3.mcu_board.bst_protocol import BstProtocol, BstProtocolError
+from umrx_app_v3.mcu_board.comm.serial_comm import SerialCommunication
 from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
 from umrx_app_v3.mcu_board.commands.command import Command
 
@@ -142,3 +143,42 @@ def test_bst_protocol_create_message_from(bst_protocol_usb: BstProtocol) -> None
     payload_array = array("B", [2, 31])
     message = Command.create_message_from(payload_array)
     check_result(message, payload_array)
+
+
+@pytest.mark.bst_protocol
+def test_bst_protocol_send(bst_protocol_usb: BstProtocol) -> None:
+    with patch.object(bst_protocol_usb.communication, "send") as mocked_send:
+        dummy_message = array("B", (0xBA, 0xBE, 0xCA, 0xFE))
+        bst_protocol_usb.send(dummy_message)
+        mocked_send.assert_called_once_with(dummy_message)
+
+
+@pytest.mark.bst_protocol
+def test_bst_protocol_receive(bst_protocol_usb: BstProtocol) -> None:
+    with patch.object(bst_protocol_usb.communication, "receive") as mocked_receive:
+        bst_protocol_usb.receive()
+        mocked_receive.assert_called_once()
+
+
+@pytest.mark.bst_protocol
+def test_bst_protocol_no_comm() -> None:
+    bst_protocol_usb = BstProtocol()
+    assert bst_protocol_usb.communication is None
+
+
+@pytest.mark.bst_protocol
+def test_bst_protocol_unsupported_comm() -> None:
+    with pytest.raises(BstProtocolError):
+        BstProtocol(comm="pci")
+
+
+@pytest.mark.bst_protocol
+def test_bst_protocol_comm_serial() -> None:
+    bst_protocol_usb = BstProtocol(comm="serial")
+    assert isinstance(bst_protocol_usb.communication, SerialCommunication)
+
+
+@pytest.mark.bst_protocol
+def test_bst_protocol_comm_usb() -> None:
+    bst_protocol_usb = BstProtocol(comm="usb")
+    assert isinstance(bst_protocol_usb.communication, UsbCommunication)

@@ -8,6 +8,9 @@ from umrx_app_v3.mcu_board.comm.usb_comm import UsbCommunication
 logger = logging.getLogger(__name__)
 
 
+class BstProtocolError(Exception): ...
+
+
 class BstProtocol:
     def __init__(self, **kw: Any) -> None:
         self.communication: SerialCommunication | UsbCommunication | None = None
@@ -24,7 +27,7 @@ class BstProtocol:
                     self.communication = SerialCommunication()
             else:
                 error_message = f"Provided communication type {kw['comm']} is not supported"
-                raise ValueError(error_message)
+                raise BstProtocolError(error_message)
 
     def initialize(self) -> None:
         self.communication.connect()
