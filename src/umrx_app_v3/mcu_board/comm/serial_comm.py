@@ -44,7 +44,7 @@ class SerialCommunication(Communication):
     def receive(self) -> array[int] | bytes:
         return self._receive()
 
-    def receive_streaming(self) -> Generator:
+    def receive_polling_streaming(self) -> Generator:
         message = self._receive()
         while len(message) > 0:
             if Command.check_message(message):

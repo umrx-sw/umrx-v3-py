@@ -131,11 +131,11 @@ def test_streaming_polling_i2c_accel_and_gyro(app_board_v3_rev0: ApplicationBoar
     )
     app_board_v3_rev0.configure_streaming_polling(interface="i2c")
 
-    app_board_v3_rev0.start_streaming()
+    app_board_v3_rev0.start_polling_streaming()
     logger.info("start streaming")
     time.sleep(0.5)
     for _ in range(100):
-        streaming = app_board_v3_rev0.receive_streaming()
+        streaming = app_board_v3_rev0.receive_polling_streaming()
         sensor_id, payload = streaming
         data_x, data_y, data_z = struct.unpack("<hhh", payload)
         if sensor_id == 1:
@@ -196,11 +196,11 @@ def test_streaming_polling_spi_accel_and_gyro(app_board_v3_rev0: ApplicationBoar
     )
     app_board_v3_rev0.configure_streaming_polling(interface="spi")
 
-    app_board_v3_rev0.start_streaming()
+    app_board_v3_rev0.start_polling_streaming()
     logger.info("start streaming")
     time.sleep(0.5)
     for _ in range(100):
-        streaming = app_board_v3_rev0.receive_streaming()
+        streaming = app_board_v3_rev0.receive_polling_streaming()
         sensor_id, payload = streaming
         if sensor_id == 1:
             _, a_x, a_y, a_z = struct.unpack("<chhh", payload)

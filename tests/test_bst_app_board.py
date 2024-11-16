@@ -17,6 +17,13 @@ from umrx_app_v3.mcu_board.bst_protocol_constants import (
 )
 from umrx_app_v3.mcu_board.comm.serial_comm import SerialCommunication
 from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd
+from umrx_app_v3.mcu_board.commands.streaming_interrupt import (
+    StreamingInterruptCmd,
+    StreamingInterruptI2cChannelConfig,
+    StreamingInterruptI2cConfig,
+    StreamingInterruptSpiChannelConfig,
+    StreamingInterruptSpiConfig,
+)
 from umrx_app_v3.mcu_board.commands.streaming_polling import StreamingPollingCmd
 
 logger = logging.getLogger(__name__)
@@ -373,9 +380,9 @@ def test_app_board_polling_configure_spi_2_channel(bst_app_board_with_serial: Ap
 
 
 @pytest.mark.app_board
-def test_app_board_start_streaming(bst_app_board_with_serial: ApplicationBoard) -> None:
+def test_app_board_start_polling_streaming(bst_app_board_with_serial: ApplicationBoard) -> None:
     with patch.object(bst_app_board_with_serial.protocol, "send_receive") as mocked_send_receive:
-        bst_app_board_with_serial.start_streaming()
+        bst_app_board_with_serial.start_polling_streaming()
         expected_payload = array("B", (0xAA, 0x06, 0x06, 0xFF, 0x0D, 0x0A))
         mocked_send_receive.assert_called_once_with(expected_payload)
 
@@ -386,6 +393,80 @@ def test_app_board_streaming_polling_receive_i2c(bst_app_board_with_serial: Appl
         "B", (0xAA, 0x0F, 0x01, 0x00, 0x87, 0xE4, 0xFF, 0xDE, 0xFF, 0xE8, 0xFF, 0x00, 0x02, 0x0D, 0x0A)
     )
     with patch.object(bst_app_board_with_serial.protocol, "receive", return_value=example_streaming_packet):
-        sensor_id, payload = bst_app_board_with_serial.receive_streaming()
+        sensor_id, payload = bst_app_board_with_serial.receive_polling_streaming()
         assert sensor_id == 2
         assert payload == array("B", (0xE4, 0xFF, 0xDE, 0xFF, 0xE8, 0xFF))
+
+
+@pytest.mark.app_board
+def test_app_board_start_interrupt_streaming(bst_app_board_with_serial: ApplicationBoard) -> None:
+    with patch.object(bst_app_board_with_serial.protocol, "send_receive") as mocked_send_receive:
+        bst_app_board_with_serial.start_interrupt_streaming()
+        expected_payload = array("B", (0xAA, 0x06, 0x0A, 0xFF, 0x0D, 0x0A))
+        mocked_send_receive.assert_called_once_with(expected_payload)
+
+
+@pytest.mark.app_board
+def test_app_board_interrupt_set_spi_config(bst_app_board_with_serial: ApplicationBoard) -> None:
+    bst_app_board_with_serial.streaming_interrupt_set_spi_configuration()
+
+    assert isinstance(StreamingInterruptCmd.streaming_interrupt_config, StreamingInterruptSpiConfig)
+    assert len(StreamingInterruptCmd.streaming_interrupt_config.channel_configs) == 0
+
+
+@pytest.mark.app_board
+def test_app_board_interrupt_config_spi_channel(bst_app_board_with_serial: ApplicationBoard) -> None:
+    config_1 = StreamingInterruptSpiChannelConfig(
+        id=1,
+        interrupt_pin=MultiIOPin.MINI_SHUTTLE_PIN_1_6,
+        cs_pin=MultiIOPin.MINI_SHUTTLE_PIN_2_1,
+        register_address=0x12,
+        bytes_to_read=7,
+    )
+    bst_app_board_with_serial.streaming_interrupt_set_spi_configuration()
+    bst_app_board_with_serial.streaming_interrupt_set_spi_channel(
+        interrupt_pin=MultiIOPin.MINI_SHUTTLE_PIN_1_6,
+        cs_pin=MultiIOPin.MINI_SHUTTLE_PIN_2_1,
+        register_address=0x12,
+        bytes_to_read=7,
+    )
+
+    assert StreamingInterruptCmd.streaming_interrupt_config.channel_configs[0] == config_1
+
+
+@pytest.mark.app_board
+def test_app_board_interrupt_set_i2c_config(bst_app_board_with_serial: ApplicationBoard) -> None:
+    bst_app_board_with_serial.streaming_interrupt_set_i2c_configuration()
+
+    assert isinstance(StreamingInterruptCmd.streaming_interrupt_config, StreamingInterruptI2cConfig)
+    assert len(StreamingInterruptCmd.streaming_interrupt_config.channel_configs) == 0
+
+
+@pytest.mark.app_board
+def test_app_board_interrupt_config_i2c_channel(bst_app_board_with_serial: ApplicationBoard) -> None:
+    config_1 = StreamingInterruptI2cChannelConfig(
+        id=1, interrupt_pin=MultiIOPin.MINI_SHUTTLE_PIN_1_6, i2c_address=0x18, register_address=0x12, bytes_to_read=6
+    )
+    bst_app_board_with_serial.streaming_interrupt_set_i2c_configuration()
+    bst_app_board_with_serial.streaming_interrupt_set_i2c_channel(
+        interrupt_pin=MultiIOPin.MINI_SHUTTLE_PIN_1_6, i2c_address=0x18, register_address=0x12, bytes_to_read=6
+    )
+
+    assert StreamingInterruptCmd.streaming_interrupt_config.channel_configs[0] == config_1
+
+
+@pytest.mark.app_board
+def test_app_board_interrupt_configure_streaming(bst_app_board_with_serial: ApplicationBoard) -> None:
+    bst_app_board_with_serial.streaming_interrupt_set_i2c_configuration()
+    bst_app_board_with_serial.streaming_interrupt_set_i2c_channel(
+        interrupt_pin=MultiIOPin.MINI_SHUTTLE_PIN_1_6, i2c_address=0x18, register_address=0x12, bytes_to_read=6
+    )
+
+    bst_app_board_with_serial.streaming_interrupt_set_i2c_channel(
+        interrupt_pin=MultiIOPin.MINI_SHUTTLE_PIN_1_7, i2c_address=0x68, register_address=0x02, bytes_to_read=6
+    )
+
+    with patch.object(bst_app_board_with_serial.protocol, "send_receive") as mocked_send_receive:
+        bst_app_board_with_serial.configure_streaming_interrupt(interface="i2c")
+
+        assert mocked_send_receive.call_count == 2

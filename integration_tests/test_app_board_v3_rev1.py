@@ -112,7 +112,7 @@ def test_app_board_v3_rev1_streaming_polling_i2c_accel_and_gyro(app_board_v3_rev
     )
     app_board_v3_rev1.configure_streaming_polling(interface="i2c")
 
-    app_board_v3_rev1.start_streaming()
+    app_board_v3_rev1.start_polling_streaming()
     logger.info("start streaming")
     time.sleep(0.1)
     for _ in range(100):
@@ -225,7 +225,7 @@ def test_app_board_v3_rev1_polling_spi_accel_and_gyro(app_board_v3_rev1: Applica
     )
     app_board_v3_rev1.configure_streaming_polling(interface="spi")
 
-    app_board_v3_rev1.start_streaming()
+    app_board_v3_rev1.start_polling_streaming()
     logger.info("start streaming")
     time.sleep(0.1)
     for _ in range(100):

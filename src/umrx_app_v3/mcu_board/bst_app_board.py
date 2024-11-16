@@ -18,7 +18,7 @@ from umrx_app_v3.mcu_board.commands.i2c import I2CConfigureCmd, I2CReadCmd, I2CW
 from umrx_app_v3.mcu_board.commands.pin_config import GetPinConfigCmd, SetPinConfigCmd
 from umrx_app_v3.mcu_board.commands.set_vdd_vddio import SetVddVddioCmd, Volts
 from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd, SPIReadCmd, SPIWriteCmd
-from umrx_app_v3.mcu_board.commands.streaming_interrupt import StopInterruptStreamingCmd
+from umrx_app_v3.mcu_board.commands.streaming_interrupt import StreamingInterruptCmd
 from umrx_app_v3.mcu_board.commands.streaming_polling import StreamingPollingCmd
 from umrx_app_v3.mcu_board.commands.timer import TimerCmd
 
@@ -66,10 +66,6 @@ class ApplicationBoard:
     def switch_usb_mtp(self) -> None:
         self.start_communication()
         return self.switch_app(0x28000)
-
-    def stop_interrupt_streaming(self) -> None:
-        payload = StopInterruptStreamingCmd.assemble()
-        self.protocol.send_receive(payload)
 
     def disable_timer(self) -> None:
         for payload in TimerCmd.disable():
@@ -167,10 +163,56 @@ class ApplicationBoard:
         payload = StreamingPollingCmd.stop_streaming()
         self.protocol.send_receive(payload)
 
-    def start_streaming(self) -> None:
+    def start_polling_streaming(self) -> None:
         payload = StreamingPollingCmd.start_streaming()
         self.protocol.send_receive(payload)
 
-    def receive_streaming(self) -> tuple[int, array[int]]:
+    def receive_polling_streaming(self) -> tuple[int, array[int]]:
         message = self.protocol.receive()
         return StreamingPollingCmd.parse(message)
+
+    def stop_interrupt_streaming(self) -> None:
+        payload = StreamingInterruptCmd.stop_streaming()
+        self.protocol.send_receive(payload)
+
+    def start_interrupt_streaming(self) -> None:
+        payload = StreamingInterruptCmd.start_streaming()
+        self.protocol.send_receive(payload)
+
+    def streaming_interrupt_set_spi_configuration(self) -> None:
+        StreamingInterruptCmd.set_spi_config()
+
+    def streaming_interrupt_set_spi_channel(
+        self,
+        interrupt_pin: MultiIOPin,
+        cs_pin: MultiIOPin,
+        register_address: int,
+        bytes_to_read: int,
+    ) -> None:
+        StreamingInterruptCmd.set_streaming_channel_spi(
+            interrupt_pin=interrupt_pin,
+            cs_pin=cs_pin,
+            register_address=register_address,
+            bytes_to_read=bytes_to_read,
+        )
+
+    def streaming_interrupt_set_i2c_configuration(self) -> None:
+        StreamingInterruptCmd.set_i2c_config()
+
+    def streaming_interrupt_set_i2c_channel(
+        self,
+        interrupt_pin: MultiIOPin,
+        i2c_address: int,
+        register_address: int,
+        bytes_to_read: int,
+    ) -> None:
+        StreamingInterruptCmd.set_streaming_channel_i2c(
+            interrupt_pin=interrupt_pin,
+            i2c_address=i2c_address,
+            register_address=register_address,
+            bytes_to_read=bytes_to_read,
+        )
+
+    def configure_streaming_interrupt(self, interface: Literal["i2c", "spi"]) -> None:
+        for command in StreamingInterruptCmd.assemble(interface):
+            self.protocol.send_receive(command)

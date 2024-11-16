@@ -30,5 +30,5 @@ class ApplicationBoardV3Rev1(ApplicationBoard):
             self.usb_comm.initialize()
 
     def receive_streaming_multiple(self) -> tuple[int, array[int]]:
-        for message in self.protocol.communication.receive_streaming():
+        for message in self.protocol.communication.receive_polling_streaming():
             yield StreamingPollingCmd.parse(message)
