@@ -210,3 +210,65 @@ def test_streaming_polling_spi_accel_and_gyro(app_board_v3_rev0: ApplicationBoar
             logger.info(f"[g] g_x={g_x:04d}, g_y={g_y:04d}, g_z={g_z:04d} ")
         time.sleep(0.05)
     app_board_v3_rev0.stop_polling_streaming()
+
+
+def test_streaming_interrupt_i2c_accel_and_gyro(app_board_v3_rev0: ApplicationBoardV3Rev0) -> None:
+    app_board_v3_rev0.initialize()
+    app_board_v3_rev0.start_communication()
+    info = app_board_v3_rev0.board_info
+    assert info.shuttle_id == 0x66, "The integration test works only with BMI088"
+    app_board_v3_rev0.set_pin_config(MultiIOPin.MINI_SHUTTLE_PIN_2_6, PinDirection.OUTPUT, PinValue.HIGH)
+    app_board_v3_rev0.set_vdd_vddio(3.3, 3.3)
+    app_board_v3_rev0.configure_i2c()
+    app_board_v3_rev0.enable_timer()
+    # power on accelerometer - it is OFF by default
+    app_board_v3_rev0.write_i2c(0x18, 0x7C, array("B", (0x00, 0x04)))
+    # configure interrupt for accel
+    int1_io_conf = 0x53
+    app_board_v3_rev0.write_i2c(0x18, int1_io_conf, array("B", (0x0A,)))
+    int1_int2_map_data = 0x58
+    app_board_v3_rev0.write_i2c(0x18, int1_int2_map_data, array("B", (0x04,)))
+    # set gyro power mode
+    gyro_lpm_addr = 0x11
+    app_board_v3_rev0.write_i2c(0x68, gyro_lpm_addr, array("B", (0x00,)))
+    # configure gyro measurement bandwidth
+    gyro_bandwidth_addr = 0x10
+    app_board_v3_rev0.write_i2c(0x68, gyro_bandwidth_addr, array("B", (0x01,)))
+    # configure gyro measurement range
+    gyro_range_addr = 0x0F
+    app_board_v3_rev0.write_i2c(0x68, gyro_range_addr, array("B", (0x03,)))
+    # map gyro data ready to INT3 pin
+    int3_int4_io_map = 0x18
+    app_board_v3_rev0.write_i2c(0x68, int3_int4_io_map, array("B", (0x01,)))
+    # set gyro int3 pin to active high
+    int3_int4_io_conf = 0x16
+    app_board_v3_rev0.write_i2c(0x68, int3_int4_io_conf, array("B", (0x51,)))
+    gyro_int_ctrl = 0x15
+    app_board_v3_rev0.write_i2c(0x68, gyro_int_ctrl, array("B", (0x80,)))
+
+    app_board_v3_rev0.streaming_interrupt_set_i2c_channel(
+        interrupt_pin=MultiIOPin.MINI_SHUTTLE_PIN_1_6,
+        i2c_address=0x18,
+        register_address=0x12,
+        bytes_to_read=6,
+    )
+    app_board_v3_rev0.streaming_interrupt_set_i2c_channel(
+        interrupt_pin=MultiIOPin.MINI_SHUTTLE_PIN_1_7,
+        i2c_address=0x68,
+        register_address=0x02,
+        bytes_to_read=6,
+    )
+    app_board_v3_rev0.configure_streaming_interrupt(interface="i2c")
+
+    app_board_v3_rev0.start_interrupt_streaming()
+    logger.info("start streaming")
+    time.sleep(0.5)
+    for _ in range(100):
+        streaming = app_board_v3_rev0.receive_interrupt_streaming()
+        sensor_id, packet, time_stamp, payload = streaming
+        data_x, data_y, data_z = struct.unpack("<hhh", payload)
+        if sensor_id == 1:
+            logger.info(f"[a] packet={packet:06d} a_x={data_x:04d}, a_y={data_y:04d}, a_z={data_z:04d}")
+        elif sensor_id == 2:
+            logger.info(f"[g] packet={packet:06d} g_x={data_x:04d}, g_y={data_y:04d}, g_z={data_z:04d}")
+    app_board_v3_rev0.stop_interrupt_streaming()

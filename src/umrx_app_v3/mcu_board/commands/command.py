@@ -1,13 +1,15 @@
 import abc
 import inspect
 import logging
+import struct
 from array import array
 from collections.abc import Callable
 from typing import Any, Optional
 
 from umrx_app_v3.mcu_board.bst_protocol_constants import (
+    CoinesInterruptStreamResponse,
+    CoinesPollingStreamResponse,
     CoinesResponse,
-    CoinesStreamResponse,
     CommandId,
     ErrorCode,
     StreamingDataResponse,
@@ -103,7 +105,7 @@ class Command(abc.ABC):
         return True, ""
 
     @staticmethod
-    def parse_streaming_packet(message: array[int]) -> tuple[int, array[int]]:
+    def parse_polling_streaming_packet(message: array[int]) -> tuple[int, array[int]]:
         if not Command.check_message(message):
             error_message = f"Cannot parse invalid message {message}"
             raise CommandError(error_message)
@@ -114,9 +116,45 @@ class Command(abc.ABC):
         if not (feature_correct and status_ok):
             error_message = f"Error in message: {feature_correct=}, {status_ok=}, {message=}"
             raise CommandError(error_message)
-        message_channel_msb = message[CoinesStreamResponse.SENSOR_ID_MSB.value]
-        message_channel_lsb = message[CoinesStreamResponse.SENSOR_ID_LSB.value]
+        message_channel_msb = message[CoinesPollingStreamResponse.SENSOR_ID_MSB.value]
+        message_channel_lsb = message[CoinesPollingStreamResponse.SENSOR_ID_LSB.value]
         message_channel_id = (message_channel_msb << 8) | message_channel_lsb
-        payload = message[CoinesStreamResponse.DATA_START_POSITION.value : CoinesStreamResponse.SENSOR_ID_MSB.value]
+        payload_start = CoinesPollingStreamResponse.DATA_START_POSITION.value
+        payload_end = CoinesPollingStreamResponse.SENSOR_ID_MSB.value
+        payload = message[payload_start:payload_end]
         payload_array = array("B", (int(el) for el in payload))
         return message_channel_id, payload_array
+
+    @staticmethod
+    def parse_interrupt_streaming_packet(
+        message: array[int], *, includes_mcu_timestamp: bool = False
+    ) -> tuple[int, int, int, array[int]]:
+        if not Command.check_message(message):
+            error_message = f"Cannot parse invalid message {message}"
+            raise CommandError(error_message)
+        message_status = message[CoinesResponse.DD_RESPONSE_STATUS_POSITION.value]
+        message_feature = message[CoinesResponse.DD_RESPONSE_COMMAND_ID_POSITION.value]
+        feature_correct = message_feature == StreamingDataResponse.INTERRUPT.value
+        status_ok = message_status == ErrorCode.SUCCESS.value
+        if not (feature_correct and status_ok):
+            error_message = f"Error in message: {feature_correct=}, {status_ok=}, {message=}"
+            raise CommandError(error_message)
+
+        message_channel_id = message[CoinesInterruptStreamResponse.CHANNEL_ID_IDX.value]
+        packet_count_start = CoinesInterruptStreamResponse.PACKET_COUNT_IDX.value
+        packet_count_end = CoinesInterruptStreamResponse.PACKET_COUNT_LENGTH.value + packet_count_start
+        packet_count_raw = message[packet_count_start:packet_count_end]
+        (packet_count,) = struct.unpack(">I", packet_count_raw)
+        time_stamp = -1
+        if includes_mcu_timestamp:
+            payload_end = CoinesInterruptStreamResponse.TIME_STAMP_IDX.value
+            time_stamp_start = CoinesInterruptStreamResponse.TIME_STAMP_IDX.value
+            time_stamp_end = CoinesInterruptStreamResponse.PACKET_FOOTER.value
+            time_stamp_raw = message[time_stamp_start:time_stamp_end]
+            time_stamp = array("B", (0, 0)) + array("B", time_stamp_raw)
+            (time_stamp,) = struct.unpack(">Q", time_stamp)
+        else:
+            payload_end = CoinesInterruptStreamResponse.PACKET_FOOTER.value
+        payload = message[CoinesInterruptStreamResponse.PAYLOAD_START_IDX.value : payload_end]
+        payload_array = array("B", (int(el) for el in payload))
+        return message_channel_id, packet_count, time_stamp, payload_array

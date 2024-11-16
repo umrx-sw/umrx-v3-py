@@ -61,10 +61,19 @@ class CoinesResponse(Enum):
     DD_RESPONSE_EXTENDED_READ_ID = 0x43
 
 
-class CoinesStreamResponse(Enum):
+class CoinesPollingStreamResponse(Enum):
     DATA_START_POSITION = 0x05
     SENSOR_ID_MSB = -4
     SENSOR_ID_LSB = -3
+
+
+class CoinesInterruptStreamResponse(Enum):
+    CHANNEL_ID_IDX = 0x05
+    PACKET_COUNT_IDX = 0x06
+    PACKET_COUNT_LENGTH = 0x04
+    PAYLOAD_START_IDX = 0x0A
+    TIME_STAMP_IDX = -8
+    PACKET_FOOTER = -2
 
 
 class ErrorCode(Enum):

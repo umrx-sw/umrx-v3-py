@@ -60,7 +60,7 @@ class StreamingPollingCmd(Command):
 
     @staticmethod
     def parse(message: array[int]) -> tuple[int, array[int]]:
-        return Command.parse_streaming_packet(message)
+        return Command.parse_polling_streaming_packet(message)
 
     @staticmethod
     def set_spi_config() -> None:
