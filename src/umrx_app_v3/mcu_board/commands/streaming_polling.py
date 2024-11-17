@@ -7,8 +7,12 @@ from dataclasses import dataclass, field
 from typing import Literal
 
 from umrx_app_v3.mcu_board.bst_protocol_constants import (
+    CoinesPollingStreamResponse,
+    CoinesResponse,
     CommandType,
+    ErrorCode,
     MultiIOPin,
+    StreamingDataResponse,
     StreamingSamplingUnit,
 )
 from umrx_app_v3.mcu_board.commands.command import Command, CommandError
@@ -60,7 +64,7 @@ class StreamingPollingCmd(Command):
 
     @staticmethod
     def parse(message: array[int]) -> tuple[int, array[int]]:
-        return Command.parse_polling_streaming_packet(message)
+        return StreamingPollingCmd.parse_streaming_packet(message)
 
     @staticmethod
     def set_spi_config() -> None:
@@ -246,3 +250,24 @@ class StreamingPollingCmd(Command):
             0,
         )
         return Command.create_message_from(payload)
+
+    @staticmethod
+    def parse_streaming_packet(message: array[int]) -> tuple[int, array[int]]:
+        if not Command.check_message(message):
+            error_message = f"Cannot parse invalid message {message}"
+            raise CommandError(error_message)
+        message_status = message[CoinesResponse.DD_RESPONSE_STATUS_POSITION.value]
+        message_feature = message[CoinesResponse.DD_RESPONSE_COMMAND_ID_POSITION.value]
+        feature_correct = message_feature == StreamingDataResponse.POLLING.value
+        status_ok = message_status == ErrorCode.SUCCESS.value
+        if not (feature_correct and status_ok):
+            error_message = f"Error in message: {feature_correct=}, {status_ok=}, {message=}"
+            raise CommandError(error_message)
+        message_channel_msb = message[CoinesPollingStreamResponse.SENSOR_ID_MSB.value]
+        message_channel_lsb = message[CoinesPollingStreamResponse.SENSOR_ID_LSB.value]
+        message_channel_id = (message_channel_msb << 8) | message_channel_lsb
+        payload_start = CoinesPollingStreamResponse.DATA_START_POSITION.value
+        payload_end = CoinesPollingStreamResponse.SENSOR_ID_MSB.value
+        payload = message[payload_start:payload_end]
+        payload_array = array("B", (int(el) for el in payload))
+        return message_channel_id, payload_array

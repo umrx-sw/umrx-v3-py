@@ -171,9 +171,9 @@ class ApplicationBoard:
         message = self.protocol.receive()
         return StreamingPollingCmd.parse(message)
 
-    def receive_interrupt_streaming(self) -> tuple[int, int, int, array[int]]:
+    def receive_interrupt_streaming(self, *, includes_mcu_timestamp: bool = False) -> tuple[int, int, int, array[int]]:
         message = self.protocol.receive()
-        return StreamingInterruptCmd.parse_interrupt_streaming_packet(message)
+        return StreamingInterruptCmd.parse_streaming_packet(message, includes_mcu_timestamp=includes_mcu_timestamp)
 
     def stop_interrupt_streaming(self) -> None:
         payload = StreamingInterruptCmd.stop_streaming()

@@ -24,13 +24,6 @@ def test_command_stop_interrupt_streaming_assemble(streaming_interrupt_command: 
 
 
 @pytest.mark.commands
-def test_command_stop_interrupt_streaming_parse(streaming_interrupt_command: StreamingInterruptCmd) -> None:
-    dummy_response = array("B", (0xCA, 0xFE))
-
-    assert streaming_interrupt_command.parse(dummy_response) is None
-
-
-@pytest.mark.commands
 def test_command_interrupt_assemble_spi_channel_config(streaming_interrupt_command: StreamingInterruptCmd) -> None:
     config_1 = StreamingInterruptSpiChannelConfig(
         id=1,
@@ -430,3 +423,73 @@ def test_command_interrupt_assemble(streaming_interrupt_command: StreamingInterr
 
     with pytest.raises(CommandError):
         streaming_interrupt_command.assemble(sensor_interface="pci")
+
+
+@pytest.mark.commands
+def test_command_interrupt_streaming_parse(streaming_interrupt_command: StreamingInterruptCmd) -> None:
+    response = array("B", [170, 18, 1, 0, 138, 1, 0, 0, 0, 49, 168, 0, 69, 0, 77, 21, 13, 10])
+
+    channel_id, packet_idx, timestamp, payload = streaming_interrupt_command.parse(response)
+    assert channel_id == 1
+    assert packet_idx == 49
+    assert timestamp == -1
+    assert payload == array("B", [168, 0, 69, 0, 77, 21])
+
+
+@pytest.mark.commands
+def test_command_interrupt_streaming_parse_invalid(streaming_interrupt_command: StreamingInterruptCmd) -> None:
+    invalid_response = array("B", [170, 22, 1, 0, 138, 1, 0, 0, 0, 49, 168, 0, 69, 0, 77, 21])
+
+    with pytest.raises(CommandError):
+        _ = streaming_interrupt_command.parse(invalid_response)
+
+    status_error = array("B", [170, 18, 1, 22, 138, 1, 0, 0, 0, 49, 168, 0, 69, 0, 77, 21, 13, 10])
+    with pytest.raises(CommandError):
+        _ = streaming_interrupt_command.parse(status_error)
+
+    feature_invalid = array("B", [170, 18, 1, 0, 135, 1, 0, 0, 0, 49, 168, 0, 69, 0, 77, 21, 13, 10])
+    with pytest.raises(CommandError):
+        _ = streaming_interrupt_command.parse(feature_invalid)
+
+    both_invalid = array("B", [170, 18, 1, 22, 135, 1, 0, 0, 0, 49, 168, 0, 69, 0, 77, 21, 13, 10])
+    with pytest.raises(CommandError):
+        _ = streaming_interrupt_command.parse(both_invalid)
+
+
+@pytest.mark.commands
+def test_command_interrupt_streaming_parse_with_timestamp(streaming_interrupt_command: StreamingInterruptCmd) -> None:
+    message_with_timestamp = array(
+        "B",
+        [
+            0xAA,
+            0x18,
+            0x01,
+            0x00,
+            0x8A,
+            0x02,
+            0x00,
+            0x00,
+            0x00,
+            0x0F,
+            0x06,
+            0x00,
+            0x4B,
+            0x00,
+            0xEF,
+            0xFF,
+            0x00,
+            0x00,
+            0x16,
+            0x3D,
+            0x8C,
+            0xBA,
+            0x0D,
+            0x0A,
+        ],
+    )
+    response = streaming_interrupt_command.parse_streaming_packet(message_with_timestamp, includes_mcu_timestamp=True)
+    sensor_id, packet_count, timestamp, payload = response
+    assert sensor_id == 2
+    assert packet_count == 0xF
+    assert timestamp == 12437749
+    assert payload == array("B", (0x06, 0x00, 0x4B, 0x00, 0xEF, 0xFF))

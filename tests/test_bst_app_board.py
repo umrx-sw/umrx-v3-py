@@ -470,3 +470,52 @@ def test_app_board_interrupt_configure_streaming(bst_app_board_with_serial: Appl
         bst_app_board_with_serial.configure_streaming_interrupt(interface="i2c")
 
         assert mocked_send_receive.call_count == 2
+
+
+@pytest.mark.app_board
+def test_app_board_interrupt_receive_streaming(bst_app_board_with_serial: ApplicationBoard) -> None:
+    message_without_timestamp = array("B", [170, 18, 1, 0, 138, 2, 0, 0, 1, 238, 228, 255, 191, 255, 205, 255, 13, 10])
+    with patch.object(bst_app_board_with_serial.protocol, "receive", return_value=message_without_timestamp):
+        streaming_response = bst_app_board_with_serial.receive_interrupt_streaming()
+        channel_id, packet_count, timestamp, payload = streaming_response
+        assert channel_id == 2
+        assert packet_count == 494
+        assert timestamp == -1
+        assert payload == array("B", (228, 255, 191, 255, 205, 255))
+
+    message_with_timestamp = array(
+        "B",
+        [
+            0xAA,
+            0x18,
+            0x01,
+            0x00,
+            0x8A,
+            0x02,
+            0x00,
+            0x00,
+            0x00,
+            0x0F,
+            0x06,
+            0x00,
+            0x4B,
+            0x00,
+            0xEF,
+            0xFF,
+            0x00,
+            0x00,
+            0x16,
+            0x3D,
+            0x8C,
+            0xBA,
+            0x0D,
+            0x0A,
+        ],
+    )
+    with patch.object(bst_app_board_with_serial.protocol, "receive", return_value=message_with_timestamp):
+        streaming_response = bst_app_board_with_serial.receive_interrupt_streaming(includes_mcu_timestamp=True)
+        channel_id, packet_count, timestamp, payload = streaming_response
+        assert channel_id == 2
+        assert packet_count == 0x0F
+        assert timestamp == 12437749
+        assert payload == array("B", (0x06, 0x00, 0x4B, 0x00, 0xEF, 0xFF))
