@@ -31,12 +31,12 @@ class TimerCmd(Command):
 
     @staticmethod
     def _enable() -> array[int]:
-        payload = (CommandType.DD_SET.value, CommandId.TIMER_CFG_CMD_ID.value, TimerConfig.ENABLE.value)
+        payload = (CommandType.DD_GET.value, CommandId.TIMER_CFG_CMD_ID.value, TimerConfig.ENABLE.value)
         return Command.create_message_from(payload)
 
     @staticmethod
     def _disable() -> array[int]:
-        payload = (CommandType.DD_SET.value, CommandId.TIMER_CFG_CMD_ID.value, TimerConfig.DISABLE.value)
+        payload = (CommandType.DD_GET.value, CommandId.TIMER_CFG_CMD_ID.value, TimerConfig.DISABLE.value)
         return Command.create_message_from(payload)
 
     @staticmethod
