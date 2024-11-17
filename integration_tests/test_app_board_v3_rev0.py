@@ -220,7 +220,6 @@ def test_streaming_interrupt_i2c_accel_and_gyro(app_board_v3_rev0: ApplicationBo
     app_board_v3_rev0.set_pin_config(MultiIOPin.MINI_SHUTTLE_PIN_2_6, PinDirection.OUTPUT, PinValue.HIGH)
     app_board_v3_rev0.set_vdd_vddio(3.3, 3.3)
     app_board_v3_rev0.configure_i2c()
-    app_board_v3_rev0.enable_timer()
     # power on accelerometer - it is OFF by default
     app_board_v3_rev0.write_i2c(0x18, 0x7C, array("B", (0x00, 0x04)))
     # configure interrupt for accel
@@ -245,7 +244,8 @@ def test_streaming_interrupt_i2c_accel_and_gyro(app_board_v3_rev0: ApplicationBo
     app_board_v3_rev0.write_i2c(0x68, int3_int4_io_conf, array("B", (0x51,)))
     gyro_int_ctrl = 0x15
     app_board_v3_rev0.write_i2c(0x68, gyro_int_ctrl, array("B", (0x80,)))
-
+    app_board_v3_rev0.enable_timer()
+    time.sleep(0.1)
     app_board_v3_rev0.streaming_interrupt_set_i2c_channel(
         interrupt_pin=MultiIOPin.MINI_SHUTTLE_PIN_1_6,
         i2c_address=0x18,
@@ -259,16 +259,15 @@ def test_streaming_interrupt_i2c_accel_and_gyro(app_board_v3_rev0: ApplicationBo
         bytes_to_read=6,
     )
     app_board_v3_rev0.configure_streaming_interrupt(interface="i2c")
-
     app_board_v3_rev0.start_interrupt_streaming()
     logger.info("start streaming")
     time.sleep(0.5)
     for _ in range(100):
-        streaming = app_board_v3_rev0.receive_interrupt_streaming()
+        streaming = app_board_v3_rev0.receive_interrupt_streaming(includes_mcu_timestamp=True)
         sensor_id, packet, time_stamp, payload = streaming
         data_x, data_y, data_z = struct.unpack("<hhh", payload)
         if sensor_id == 1:
-            logger.info(f"[a] packet={packet:06d} a_x={data_x:04d}, a_y={data_y:04d}, a_z={data_z:04d}")
+            logger.info(f"[a] {packet=:06d} {time_stamp=:08d}, a_x={data_x:04d}, a_y={data_y:04d}, a_z={data_z:04d}")
         elif sensor_id == 2:
-            logger.info(f"[g] packet={packet:06d} g_x={data_x:04d}, g_y={data_y:04d}, g_z={data_z:04d}")
+            logger.info(f"[g] {packet=:06d} {time_stamp=:08d}, g_x={data_x:04d}, g_y={data_y:04d}, g_z={data_z:04d}")
     app_board_v3_rev0.stop_interrupt_streaming()
