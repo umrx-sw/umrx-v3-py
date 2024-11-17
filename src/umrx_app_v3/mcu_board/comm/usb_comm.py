@@ -32,7 +32,7 @@ class UsbCommunication(Communication):
     def find_device(self) -> None:
         self.usb_device = usb.core.find(idVendor=self.vid, idProduct=self.pid)
         if self.usb_device is None:
-            error_message = f"BST Board with VID={self.vid}, PID={self.pid} not found! Is it connected and turned ON?"
+            error_message = f"Board with VID={self.vid:04X}, PID={self.pid:04X} not found! Is it connected and ON?"
             raise UsbCommunicationError(error_message)
 
     def get_set_usb_config(self) -> None:
