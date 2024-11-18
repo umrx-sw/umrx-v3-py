@@ -44,7 +44,7 @@ class SerialCommunication(Communication):
     def receive(self) -> array[int] | bytes:
         return self._receive()
 
-    def receive_polling_streaming(self) -> Generator:
+    def receive_multiple_streaming_packets(self) -> Generator:
         message = self._receive()
         while len(message) > 0:
             if Command.check_message(message):
@@ -83,7 +83,7 @@ class SerialCommunication(Communication):
         if self.port_name is None:
             found = self.find_device()
             if not found:
-                error_msg = "No serial port found!"
+                error_msg = "Board is not found! Is it connected and turned ON?"
                 raise SerialCommunicationError(error_msg)
         self.port = serial.Serial(port=self.port_name)
         self.port.port = self.port_name

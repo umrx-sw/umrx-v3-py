@@ -74,7 +74,7 @@ def test_app_board_v3_rev1_receive_streaming_multiple(app_board_v3_rev1: Applica
         app_board_v3_rev1.protocol.communication, "_receive", return_value=example_payload
     ) as mocked_protocol_initialize:
         num_messages = 0
-        for message in app_board_v3_rev1.receive_streaming_multiple():
+        for message in app_board_v3_rev1.receive_polling_streaming_multiple():
             logger.info(f"{message=}")
             num_messages += 1
 

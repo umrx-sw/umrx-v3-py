@@ -19,6 +19,6 @@ def test_serial_message_split(serial_comm: SerialCommunication) -> None:
     assert message
     with patch.object(serial_comm, "_receive", return_value=message):
         num_packets = 0
-        for _ in serial_comm.receive_polling_streaming():
+        for _ in serial_comm.receive_multiple_streaming_packets():
             num_packets += 1
         assert num_packets == 273
