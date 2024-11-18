@@ -20,7 +20,7 @@ from umrx_app_v3.mcu_board.commands.streaming_polling import (
     StreamingPollingCmd,
 )
 from umrx_app_v3.mcu_board.commands.timer import TimerCmd
-from umrx_app_v3.shuttle_board.bmi088 import BMI088
+from umrx_app_v3.shuttle_board.bmi088.bmi088_shuttle import BMI088Shuttle
 
 handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(logging.Formatter("[%(asctime)s][%(levelname)-8s][%(name)s]: %(message)s"))
@@ -143,5 +143,5 @@ def app_board_v3_rev1(bst_protocol_serial: BstProtocol) -> ApplicationBoardV3Rev
 
 
 @pytest.fixture(scope="session", autouse=True)
-def bmi088(app_board_v3_rev0: ApplicationBoardV3Rev0) -> BMI088:
-    return BMI088(board=app_board_v3_rev0)
+def bmi088_shuttle(app_board_v3_rev0: ApplicationBoardV3Rev0) -> BMI088Shuttle:
+    return BMI088Shuttle(board=app_board_v3_rev0)

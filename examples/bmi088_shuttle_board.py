@@ -1,10 +1,8 @@
 import logging
 import sys
 from pathlib import Path
-from time import sleep
 
-from umrx_app_v3.mcu_board.app_board_v3_rev0 import ApplicationBoardV3Rev0
-from umrx_app_v3.shuttle_board.bmi088 import BMI088
+from umrx_app_v3.shuttle_board.bmi088.bmi088_shuttle import BMI088Shuttle
 
 if __name__ == "__main__":
     logging.basicConfig(
@@ -16,34 +14,6 @@ if __name__ == "__main__":
         ],
     )
 
-    app_board_30 = ApplicationBoardV3Rev0()
-    shuttle = BMI088()
+    shuttle = BMI088Shuttle.shuttle_on_hardware_v3_rev0()
 
-    shuttle.attach_to(app_board_30)
-
-    shuttle.init()
-    for _ in range(4):
-        shuttle.board.protocol.receive()
-    sleep(0.2)
-    shuttle.read_gyro_register_spi(0)
-    sleep(0.2)
-    shuttle.read_accel_register_spi(0)
-    sleep(0.2)
-    shuttle.read_accel_register_spi(0)
-    sleep(0.2)
-    shuttle.read_accel_register_spi(2)
-    sleep(0.2)
-    shuttle.read_accel_register_spi(0x12)
-    sleep(0.2)
-    shuttle.read_accel_register_spi(0x22)
-    sleep(0.2)
-    shuttle.read_accel_register_spi(0x23)
-    sleep(0.2)
-    shuttle.read_accel_register_spi(0x00)
-    # shuttle.start_broadcast()
-    # sleep(0.1)
-    # for packet in shuttle.receive_broadcast(num_packets=1000000):
-    #     print(packet)
-    #
-    # for packet in shuttle.receive_gyro_broadcast(num_packets=1000000):
-    #     print(packet)
+    shuttle.initialize()
