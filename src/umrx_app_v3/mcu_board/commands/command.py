@@ -40,9 +40,13 @@ class Command(abc.ABC):
 
     @staticmethod
     def check_message(packet: array[int] | tuple[int, ...] | list[int]) -> bool:
+        if len(packet) < 2:
+            return False
         packet_start = 0xAA
         is_packet_start_found = packet[0] == packet_start
         packet_size = packet[1]
+        if len(packet) < packet_size:
+            return False
         packet_end = 0x0D, 0x0A
         is_packet_end_found = tuple(packet[packet_size - 2 : packet_size]) == packet_end
         return is_packet_start_found and is_packet_end_found
