@@ -64,6 +64,46 @@ class BMI088:
     def __init__(self) -> None:
         self.read_gyro: Callable | None = None
         self.write_gyro: Callable | None = None
+        self.read_accel: Callable | None = None
+        self.write_accel: Callable | None = None
+
+    def assign_gyro_callbacks(self, read_callback: Callable, write_callback: Callable) -> None:
+        self.read_gyro = read_callback
+        self.write_gyro = write_callback
+
+    def assign_accel_callbacks(self, read_callback: Callable, write_callback: Callable) -> None:
+        self.read_accel = read_callback
+        self.write_accel = write_callback
+
+    @property
+    def gyro_chip_id(self) -> int:
+        return self.read_gyro(BMI088.gyro_chip_id_addr)
+
+    @property
+    def gyro_rate_x(self) -> int:
+        lsb = self.read_gyro(BMI088.gyro_rate_x_lsb_addr)
+        msb = self.read_gyro(BMI088.gyro_rate_x_msb_addr)
+        return (msb << 8) | lsb
+
+    @property
+    def gyro_rate_y(self) -> int:
+        lsb = self.read_gyro(BMI088.gyro_rate_y_lsb_addr)
+        msb = self.read_gyro(BMI088.gyro_rate_y_msb_addr)
+        return (msb << 8) | lsb
+
+    @property
+    def gyro_rate_z(self) -> int:
+        lsb = self.read_gyro(BMI088.gyro_rate_z_lsb_addr)
+        msb = self.read_gyro(BMI088.gyro_rate_z_msb_addr)
+        return (msb << 8) | lsb
+
+    @property
+    def gyro_int_stat_1(self) -> int:
+        return self.read_gyro(BMI088.gyro_int_stat_1_addr)
+
+    @property
+    def gyro_fifo_status(self) -> int:
+        return self.read_gyro(BMI088.gyro_fifo_status_addr)
 
     @property
     def gyro_lpm1(self) -> int:
