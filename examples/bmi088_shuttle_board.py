@@ -14,6 +14,6 @@ if __name__ == "__main__":
         ],
     )
 
-    shuttle = BMI088Shuttle.shuttle_on_hardware_v3_rev0()
+    shuttle = BMI088Shuttle.on_hardware_v3_rev0()
 
     shuttle.initialize()

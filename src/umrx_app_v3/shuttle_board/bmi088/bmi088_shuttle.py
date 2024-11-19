@@ -27,11 +27,11 @@ class BMI088Shuttle:
         self.board = board
 
     @classmethod
-    def shuttle_on_hardware_v3_rev0(cls) -> Self:
+    def on_hardware_v3_rev0(cls) -> Self:
         return cls(board=ApplicationBoardV3Rev0())
 
     @classmethod
-    def shuttle_on_hardware_v3_rev1(cls) -> Self:
+    def on_hardware_v3_rev1(cls) -> Self:
         return cls(board=ApplicationBoardV3Rev1())
 
     def initialize(self) -> None:
