@@ -78,20 +78,17 @@ class BMI088:
 
     @property
     def gyro_rate_x(self) -> int:
-        lsb = self.read_gyro(BMI088.gyro_rate_x_lsb_addr)
-        msb = self.read_gyro(BMI088.gyro_rate_x_msb_addr)
+        lsb, msb = self.read_gyro(BMI088.gyro_rate_x_lsb_addr, 2)
         return (msb << 8) | lsb
 
     @property
     def gyro_rate_y(self) -> int:
-        lsb = self.read_gyro(BMI088.gyro_rate_y_lsb_addr)
-        msb = self.read_gyro(BMI088.gyro_rate_y_msb_addr)
+        lsb, msb = self.read_gyro(BMI088.gyro_rate_y_lsb_addr, 2)
         return (msb << 8) | lsb
 
     @property
     def gyro_rate_z(self) -> int:
-        lsb = self.read_gyro(BMI088.gyro_rate_z_lsb_addr)
-        msb = self.read_gyro(BMI088.gyro_rate_z_msb_addr)
+        lsb, msb = self.read_gyro(BMI088.gyro_rate_z_lsb_addr, 2)
         return (msb << 8) | lsb
 
     @property
@@ -103,9 +100,261 @@ class BMI088:
         return self.read_gyro(BMI088.gyro_fifo_status_addr)
 
     @property
+    def gyro_range(self) -> int:
+        return self.read_gyro(BMI088.gyro_range_addr)
+
+    @gyro_range.setter
+    def gyro_range(self, value: int) -> None:
+        self.write_gyro(BMI088.gyro_range_addr, value)
+
+    @property
+    def gyro_bandwidth(self) -> int:
+        return self.read_gyro(BMI088.gyro_bandwidth_addr)
+
+    @gyro_bandwidth.setter
+    def gyro_bandwidth(self, value: int) -> None:
+        self.write_gyro(BMI088.gyro_bandwidth_addr, value)
+
+    @property
     def gyro_lpm1(self) -> int:
         return self.read_gyro(BMI088.gyro_lpm1_addr)
 
     @gyro_lpm1.setter
     def gyro_lpm1(self, value: int) -> None:
         self.write_gyro(BMI088.gyro_lpm1_addr, value)
+
+    def gyro_soft_reset(self, value: int) -> None:
+        self.write_gyro(BMI088.gyro_soft_reset_addr, value)
+
+    gyro_soft_reset = property(None, gyro_soft_reset)
+
+    @property
+    def gyro_int_ctrl(self) -> int:
+        return self.read_gyro(BMI088.gyro_int_ctrl_addr)
+
+    @gyro_int_ctrl.setter
+    def gyro_int_ctrl(self, value: int) -> None:
+        self.write_gyro(BMI088.gyro_int_ctrl_addr, value)
+
+    @property
+    def gyro_int3_int4_io_conf(self) -> int:
+        return self.read_gyro(BMI088.gyro_int3_int4_io_conf_addr)
+
+    @gyro_int3_int4_io_conf.setter
+    def gyro_int3_int4_io_conf(self, value: int) -> None:
+        self.write_gyro(BMI088.gyro_int3_int4_io_conf_addr, value)
+
+    @property
+    def gyro_int3_int4_io_map(self) -> int:
+        return self.read_gyro(BMI088.gyro_int3_int4_io_map_addr)
+
+    @gyro_int3_int4_io_map.setter
+    def gyro_int3_int4_io_map(self, value: int) -> None:
+        self.write_gyro(BMI088.gyro_int3_int4_io_map_addr, value)
+
+    @property
+    def gyro_fifo_wm_en(self) -> int:
+        return self.read_gyro(BMI088.gyro_fifo_wm_en_addr)
+
+    @gyro_fifo_wm_en.setter
+    def gyro_fifo_wm_en(self, value: int) -> None:
+        self.write_gyro(BMI088.gyro_fifo_wm_en_addr, value)
+
+    @property
+    def gyro_fifo_ext_int_s(self) -> int:
+        return self.read_gyro(BMI088.gyro_fifo_ext_int_s_addr)
+
+    @gyro_fifo_ext_int_s.setter
+    def gyro_fifo_ext_int_s(self, value: int) -> None:
+        self.write_gyro(BMI088.gyro_fifo_ext_int_s_addr, value)
+
+    @property
+    def gyro_self_test(self) -> int:
+        return self.read_gyro(BMI088.gyro_self_test_addr)
+
+    @gyro_self_test.setter
+    def gyro_self_test(self, value: int) -> None:
+        self.write_gyro(BMI088.gyro_self_test_addr, value)
+
+    @property
+    def gyro_fifo_config_0(self) -> int:
+        return self.read_gyro(BMI088.gyro_fifo_config_0_addr)
+
+    @gyro_fifo_config_0.setter
+    def gyro_fifo_config_0(self, value: int) -> None:
+        self.write_gyro(BMI088.gyro_fifo_config_0_addr, value)
+
+    @property
+    def gyro_fifo_config_1(self) -> int:
+        return self.read_gyro(BMI088.gyro_fifo_config_1_addr)
+
+    @gyro_fifo_config_1.setter
+    def gyro_fifo_config_1(self, value: int) -> None:
+        self.write_gyro(BMI088.gyro_fifo_config_1_addr, value)
+
+    @property
+    def gyro_fifo_data(self) -> int:
+        return self.read_gyro(BMI088.gyro_fifo_data_addr)
+
+    # Accelerometer
+    @property
+    def acc_chip_id(self) -> int:
+        return self.read_accel(BMI088.acc_chip_id_addr)
+
+    @property
+    def acc_err_reg(self) -> int:
+        return self.read_accel(BMI088.acc_err_reg_addr)
+
+    @property
+    def acc_status(self) -> int:
+        return self.read_accel(BMI088.acc_status_addr)
+
+    @property
+    def acc_x(self) -> int:
+        lsb, msb = self.read_accel(BMI088.acc_x_lsb_addr, 2)
+        return (msb << 8) | lsb
+
+    @property
+    def acc_y(self) -> int:
+        lsb, msb = self.read_accel(BMI088.acc_y_lsb_addr, 2)
+        return (msb << 8) | lsb
+
+    @property
+    def acc_z(self) -> int:
+        lsb, msb = self.read_accel(BMI088.acc_z_lsb_addr, 2)
+        return (msb << 8) | lsb
+
+    @property
+    def acc_sensor_time(self) -> int:
+        byte_0, byte_1, byte_2 = self.read_accel(BMI088.acc_sensor_time_0_addr, 3)
+        return (byte_2 << 16) | (byte_1 << 8) | byte_0
+
+    @property
+    def acc_int_stat_1(self) -> int:
+        return self.read_accel(BMI088.acc_int_stat_1_addr)
+
+    @property
+    def acc_temperature(self) -> int:
+        msb, lsb = self.read_accel(BMI088.acc_temp_msb_addr, 2)
+        return (msb << 3) | (lsb >> 5)
+
+    @property
+    def acc_fifo_length_0(self) -> int:
+        return self.read_accel(BMI088.acc_fifo_length_0_addr)
+
+    @property
+    def acc_fifo_length_1(self) -> int:
+        return self.read_accel(BMI088.acc_fifo_length_1_addr)
+
+    @property
+    def acc_fifo_data(self) -> int:
+        return self.read_accel(BMI088.acc_fifo_data_addr)
+
+    @property
+    def acc_conf(self) -> int:
+        return self.read_accel(BMI088.acc_conf_addr)
+
+    @acc_conf.setter
+    def acc_conf(self, value: int) -> None:
+        self.write_accel(BMI088.acc_conf_addr, value)
+
+    @property
+    def acc_range(self) -> int:
+        return self.read_accel(BMI088.acc_range_addr)
+
+    @acc_range.setter
+    def acc_range(self, value: int) -> None:
+        self.write_accel(BMI088.acc_range_addr, value)
+
+    @property
+    def acc_fifo_downs(self) -> int:
+        return self.read_accel(BMI088.acc_fifo_downs_addr)
+
+    @acc_fifo_downs.setter
+    def acc_fifo_downs(self, value: int) -> None:
+        self.write_accel(BMI088.acc_fifo_downs_addr, value)
+
+    @property
+    def acc_fifo_wtm_0(self) -> int:
+        return self.read_accel(BMI088.acc_fifo_wtm_0_addr)
+
+    @acc_fifo_wtm_0.setter
+    def acc_fifo_wtm_0(self, value: int) -> None:
+        self.write_accel(BMI088.acc_fifo_wtm_0_addr, value)
+
+    @property
+    def acc_fifo_wtm_1(self) -> int:
+        return self.read_accel(BMI088.acc_fifo_wtm_1_addr)
+
+    @acc_fifo_wtm_1.setter
+    def acc_fifo_wtm_1(self, value: int) -> None:
+        self.write_accel(BMI088.acc_fifo_wtm_1_addr, value)
+
+    @property
+    def acc_fifo_config_0(self) -> int:
+        return self.read_accel(BMI088.acc_fifo_config_0_addr)
+
+    @acc_fifo_config_0.setter
+    def acc_fifo_config_0(self, value: int) -> None:
+        self.write_accel(BMI088.acc_fifo_config_0_addr, value)
+
+    @property
+    def acc_fifo_config_1(self) -> int:
+        return self.read_accel(BMI088.acc_fifo_config_1_addr)
+
+    @acc_fifo_config_1.setter
+    def acc_fifo_config_1(self, value: int) -> None:
+        self.write_accel(BMI088.acc_fifo_config_1_addr, value)
+
+    @property
+    def acc_int1_io_ctrl(self) -> int:
+        return self.read_accel(BMI088.acc_int1_io_ctrl_addr)
+
+    @acc_int1_io_ctrl.setter
+    def acc_int1_io_ctrl(self, value: int) -> None:
+        self.write_accel(BMI088.acc_int1_io_ctrl_addr, value)
+
+    @property
+    def acc_int2_io_ctrl(self) -> int:
+        return self.read_accel(BMI088.acc_int2_io_ctrl_addr)
+
+    @acc_int2_io_ctrl.setter
+    def acc_int2_io_ctrl(self, value: int) -> None:
+        self.write_accel(BMI088.acc_int2_io_ctrl_addr, value)
+
+    @property
+    def acc_int_map_data(self) -> int:
+        return self.read_accel(BMI088.acc_int_map_data_addr)
+
+    @acc_int_map_data.setter
+    def acc_int_map_data(self, value: int) -> None:
+        self.write_accel(BMI088.acc_int_map_data_addr, value)
+
+    @property
+    def acc_self_test(self) -> int:
+        return self.read_accel(BMI088.acc_self_test_addr)
+
+    @acc_self_test.setter
+    def acc_self_test(self, value: int) -> None:
+        self.write_accel(BMI088.acc_self_test_addr, value)
+
+    @property
+    def acc_pwr_conf(self) -> int:
+        return self.read_accel(BMI088.acc_pwr_conf_addr)
+
+    @acc_pwr_conf.setter
+    def acc_pwr_conf(self, value: int) -> None:
+        self.write_accel(BMI088.acc_pwr_conf_addr, value)
+
+    @property
+    def acc_pwr_ctrl(self) -> int:
+        return self.read_accel(BMI088.acc_pwr_ctrl_addr)
+
+    @acc_pwr_ctrl.setter
+    def acc_pwr_ctrl(self, value: int) -> None:
+        self.write_accel(BMI088.acc_pwr_ctrl_addr, value)
+
+    def acc_soft_reset(self, value: int) -> None:
+        self.write_accel(BMI088.acc_soft_reset_addr, value)
+
+    acc_soft_reset = property(None, acc_soft_reset)
