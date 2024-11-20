@@ -70,11 +70,20 @@ class BMI088Shuttle:
             error_message = f"Expect shuttle_id={self.SHUTTLE_ID} got {board_info.shuttle_id}"
             raise BMI088ShuttleError(error_message)
 
+    def assign_sensor_callbacks(self) -> None:
+        self.sensor.assign_gyro_callbacks(
+            read_callback=self.read_gyro_register, write_callback=self.write_gyro_register
+        )
+        self.sensor.assign_accel_callbacks(
+            read_callback=self.read_accel_register, write_callback=self.write_accel_register
+        )
+
     def configure_i2c(self) -> None:
         self.board.set_pin_config(self.PS, PinDirection.OUTPUT, PinValue.HIGH)
         self.board.set_vdd_vddio(3.3, 3.3)
         time.sleep(0.01)
         self.board.configure_i2c()
+        self.assign_sensor_callbacks()
         self.is_i2c_configured = True
         self.is_spi_configured = False
 
@@ -88,6 +97,7 @@ class BMI088Shuttle:
         if isinstance(self.board, ApplicationBoardV3Rev1):
             SPIConfigureCmd.set_bus(SPIBus.BUS_1)
         self.board.configure_spi()
+        self.assign_sensor_callbacks()
         self.is_spi_configured = True
         self.is_i2c_configured = False
 
@@ -238,8 +248,13 @@ class BMI088Shuttle:
         self.switch_on_accel()
         self.sensor.acc_int1_io_ctrl = 0x0A
         self.sensor.acc_int_map_data = 0x04
-        self.sensor.gyro_lpm1 = 0x23
-        # TODO: finish configuration
+        self.sensor.gyro_range = 0x03
+        self.sensor.gyro_bandwidth = 0x01
+        self.sensor.gyro_lpm1 = 0x00
+        self.sensor.gyro_int3_int4_io_map = 0x01
+        self.sensor.gyro_int3_int4_io_conf = 0x51
+        self.sensor.gyro_int_ctrl = 0x80
+        time.sleep(0.02)
         if self.is_i2c_configured:
             return self._configure_i2c_interrupt_streaming()
         if self.is_spi_configured:
