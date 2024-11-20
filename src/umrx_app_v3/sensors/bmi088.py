@@ -1,3 +1,4 @@
+import struct
 from collections.abc import Callable
 
 
@@ -77,19 +78,10 @@ class BMI088:
         return self.read_gyro(BMI088.gyro_chip_id_addr)
 
     @property
-    def gyro_rate_x(self) -> int:
-        lsb, msb = self.read_gyro(BMI088.gyro_rate_x_lsb_addr, 2)
-        return (msb << 8) | lsb
-
-    @property
-    def gyro_rate_y(self) -> int:
-        lsb, msb = self.read_gyro(BMI088.gyro_rate_y_lsb_addr, 2)
-        return (msb << 8) | lsb
-
-    @property
-    def gyro_rate_z(self) -> int:
-        lsb, msb = self.read_gyro(BMI088.gyro_rate_z_lsb_addr, 2)
-        return (msb << 8) | lsb
+    def gyro_rate(self) -> tuple[int, int, int]:
+        payload = self.read_gyro(BMI088.gyro_rate_x_lsb_addr, 6)
+        g_x, g_y, g_z = struct.unpack("<hhh", payload)
+        return g_x, g_y, g_z
 
     @property
     def gyro_int_stat_1(self) -> int:
@@ -210,19 +202,10 @@ class BMI088:
         return self.read_accel(BMI088.acc_status_addr)
 
     @property
-    def acc_x(self) -> int:
-        lsb, msb = self.read_accel(BMI088.acc_x_lsb_addr, 2)
-        return (msb << 8) | lsb
-
-    @property
-    def acc_y(self) -> int:
-        lsb, msb = self.read_accel(BMI088.acc_y_lsb_addr, 2)
-        return (msb << 8) | lsb
-
-    @property
-    def acc_z(self) -> int:
-        lsb, msb = self.read_accel(BMI088.acc_z_lsb_addr, 2)
-        return (msb << 8) | lsb
+    def acceleration(self) -> tuple[int, int, int]:
+        payload = self.read_accel(BMI088.acc_x_lsb_addr, 6)
+        a_x, a_y, a_z = struct.unpack("<hhh", payload)
+        return a_x, a_y, a_z
 
     @property
     def acc_sensor_time(self) -> int:
