@@ -119,9 +119,9 @@ class BMI088Shuttle:
 
     def write_accel_register(self, reg_addr: int, value: int) -> None:
         if self.is_i2c_configured:
-            self.board.write_i2c(self.ACCEL_I2C_DEFAULT_ADDRESS, reg_addr, array("B", (value,)))
+            return self.board.write_i2c(self.ACCEL_I2C_DEFAULT_ADDRESS, reg_addr, array("B", (value,)))
         if self.is_spi_configured:
-            self.board.write_spi(self.CSB1, reg_addr, array("B", (value,)))
+            return self.board.write_spi(self.CSB1, reg_addr, array("B", (value,)))
         error_message = "Configure I2C or SPI protocol prior to reading registers"
         raise BMI088ShuttleError(error_message)
 
