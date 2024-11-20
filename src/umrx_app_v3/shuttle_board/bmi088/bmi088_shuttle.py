@@ -108,10 +108,12 @@ class BMI088Shuttle:
                 return values[0]
             return values
         if self.is_spi_configured:
-            values = self.board.read_spi(self.CSB1, reg_addr, bytes_to_read)
+            if bytes_to_read == 1:
+                _ = self.board.read_spi(self.CSB1, reg_addr, 1)
+            values = self.board.read_spi(self.CSB1, reg_addr, bytes_to_read + 1)
             if bytes_to_read == 1:
                 return values[0]
-            return values
+            return values[1:]
         error_message = "Configure I2C or SPI protocol prior to reading registers"
         raise BMI088ShuttleError(error_message)
 
