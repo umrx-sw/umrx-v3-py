@@ -31,7 +31,7 @@ class AppBoardError(Exception): ...
 class ApplicationBoard:
     def __init__(self, **kw: Any) -> None:
         self.protocol: BstProtocol = (
-            kw["protocol"] if kw.get("protocol") and isinstance(kw["protocol"], BstProtocol) else BstProtocol(kw)
+            kw["protocol"] if kw.get("protocol") and isinstance(kw["protocol"], BstProtocol) else BstProtocol(**kw)
         )
 
     def initialize(self) -> None:
