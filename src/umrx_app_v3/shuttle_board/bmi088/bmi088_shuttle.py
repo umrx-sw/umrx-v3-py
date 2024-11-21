@@ -141,9 +141,9 @@ class BMI088Shuttle:
 
     def write_gyro_register(self, reg_addr: int, value: int) -> None:
         if self.is_i2c_configured:
-            self.board.write_i2c(self.GYRO_I2C_DEFAULT_ADDRESS, reg_addr, array("B", (value,)))
+            return self.board.write_i2c(self.GYRO_I2C_DEFAULT_ADDRESS, reg_addr, array("B", (value,)))
         if self.is_spi_configured:
-            self.board.write_spi(self.CSB2, reg_addr, array("B", (value,)))
+            return self.board.write_spi(self.CSB2, reg_addr, array("B", (value,)))
         error_message = "Configure I2C or SPI protocol prior to reading registers"
         raise BMI088ShuttleError(error_message)
 
@@ -169,6 +169,7 @@ class BMI088Shuttle:
             bytes_to_read=6,
         )
         self.board.configure_streaming_polling(interface="i2c")
+        self.is_polling_streaming_configured = True
 
     def _configure_spi_polling_streaming(
         self,
@@ -192,6 +193,7 @@ class BMI088Shuttle:
             bytes_to_read=6,
         )
         self.board.configure_streaming_polling(interface="spi")
+        self.is_polling_streaming_configured = True
 
     def switch_on_accel(self) -> None:
         self.sensor.acc_pwr_conf = 0x00
@@ -230,6 +232,7 @@ class BMI088Shuttle:
             bytes_to_read=6,
         )
         self.board.configure_streaming_interrupt(interface="i2c")
+        self.is_interrupt_streaming_configured = True
 
     def _configure_spi_interrupt_streaming(self) -> None:
         self.board.streaming_interrupt_set_spi_channel(
@@ -245,6 +248,7 @@ class BMI088Shuttle:
             bytes_to_read=6,
         )
         self.board.configure_streaming_interrupt(interface="spi")
+        self.is_interrupt_streaming_configured = True
 
     def configure_interrupt_streaming(self) -> None:
         self.switch_on_accel()
