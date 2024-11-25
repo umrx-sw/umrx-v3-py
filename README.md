@@ -1,5 +1,7 @@
 # Python communication with COINES firmware
 
+[![Static analysis and Unit tests](https://github.com/umrx-sw/umrx-v3-py/actions/workflows/python-lint-and-test.yml/badge.svg)](https://github.com/umrx-sw/umrx-v3-py/actions/workflows/python-lint-and-test.yml)
+
 `python3` communication with COINES firmware on 
 [Application Board 3.1](https://www.bosch-sensortec.com/software-tools/tools/application-board-3-1/) or 
 [3.0](https://www.bosch-sensortec.com/software-tools/tools/application-board-3-0/) hardware.
