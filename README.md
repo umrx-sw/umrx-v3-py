@@ -8,11 +8,11 @@
 
 Install the latest version from [pypi](https://pypi.org/):
 ```bash
-pip install umrx-v3-py
+pip install umrx-app-v3
 ```
 
-The `umrx-v3-py` project implements in `python3` COINES communication protocol 
-to control the micro-controller (MCU) and read the sensor data from the 
+The `umrx-app-v3` project implements in `python3` COINES communication protocol 
+to interact with the micro-controller (MCU) and read the sensor data from the 
 [Application Board 3.1](https://www.bosch-sensortec.com/software-tools/tools/application-board-3-1/) and 
 [3.0](https://www.bosch-sensortec.com/software-tools/tools/application-board-3-0/) when 
 board is programmed with BST default firmware.
@@ -35,10 +35,10 @@ and
 * Read / write the sensor registers using the SPI protocol;
 * Configure and receive streaming packets:
     * **Polling** streaming: sensor registers are read in bulk at regular intervals;
-    * **Interrupt** streaming: sensor registers are read in bulk when sensor reports data ready over interrupt pin.
+    * **Interrupt** streaming: sensor registers are read in bulk when sensor reports data ready over interrupt pin;
 * Switch application to 
   [DFU](https://www.usb.org/document-library/device-firmware-upgrade-11-new-version-31-aug-2004) or 
-  [MTP](https://en.wikipedia.org/wiki/Media_Transfer_Protocol)
+  [MTP](https://en.wikipedia.org/wiki/Media_Transfer_Protocol);
 * Enable MCU time stamp (works only with Application Board 3.0).
 
 
@@ -125,7 +125,7 @@ Execute the python scripts with `sudo` to read/write USB device.
 ### Install using pip
 
 ```bash
-pip install umrx-v3-py
+pip install umrx-app-v3
 ```
 
 
