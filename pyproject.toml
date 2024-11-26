@@ -36,6 +36,8 @@ safety = ">=2.3.4,!=2.3.5"
 typeguard = ">=3.0.2"
 unittest-parametrize = "^1.4.0"
 
+[tool.poetry-dynamic-versioning]
+enable = true
 
 [tool.coverage.report]
 fail_under = 50
