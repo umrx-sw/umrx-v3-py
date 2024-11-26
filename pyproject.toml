@@ -5,7 +5,7 @@ build-backend = "poetry_dynamic_versioning.backend"
 [tool.poetry]
 name = "umrx-app-v3"
 version = "0.0.0"
-description = "Python COINES firmware communication"
+description = "Communication with COINES firmware for humans"
 authors = [
   "Konstantin Selyunin <selyunin.k.v@gmail.com>",
 ]
@@ -35,9 +35,6 @@ rich = "^13.7.1"
 safety = ">=2.3.4,!=2.3.5"
 typeguard = ">=3.0.2"
 unittest-parametrize = "^1.4.0"
-
-[tool.poetry-dynamic-versioning]
-enable = true
 
 
 [tool.coverage.report]
