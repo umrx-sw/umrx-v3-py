@@ -6,7 +6,7 @@
 [Application Board 3.1](https://www.bosch-sensortec.com/software-tools/tools/application-board-3-1/) or 
 [3.0](https://www.bosch-sensortec.com/software-tools/tools/application-board-3-0/) hardware.
 
-Install the latest version from [pypi](https://pypi.org/):
+Install the latest version from [pypi](https://pypi.org/project/umrx-app-v3/):
 ```bash
 pip install umrx-app-v3
 ```
