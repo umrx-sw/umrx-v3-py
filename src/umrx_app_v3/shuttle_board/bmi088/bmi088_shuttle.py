@@ -15,7 +15,7 @@ from umrx_app_v3.mcu_board.bst_protocol_constants import (
     StreamingSamplingUnit,
 )
 from umrx_app_v3.mcu_board.commands.spi import SPIConfigureCmd
-from umrx_app_v3.sensors.bmi088 import BMI088
+from umrx_app_v3.sensors.bmi088 import BMI088, BMI088AccelAddr, BMI088GyroAddr
 from umrx_app_v3.shuttle_board.bmi088.accel_streaming_packet import BMI088AccelPacket
 from umrx_app_v3.shuttle_board.bmi088.gyro_streaming_packet import BMI088GyroPacket
 
@@ -102,6 +102,8 @@ class BMI088Shuttle:
         self.is_i2c_configured = False
 
     def read_accel_register(self, reg_addr: int, bytes_to_read: int = 1) -> array[int] | int:
+        if isinstance(reg_addr, BMI088AccelAddr):
+            reg_addr = reg_addr.value
         if self.is_i2c_configured:
             values = self.board.read_i2c(self.ACCEL_I2C_DEFAULT_ADDRESS, reg_addr, bytes_to_read)
             if bytes_to_read == 1:
@@ -118,6 +120,8 @@ class BMI088Shuttle:
         raise BMI088ShuttleError(error_message)
 
     def write_accel_register(self, reg_addr: int, value: int) -> None:
+        if isinstance(reg_addr, BMI088AccelAddr):
+            reg_addr = reg_addr.value
         if self.is_i2c_configured:
             return self.board.write_i2c(self.ACCEL_I2C_DEFAULT_ADDRESS, reg_addr, array("B", (value,)))
         if self.is_spi_configured:
@@ -126,6 +130,8 @@ class BMI088Shuttle:
         raise BMI088ShuttleError(error_message)
 
     def read_gyro_register(self, reg_addr: int, bytes_to_read: int = 1) -> array[int] | int:
+        if isinstance(reg_addr, BMI088GyroAddr):
+            reg_addr = reg_addr.value
         if self.is_i2c_configured:
             values = self.board.read_i2c(self.GYRO_I2C_DEFAULT_ADDRESS, reg_addr, bytes_to_read)
             if bytes_to_read == 1:
@@ -140,6 +146,8 @@ class BMI088Shuttle:
         raise BMI088ShuttleError(error_message)
 
     def write_gyro_register(self, reg_addr: int, value: int) -> None:
+        if isinstance(reg_addr, BMI088GyroAddr):
+            reg_addr = reg_addr.value
         if self.is_i2c_configured:
             return self.board.write_i2c(self.GYRO_I2C_DEFAULT_ADDRESS, reg_addr, array("B", (value,)))
         if self.is_spi_configured:
@@ -279,7 +287,7 @@ class BMI088Shuttle:
     def stop_streaming(self) -> None:
         self.board.stop_polling_streaming()
         time.sleep(0.15)
-        self.board.start_interrupt_streaming()
+        self.board.stop_interrupt_streaming()
 
     def decode_gyro_streaming(self, payload: array[int]) -> BMI088GyroPacket:
         g_x, g_y, g_z = struct.unpack("<hhh", payload)

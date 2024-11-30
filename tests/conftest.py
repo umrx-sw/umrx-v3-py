@@ -20,7 +20,10 @@ from umrx_app_v3.mcu_board.commands.streaming_polling import (
     StreamingPollingCmd,
 )
 from umrx_app_v3.mcu_board.commands.timer import TimerCmd
+from umrx_app_v3.sensors.bmi088 import BMI088
+from umrx_app_v3.sensors.bmi323 import BMI323
 from umrx_app_v3.shuttle_board.bmi088.bmi088_shuttle import BMI088Shuttle
+from umrx_app_v3.shuttle_board.bmi323.bmi323_shuttle import BMI323Shuttle
 
 handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(logging.Formatter("[%(asctime)s][%(levelname)-8s][%(name)s]: %(message)s"))
@@ -145,3 +148,18 @@ def app_board_v3_rev1(bst_protocol_serial: BstProtocol) -> ApplicationBoardV3Rev
 @pytest.fixture(scope="session", autouse=True)
 def bmi088_shuttle(app_board_v3_rev0: ApplicationBoardV3Rev0) -> BMI088Shuttle:
     return BMI088Shuttle(board=app_board_v3_rev0)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def bmi088() -> BMI088:
+    return BMI088()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def bmi323_shuttle(app_board_v3_rev1: ApplicationBoardV3Rev1) -> BMI323Shuttle:
+    return BMI323Shuttle(board=app_board_v3_rev1)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def bmi323() -> BMI323:
+    return BMI323()
