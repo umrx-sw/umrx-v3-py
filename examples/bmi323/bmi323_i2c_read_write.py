@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     logger.info(f"chip_id=0x{shuttle.sensor.chip_id:04X}")
     logger.info(f"err_reg=0x{shuttle.sensor.err_reg:04X}")
-    logger.info(f"err_reg=0x{shuttle.sensor.status:04X}")
+    logger.info(f"status=0x{shuttle.sensor.status:04X}")
 
     a_x, a_y, a_z = shuttle.sensor.acc_data
     logger.info(f"acceleration=({a_x=:04X}, {a_y=:04X}, {a_z=:04X})")
