@@ -22,6 +22,7 @@ from umrx_app_v3.mcu_board.commands.streaming_polling import (
 from umrx_app_v3.mcu_board.commands.timer import TimerCmd
 from umrx_app_v3.sensors.bmi088 import BMI088
 from umrx_app_v3.sensors.bmi323 import BMI323
+from umrx_app_v3.sensors.bmp390 import BMP390
 from umrx_app_v3.shuttle_board.bmi088.bmi088_shuttle import BMI088Shuttle
 from umrx_app_v3.shuttle_board.bmi323.bmi323_shuttle import BMI323Shuttle
 
@@ -163,3 +164,8 @@ def bmi323_shuttle(app_board_v3_rev1: ApplicationBoardV3Rev1) -> BMI323Shuttle:
 @pytest.fixture(scope="session", autouse=True)
 def bmi323() -> BMI323:
     return BMI323()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def bmp390() -> BMP390:
+    return BMP390()
