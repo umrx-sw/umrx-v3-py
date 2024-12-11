@@ -27,12 +27,27 @@ show different communication features for the
 [BMI323 shuttle](https://www.bosch-sensortec.com/media/boschsensortec/downloads/shuttle_board_flyer/bst-bmi323-sf000.pdf)
 board:
 
-* [`bmi088/bmi323_i2c_read_write.py`](./bmi323/bmi323_i2c_read_write.py) 
-* [`bmi088/bmi323_i2c_polling_streaming.py`](./bmi323/bmi323_i2c_polling_streaming.py)
-* [`bmi088/bmi323_i2c_interrupt_streaming.py`](./bmi323/bmi323_i2c_interrupt_streaming.py)
-* [`bmi088/bmi323_spi_read_write.py`](./bmi323/bmi323_spi_read_write.py)
-* [`bmi088/bmi323_spi_polling_streaming.py`](./bmi323/bmi323_spi_polling_streaming.py)
-* [`bmi088/bmi323_spi_interrupt_streaming.py`](./bmi323/bmi323_spi_interrupt_streaming.py)
+* [`bmi323/bmi323_i2c_read_write.py`](./bmi323/bmi323_i2c_read_write.py) 
+* [`bmi323/bmi323_i2c_polling_streaming.py`](./bmi323/bmi323_i2c_polling_streaming.py)
+* [`bmi323/bmi323_i2c_interrupt_streaming.py`](./bmi323/bmi323_i2c_interrupt_streaming.py)
+* [`bmi323/bmi323_spi_read_write.py`](./bmi323/bmi323_spi_read_write.py)
+* [`bmi323/bmi323_spi_polling_streaming.py`](./bmi323/bmi323_spi_polling_streaming.py)
+* [`bmi323/bmi323_spi_interrupt_streaming.py`](./bmi323/bmi323_spi_interrupt_streaming.py)
+
+## [`bmp390`](https://www.bosch-sensortec.com/products/environmental-sensors/pressure-sensors/bmp390/)
+
+The examples in the [`bmp390`](./bmp390) folder 
+show different communication features for the 
+[BMP390 shuttle](https://www.bosch-sensortec.com/media/boschsensortec/downloads/shuttle_board_flyer/application_board_3_1/bst-bmp390-sf000.pdf)
+board:
+
+* [`bmp390/bmp390_i2c_read_write.py`](./bmp390/bmp390_i2c_read_write.py) 
+* [`bmp390/bmp390_i2c_polling_streaming.py`](./bmp390/bmp390_i2c_polling_streaming.py)
+* [`bmp390/bmp390_i2c_interrupt_streaming.py`](./bmp390/bmp390_i2c_interrupt_streaming.py)
+* [`bmp390/bmp390_spi_read_write.py`](./bmp390/bmp390_spi_read_write.py)
+* [`bmp390/bmp390_spi_polling_streaming.py`](./bmp390/bmp390_spi_polling_streaming.py)
+* [`bmp390/bmp390_spi_interrupt_streaming.py`](./bmp390/bmp390_spi_interrupt_streaming.py)
+
 
 
 ## Need a specific example or do not know how to read data from your sensor?
