@@ -20,6 +20,7 @@ from umrx_app_v3.mcu_board.commands.streaming_polling import (
     StreamingPollingCmd,
 )
 from umrx_app_v3.mcu_board.commands.timer import TimerCmd
+from umrx_app_v3.sensors.bma400 import BMA400
 from umrx_app_v3.sensors.bmi088 import BMI088
 from umrx_app_v3.sensors.bmi323 import BMI323
 from umrx_app_v3.sensors.bmp390 import BMP390
@@ -169,3 +170,8 @@ def bmi323() -> BMI323:
 @pytest.fixture(scope="session", autouse=True)
 def bmp390() -> BMP390:
     return BMP390()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def bma400() -> BMA400:
+    return BMA400()

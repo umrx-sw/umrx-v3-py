@@ -5,6 +5,20 @@ These are self-contained examples for using the `umrx-v3-py` with Application Bo
 * [`switch_app_dfu.py`](./switch_app_dfu.py)
 * [`switch_app_mtp.py`](./switch_app_mtp.py)
 
+## [`bma400`](https://www.bosch-sensortec.com/products/motion-sensors/accelerometers/bma400/)
+
+The examples in the [`bma400`](./bma400) folder 
+show different communication features for the 
+[BMA400 shuttle](https://www.bosch-sensortec.com/media/boschsensortec/downloads/shuttle_board_flyer/application_board_3_1/bst-bma400-sf000.pdf)
+board:
+
+* [`bma400/bma400_i2c_read_write.py`](./bma400/bma400_i2c_read_write.py) 
+* [`bma400/bma400_i2c_polling_streaming.py`](./bma400/bma400_i2c_polling_streaming.py)
+* [`bma400/bma400_i2c_interrupt_streaming.py`](./bma400/bma400_i2c_interrupt_streaming.py)
+* [`bma400/bma400_spi_read_write.py`](./bma400/bma400_spi_read_write.py)
+* [`bma400/bma400_spi_polling_streaming.py`](./bma400/bma400_spi_polling_streaming.py)
+* [`bma400/bma400_spi_interrupt_streaming.py`](./bma400/bma400_spi_interrupt_streaming.py)
+
 
 ## [`bmi088`](https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi088/)
 
