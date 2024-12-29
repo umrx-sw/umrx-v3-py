@@ -19,6 +19,19 @@ board:
 * [`bma400/bma400_spi_polling_streaming.py`](./bma400/bma400_spi_polling_streaming.py)
 * [`bma400/bma400_spi_interrupt_streaming.py`](./bma400/bma400_spi_interrupt_streaming.py)
 
+## [`bma456`](https://www.bosch-sensortec.com/products/motion-sensors/accelerometers/bma456/)
+
+The examples in the [`bma456`](./bma456) folder 
+show different communication features for the 
+[BMA456 shuttle](https://www.bosch-sensortec.com/media/boschsensortec/downloads/shuttle_board_flyer/application_board_3_1/bst-bma456-sf000.pdf)
+board:
+
+* [`bma456/bma456_i2c_read_write.py`](./bma456/bma456_i2c_read_write.py) 
+* [`bma456/bma456_i2c_polling_streaming.py`](./bma456/bma456_i2c_polling_streaming.py)
+* [`bma456/bma456_i2c_interrupt_streaming.py`](./bma456/bma456_i2c_interrupt_streaming.py)
+* [`bma456/bma456_spi_read_write.py`](./bma456/bma456_spi_read_write.py)
+* [`bma456/bma456_spi_polling_streaming.py`](./bma456/bma456_spi_polling_streaming.py)
+* [`bma456/bma456_spi_interrupt_streaming.py`](./bma456/bma456_spi_interrupt_streaming.py)
 
 ## [`bmi088`](https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi088/)
 
