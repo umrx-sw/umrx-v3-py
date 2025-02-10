@@ -1,8 +1,7 @@
 import struct
 from collections.abc import Callable
 from enum import Enum
-
-from cryptography.utils import cached_property
+from functools import cached_property
 
 
 class BMP390Addr(Enum):
