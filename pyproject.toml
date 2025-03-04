@@ -13,28 +13,26 @@ readme = "README.md"
 repository = "https://github.com/umrx-sw/umrx-v3-py"
 
 [tool.poetry.dependencies]
-pyusb = "1.2.1"
+pyusb = "1.3.1"
 python = ">=3.12.0,<3.14.0"
 pyserial = "^3.5"
 
 [tool.poetry.dev-dependencies]
 coverage = { extras = ["toml"], version = ">=7.2.5" }
 ipdb = "^0.13.13"
-ipython = "^8.20.0"
+ipython = "^9.0.1"
 poethepoet = ">=0.20.0"
 pre-commit = ">=3.3.1"
-pudb = "^2023.1"
-pytest = ">=7.3.1"
+pudb = "^2024.1"
+pytest = ">=8.3.5"
 pytest-icdiff = "^0.9"
-pytest-mock = ">=3.10.0"
+pytest-mock = ">=3.14.0"
 pytest-order = "^1.2.0"
-pytest-randomly = "^3.15.0"
+pytest-randomly = "^3.16.0"
 pytest-watcher = "^0.4.3"
-pytest-xdist = ">=3.2.1"
-rich = "^13.7.1"
+pytest-xdist = ">=3.6.1"
 safety = ">=2.3.4,!=2.3.5"
-typeguard = ">=3.0.2"
-unittest-parametrize = "^1.4.0"
+unittest-parametrize = "^1.6.0"
 
 [tool.poetry-dynamic-versioning]
 enable = true
@@ -77,7 +75,7 @@ warn_required_dynamic_aliases = true
 warn_untyped_fields = true
 
 [tool.pytest.ini_options]
-addopts = "--color=yes --doctest-modules --exitfirst --failed-first --strict-config --strict-markers --typeguard-packages=umrx_app_v3 --verbosity=2 --junitxml=reports/pytest.xml --log-cli-level=DEBUG"
+addopts = "--color=yes --doctest-modules --exitfirst --failed-first --strict-config --strict-markers --verbosity=2 --junitxml=reports/pytest.xml --log-cli-level=DEBUG"
 filterwarnings = [
   "error",
   "ignore::DeprecationWarning",
