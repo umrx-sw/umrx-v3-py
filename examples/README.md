@@ -33,6 +33,26 @@ board:
 * [`bma456/bma456_spi_polling_streaming.py`](./bma456/bma456_spi_polling_streaming.py)
 * [`bma456/bma456_spi_interrupt_streaming.py`](./bma456/bma456_spi_interrupt_streaming.py)
 
+## [`bma530`](https://www.bosch-sensortec.com/products/motion-sensors/accelerometers/bma530/)
+
+The examples in the [`bma530`](./bma530) folder 
+show different communication features for the 
+[BMA530 shuttle](https://www.bosch-sensortec.com/media/boschsensortec/downloads/shuttle_board_flyer/application_board_3_1/bst-bma530-sf000.pdf)
+board:
+
+* [`bma530/bma530_i2c_read_write.py`](./bma530/bma530_i2c_read_write.py)
+* [`bma530/bma530_i2c_read_write_extended.py`](./bma530/bma530_i2c_read_write_extended.py)
+* [`bma530/bma530_i2c_polling_streaming.py`](./bma530/bma530_i2c_polling_streaming.py)
+* [`bma530/bma530_i2c_interrupt_streaming.py`](./bma530/bma530_i2c_interrupt_streaming.py)
+* [`bma530/bma530_spi_read_write.py`](./bma530/bma530_spi_read_write.py)
+* [`bma530/bma530_spi_read_write_extended.py`](./bma530/bma530_spi_read_write_extended.py)
+* [`bma530/bma530_spi_polling_streaming.py`](./bma530/bma530_spi_polling_streaming.py)
+
+Note: the SPI interrupt streaming is not available for 
+[BMA530 shuttle](https://www.bosch-sensortec.com/media/boschsensortec/downloads/shuttle_board_flyer/application_board_3_1/bst-bma530-sf000.pdf)
+because of the sensor pin-out and shuttle schematics (interrupt pins multiplexed with SPI pins).
+
+
 ## [`bma580`](https://www.bosch-sensortec.com/products/motion-sensors/accelerometers/bma580/)
 
 The examples in the [`bma580`](./bma580) folder 
