@@ -107,16 +107,10 @@ class BMA580:
     def __init__(self) -> None:
         self.read: Callable | None = None
         self.write: Callable | None = None
-        self.read_extended: Callable | None = None
-        self.write_extended: Callable | None = None
 
     def assign_callbacks(self, read_callback: Callable, write_callback: Callable) -> None:
         self.read = read_callback
         self.write = write_callback
-
-    def assign_extended_callbacks(self, read_extended_callback: Callable, write_extended_callback: Callable) -> None:
-        self.read_extended = read_extended_callback
-        self.write_extended = write_extended_callback
 
     @property
     def chip_id(self) -> int:
