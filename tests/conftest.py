@@ -24,6 +24,7 @@ from umrx_app_v3.sensors.bma400 import BMA400
 from umrx_app_v3.sensors.bma456 import BMA456
 from umrx_app_v3.sensors.bma530 import BMA530
 from umrx_app_v3.sensors.bma580 import BMA580
+from umrx_app_v3.sensors.bme280 import BME280
 from umrx_app_v3.sensors.bmi088 import BMI088
 from umrx_app_v3.sensors.bmi323 import BMI323
 from umrx_app_v3.sensors.bmp390 import BMP390
@@ -151,31 +152,6 @@ def app_board_v3_rev1(bst_protocol_serial: BstProtocol) -> ApplicationBoardV3Rev
 
 
 @pytest.fixture(scope="session", autouse=True)
-def bmi088_shuttle(app_board_v3_rev0: ApplicationBoardV3Rev0) -> BMI088Shuttle:
-    return BMI088Shuttle(board=app_board_v3_rev0)
-
-
-@pytest.fixture(scope="session", autouse=True)
-def bmi088() -> BMI088:
-    return BMI088()
-
-
-@pytest.fixture(scope="session", autouse=True)
-def bmi323_shuttle(app_board_v3_rev1: ApplicationBoardV3Rev1) -> BMI323Shuttle:
-    return BMI323Shuttle(board=app_board_v3_rev1)
-
-
-@pytest.fixture(scope="session", autouse=True)
-def bmi323() -> BMI323:
-    return BMI323()
-
-
-@pytest.fixture(scope="session", autouse=True)
-def bmp390() -> BMP390:
-    return BMP390()
-
-
-@pytest.fixture(scope="session", autouse=True)
 def bma400() -> BMA400:
     return BMA400()
 
@@ -193,3 +169,33 @@ def bma530() -> BMA530:
 @pytest.fixture(scope="session", autouse=True)
 def bma580() -> BMA580:
     return BMA580()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def bme280() -> BME280:
+    return BME280()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def bmi088() -> BMI088:
+    return BMI088()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def bmi088_shuttle(app_board_v3_rev0: ApplicationBoardV3Rev0) -> BMI088Shuttle:
+    return BMI088Shuttle(board=app_board_v3_rev0)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def bmi323() -> BMI323:
+    return BMI323()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def bmi323_shuttle(app_board_v3_rev1: ApplicationBoardV3Rev1) -> BMI323Shuttle:
+    return BMI323Shuttle(board=app_board_v3_rev1)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def bmp390() -> BMP390:
+    return BMP390()

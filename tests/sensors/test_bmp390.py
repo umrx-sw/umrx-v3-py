@@ -1,23 +1,12 @@
+import logging
 import struct
+from functools import cached_property
 from typing import Any
 from unittest.mock import patch
 
 from umrx_app_v3.sensors.bmp390 import BMP390
 
-# def test_bmp390_cached_properties(bmp390: BMP390) -> None:
-#     all_properties = {key: value for key, value in bmp390.__class__.__dict__.items() if isinstance(value, property)}
-#     write_only_properties = [
-#         key for key, value in all_properties.items() if (value.fset is not None) and (value.fget is None)
-#     ]
-#     readable_properties = all_properties.keys() - write_only_properties
-#
-#     for readable_property in readable_properties:
-#         with patch.object(bmp390, "read") as mocked_read, patch.object(struct, "unpack", return_value=(1, 2, 3)):
-#             getattr(bmp390, readable_property)
-#             if readable_property == "sensor_time":
-#                 assert mocked_read.call_count == 2
-#             else:
-#                 mocked_read.assert_called_once()
+logger = logging.getLogger(__name__)
 
 
 def test_bmp390_read_properties(bmp390: BMP390) -> None:
@@ -25,7 +14,10 @@ def test_bmp390_read_properties(bmp390: BMP390) -> None:
     write_only_properties = [
         key for key, value in all_properties.items() if (value.fset is not None) and (value.fget is None)
     ]
-    readable_properties = all_properties.keys() - write_only_properties
+    cached_properties = {
+        key: value for key, value in bmp390.__class__.__dict__.items() if isinstance(value, cached_property)
+    }
+    readable_properties = (all_properties.keys() - write_only_properties) | cached_properties.keys()
 
     def fake_read(*args: Any) -> int | bytes:
         if len(args) <= 1:

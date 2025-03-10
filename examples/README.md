@@ -72,6 +72,20 @@ Note: the SPI interrupt streaming is not available for
 [BMA580 shuttle](https://www.bosch-sensortec.com/media/boschsensortec/downloads/shuttle_board_flyer/application_board_3_1/bst-bma580-sf000.pdf)
 because of the sensor pin-out and shuttle schematics (interrupt pins multiplexed with SPI pins).
 
+
+## [`bme280`](https://www.bosch-sensortec.com/products/environmental-sensors/humidity-sensors-bme280/)
+
+The examples in the [`bme280`](./bme280) folder 
+show different communication features for the 
+[BME280 shuttle](https://www.bosch-sensortec.com/media/boschsensortec/downloads/shuttle_board_flyer/application_board_3_1/bst-bme280-sf000.pdf)
+board:
+
+* [`bme280/bme280_i2c_read_write.py`](./bme280/bme280_i2c_read_write.py)
+* [`bme280/bme280_i2c_polling_streaming.py`](./bme280/bme280_i2c_polling_streaming.py)
+* [`bme280/bme280_spi_read_write.py`](./bme280/bme280_spi_read_write.py)
+* [`bme280/bme280_spi_polling_streaming.py`](./bme280/bme280_spi_polling_streaming.py)
+
+
 ## [`bmi088`](https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi088/)
 
 The examples in the [`bmi088`](./bmi088) folder 
