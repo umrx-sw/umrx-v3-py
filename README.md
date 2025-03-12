@@ -274,7 +274,17 @@ print(result)
 
 ### Examples
 
-Take a look at the additional [examples](./examples).
+Take a look at the additional [examples](./examples):
+
+* [bma400](examples/bma400)
+* [bma456](examples/bma456)
+* [bma530](examples/bma530)
+* [bma580](examples/bma580)
+* [bme280](examples/bme280)
+* [bmi088](examples/bmi088)
+* [bmi323](examples/bmi323)
+* [bmp390](examples/bmp390)
+* [bmp585](examples/bmp585)
 
 ## Default firmware
 
