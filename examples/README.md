@@ -129,6 +129,20 @@ board:
 * [`bmp390/bmp390_spi_interrupt_streaming.py`](./bmp390/bmp390_spi_interrupt_streaming.py)
 
 
+## [`bmp585`](https://www.bosch-sensortec.com/products/environmental-sensors/pressure-sensors/bmp585/)
+
+The examples in the [`bmp585`](./bmp585) folder 
+show different communication features for the 
+[BMP585 shuttle](https://www.bosch-sensortec.com/media/boschsensortec/downloads/shuttle_board_flyer/application_board_3_1/bst-bmp585-sf000.pdf)
+board:
+
+* [`bmp585/bmp585_i2c_read_write.py`](./bmp585/bmp585_i2c_read_write.py) 
+* [`bmp585/bmp585_i2c_polling_streaming.py`](./bmp585/bmp585_i2c_polling_streaming.py)
+* [`bmp585/bmp585_i2c_interrupt_streaming.py`](./bmp585/bmp585_i2c_interrupt_streaming.py)
+* [`bmp585/bmp585_spi_read_write.py`](./bmp585/bmp585_spi_read_write.py)
+* [`bmp585/bmp585_spi_polling_streaming.py`](./bmp585/bmp585_spi_polling_streaming.py)
+* [`bmp585/bmp585_spi_interrupt_streaming.py`](./bmp585/bmp585_spi_interrupt_streaming.py)
+
 
 ## Need a specific example or do not know how to read data from your sensor?
 
