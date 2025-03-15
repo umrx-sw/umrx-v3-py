@@ -27,6 +27,7 @@ from umrx_app_v3.sensors.bma580 import BMA580
 from umrx_app_v3.sensors.bme280 import BME280
 from umrx_app_v3.sensors.bmi088 import BMI088
 from umrx_app_v3.sensors.bmi323 import BMI323
+from umrx_app_v3.sensors.bmm350 import BMM350
 from umrx_app_v3.sensors.bmp390 import BMP390
 from umrx_app_v3.sensors.bmp585 import BMP585
 from umrx_app_v3.shuttle_board.bmi088.bmi088_shuttle import BMI088Shuttle
@@ -195,6 +196,11 @@ def bmi323() -> BMI323:
 @pytest.fixture(scope="session", autouse=True)
 def bmi323_shuttle(app_board_v3_rev1: ApplicationBoardV3Rev1) -> BMI323Shuttle:
     return BMI323Shuttle(board=app_board_v3_rev1)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def bmm350() -> BMM350:
+    return BMM350()
 
 
 @pytest.fixture(scope="session", autouse=True)

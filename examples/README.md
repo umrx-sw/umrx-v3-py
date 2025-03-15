@@ -114,6 +114,19 @@ board:
 * [`bmi323/bmi323_spi_polling_streaming.py`](./bmi323/bmi323_spi_polling_streaming.py)
 * [`bmi323/bmi323_spi_interrupt_streaming.py`](./bmi323/bmi323_spi_interrupt_streaming.py)
 
+
+## [`bmm350`](https://www.bosch-sensortec.com/products/motion-sensors/magnetometers/bmm350/)
+
+The examples in the [`bmm350`](./bmm350) folder 
+show different communication features for the 
+[BMM350 shuttle](https://www.bosch-sensortec.com/media/boschsensortec/downloads/shuttle_board_flyer/application_board_3_1/bst-bmm350-sf000.pdf)
+board:
+
+* [`bmm350/bmm350_i2c_read_write.py`](./bmm350/bmm350_i2c_read_write.py) 
+* [`bmm350/bmm350_i2c_polling_streaming.py`](./bmm350/bmm350_i2c_polling_streaming.py)
+* [`bmm350/bmm350_i2c_interrupt_streaming.py`](./bmm350/bmm350_i2c_interrupt_streaming.py)
+
+
 ## [`bmp390`](https://www.bosch-sensortec.com/products/environmental-sensors/pressure-sensors/bmp390/)
 
 The examples in the [`bmp390`](./bmp390) folder 
