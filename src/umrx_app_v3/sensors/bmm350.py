@@ -497,7 +497,7 @@ class BMM350:
         comp_m_y = m_y * (1 + self.sens_y) + self.offset_y + self.tco_y * (compensated_temperature - self.dut_t0)
         comp_m_y /= 1 + self.tcs_y * (compensated_temperature - self.dut_t0)
 
-        comp_m_z = m_y * (1 + self.sens_z) + self.offset_z + self.tco_z * (compensated_temperature - self.dut_t0)
+        comp_m_z = m_z * (1 + self.sens_z) + self.offset_z + self.tco_z * (compensated_temperature - self.dut_t0)
         comp_m_z /= 1 + self.tcs_z * (compensated_temperature - self.dut_t0)
 
         cross_m_x = (comp_m_x - self.cross_x_y * comp_m_y) / (1 - self.cross_y_x * self.cross_x_y)
