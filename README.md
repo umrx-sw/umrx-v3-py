@@ -137,7 +137,7 @@ To install the package from source:
 ```bash
 pip install poetry
 poetry install 
-poetry shell
+eval $(poetry env activate)
 ```
 
 ## Supported python version
