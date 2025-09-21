@@ -63,8 +63,3 @@ repos:
       - id: shellcheck
         args: [--check-sourced]
         types: [shell]
-  - repo: https://github.com/python-poetry/poetry
-    rev: e5e4b0ce9d2f4a50f6feeacac3a7d995f0880979  # 1.8.3
-    hooks:
-      - id: poetry-check
-        pass_filenames: false
