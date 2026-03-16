@@ -22,7 +22,6 @@ dynamic = ["version"]
 version = "0.0.0"
 
 [tool.poetry.group.dev.dependencies]
-authlib = ">=1.6.4"
 coverage = { extras = ["toml"], version = ">=7.10.6" }
 ipdb = "^0.13.13"
 ipython = ">=9.5.0"
