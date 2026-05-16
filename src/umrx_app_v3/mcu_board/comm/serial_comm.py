@@ -56,7 +56,7 @@ class SerialCommunication(Communication):
                 possible_start_idx = message.find(0x0A)
                 if (
                     possible_start_idx == -1
-                    or len(message) < possible_start_idx + 2
+                    or len(message) < possible_start_idx + 2 + 1
                     or len(message) < message[possible_start_idx + 2] + 2
                 ):
                     break

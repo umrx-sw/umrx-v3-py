@@ -119,9 +119,6 @@ Install [libusb](https://formulae.brew.sh/formula/libusb):
 brew install libusb
 ```
 
-
-Execute the python scripts with `sudo` to read/write USB device.
-
 ### Install using pip
 
 ```bash
